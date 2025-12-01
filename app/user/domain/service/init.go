@@ -20,6 +20,7 @@ type UserService interface {
 	IsBaned(ctx context.Context, uid int64) bool
 	CheckPassword(ctx context.Context, ePwd, pwd string) error
 	UserLogin(ctx context.Context, uid int64) (*model.Token, error)
+	GetUserById(ctx context.Context, uid int64) (*model.User, error)
 }
 
 func NewUserService(db repository.UserDB, sf *util.Snowflake, cache repository.UserCache) UserService {

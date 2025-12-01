@@ -76,3 +76,11 @@ func (us *userService) UserLogin(ctx context.Context, uid int64) (*model.Token, 
 		RefreshExpireTime: time.Now().Add(constants.RefreshTokenTTL).Unix(),
 	}, nil
 }
+
+func (us *userService) GetUserById(ctx context.Context, uid int64) (*model.User, error) {
+	u, err := us.db.GetUserById(ctx, uid)
+	if err != nil {
+		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get user by id").WithError(err)
+	}
+	return u, nil
+}

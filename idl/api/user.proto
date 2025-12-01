@@ -46,7 +46,7 @@ message GetUserInfoRequest {
 }
 
 message GetUserInfoResponse {
-    User data = 1;
+    User user = 1;
 }
 
 message UploadAvatarRequest {
@@ -54,7 +54,7 @@ message UploadAvatarRequest {
 }
 
 message UploadAvatarResponse {
-    User data = 1;
+    User user = 1;
 }
 
 message MFA {
@@ -65,7 +65,7 @@ message MFA {
 message GetMFARequest {}
 
 message GetMFAResponse {
-    MFA data = 1;
+    MFA mfa = 1;
 }
 
 message BindMFARequest {

@@ -46,7 +46,16 @@ func (s *UserHandler) Register(ctx context.Context, req *user.RegisterRequest) (
 
 // GetUserInfo implements the UserServiceImpl interface.
 func (s *UserHandler) GetUserInfo(ctx context.Context, req *user.GetUserInfoRequest) (resp *user.GetUserInfoResponse, err error) {
-	// TODO: Your code here...
+	resp = new(user.GetUserInfoResponse)
+
+	u, err := s.useCase.GetUserById(ctx, req.UserId)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildUser(u)
 	return
 }
 

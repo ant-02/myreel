@@ -57,7 +57,7 @@ func (db *userDB) GetUserByUsername(ctx context.Context, username string) (*mode
 	}, nil
 }
 
-func (db *userDB) GetUserById(ctx context.Context, id string) (*model.User, error) {
+func (db *userDB) GetUserById(ctx context.Context, id int64) (*model.User, error) {
 	var user User
 	if err := db.client.WithContext(ctx).First(&user, id).Error; err != nil {
 		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get user by id: %v", err)

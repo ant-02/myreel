@@ -3,6 +3,8 @@
 package user
 
 import (
+	"myreel/app/gateway/mv"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -23,7 +25,9 @@ func _userMw() []app.HandlerFunc {
 
 func _getuserinfoMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }
 
 func _loginMw() []app.HandlerFunc {

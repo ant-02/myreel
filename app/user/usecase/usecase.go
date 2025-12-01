@@ -16,6 +16,7 @@ type useCase struct {
 type UserUseCase interface {
 	Register(ctx context.Context, username, password string) error
 	Login(ctx context.Context, username, password string) (*model.User, *model.Token, error)
+	GetUserById(ctx context.Context, uid int64) (*model.User, error)
 }
 
 func NewUserUseCase(db repository.UserDB, svc service.UserService, cache repository.UserCache) *useCase {

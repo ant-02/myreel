@@ -47,16 +47,37 @@ func LoginRPC(ctx context.Context, req *user.LoginRequest) (*api.LoginResponse, 
 
 	return &api.LoginResponse{
 		User: &api.User{
-			Id: resp.Data.User.Id,
-			Username: resp.Data.User.Username,
-			Password: resp.Data.User.Password,
+			Id:        resp.Data.User.Id,
+			Username:  resp.Data.User.Username,
+			Password:  resp.Data.User.Password,
 			AvatarUrl: resp.Data.User.AvatarUrl,
 		},
 		Token: &api.Token{
-			AccessToken: resp.Data.Token.AccessToken,
-			AccessExpireTime: resp.Data.Token.AccessExpireTime,
-			RefreshToken: resp.Data.Token.RefreshToken,
+			AccessToken:       resp.Data.Token.AccessToken,
+			AccessExpireTime:  resp.Data.Token.AccessExpireTime,
+			RefreshToken:      resp.Data.Token.RefreshToken,
 			RefreshExpireTime: resp.Data.Token.RefreshExpireTime,
+		},
+	}, nil
+}
+
+func GetUserByIdRPC(ctx context.Context, req *user.GetUserInfoRequest) (*api.GetUserInfoResponse, error) {
+	resp, err := userClient.GetUserInfo(ctx, req)
+	if err != nil {
+		logger.Errorf("GetUserByIdRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return &api.GetUserInfoResponse{
+		User: &api.User{
+			Id:        resp.Data.Id,
+			Username:  resp.Data.Username,
+			Password:  resp.Data.Password,
+			AvatarUrl: resp.Data.AvatarUrl,
 		},
 	}, nil
 }

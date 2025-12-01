@@ -69,13 +69,19 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 	var req api.GetUserInfoRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(api.GetUserInfoResponse)
+	data, err := rpc.GetUserByIdRPC(ctx, &user.GetUserInfoRequest{
+		UserId: req.UserId,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	pack.RespData(c, data)
 }
 
 // UploadAvatar .

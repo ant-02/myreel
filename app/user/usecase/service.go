@@ -52,3 +52,7 @@ func (uc *useCase) Login(ctx context.Context, username, password string) (*model
 
 	return u, token, nil
 }
+
+func (uc *useCase) GetUserById(ctx context.Context, uid int64) (*model.User, error) {
+	return uc.svc.GetUserById(ctx, uid)
+}
