@@ -241,7 +241,7 @@ func (x *RegisterResponse) GetBase() *model.BaseResp {
 }
 
 type GetUserInfoRequest struct {
-	UserId string `protobuf:"bytes,1,opt,name=userId" json:"userId,omitempty"`
+	UserId int64 `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
 }
 
 func (x *GetUserInfoRequest) Reset() { *x = GetUserInfoRequest{} }
@@ -250,11 +250,11 @@ func (x *GetUserInfoRequest) Marshal(in []byte) ([]byte, error) { return prutal.
 
 func (x *GetUserInfoRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
-func (x *GetUserInfoRequest) GetUserId() string {
+func (x *GetUserInfoRequest) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 type GetUserInfoResponse struct {

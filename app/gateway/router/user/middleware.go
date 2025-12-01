@@ -70,3 +70,18 @@ func _getmfaMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _v1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _user0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _apiMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

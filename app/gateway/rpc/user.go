@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	api "myreel/app/gateway/model/api/user"
 	"myreel/kitex_gen/user"
 	"myreel/kitex_gen/user/userservice"
 	"myreel/pkg/constants"
@@ -31,4 +32,31 @@ func RegisterRPC(ctx context.Context, req *user.RegisterRequest) error {
 	}
 
 	return nil
+}
+
+func LoginRPC(ctx context.Context, req *user.LoginRequest) (*api.LoginResponse, error) {
+	resp, err := userClient.Login(ctx, req)
+	if err != nil {
+		logger.Errorf("LoginRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return &api.LoginResponse{
+		User: &api.User{
+			Id: resp.Data.User.Id,
+			Username: resp.Data.User.Username,
+			Password: resp.Data.User.Password,
+			AvatarUrl: resp.Data.User.AvatarUrl,
+		},
+		Token: &api.Token{
+			AccessToken: resp.Data.Token.AccessToken,
+			AccessExpireTime: resp.Data.Token.AccessExpireTime,
+			RefreshToken: resp.Data.Token.RefreshToken,
+			RefreshExpireTime: resp.Data.Token.RefreshExpireTime,
+		},
+	}, nil
 }

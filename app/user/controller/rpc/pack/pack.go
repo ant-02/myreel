@@ -22,3 +22,10 @@ func BuildToken(t *domainModel.Token) *user.Token {
 		RefreshExpireTime: t.RefreshExpireTime,
 	}
 }
+
+func BuildUserWithToken(u *domainModel.User, t *domainModel.Token) *user.UserWithToken {
+	return &user.UserWithToken{
+		User:  BuildUser(u),
+		Token: BuildToken(t),
+	}
+}

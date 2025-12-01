@@ -17,24 +17,30 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
-	root.GET("/refresh", append(_refreshMw(), user.Refresh)...)
 	{
-		_user := root.Group("/user", _userMw()...)
-		_user.GET("/info", append(_getuserinfoMw(), user.GetUserInfo)...)
-		_user.POST("/login", append(_loginMw(), user.Login)...)
-		_user.POST("/register", append(_registerMw(), user.Register)...)
+		_api := root.Group("/api", _apiMw()...)
 		{
-			_avatar := _user.Group("/avatar", _avatarMw()...)
-			_avatar.PUT("/upload", append(_uploadavatarMw(), user.UploadAvatar)...)
-		}
-		{
-			_image := _user.Group("/image", _imageMw()...)
-			_image.POST("/search", append(_searchimgMw(), user.SearchImg)...)
-		}
-		{
-			_mfa := _user.Group("/mfa", _mfaMw()...)
-			_mfa.POST("/bind", append(_bindmfaMw(), user.BindMFA)...)
-			_mfa.GET("/qrcode", append(_getmfaMw(), user.GetMFA)...)
+			_v1 := _api.Group("/v1", _v1Mw()...)
+			_v1.GET("/refresh", append(_refreshMw(), user.Refresh)...)
+			{
+				_user := _v1.Group("/user", _userMw()...)
+				_user.GET("/info", append(_getuserinfoMw(), user.GetUserInfo)...)
+				_user.POST("/login", append(_loginMw(), user.Login)...)
+				_user.POST("/register", append(_registerMw(), user.Register)...)
+				{
+					_avatar := _user.Group("/avatar", _avatarMw()...)
+					_avatar.PUT("/upload", append(_uploadavatarMw(), user.UploadAvatar)...)
+				}
+				{
+					_image := _user.Group("/image", _imageMw()...)
+					_image.POST("/search", append(_searchimgMw(), user.SearchImg)...)
+				}
+				{
+					_mfa := _user.Group("/mfa", _mfaMw()...)
+					_mfa.POST("/bind", append(_bindmfaMw(), user.BindMFA)...)
+					_mfa.GET("/qrcode", append(_getmfaMw(), user.GetMFA)...)
+				}
+			}
 		}
 	}
 }

@@ -24,9 +24,9 @@ message LoginRequest {
 
 message Token {
     string accessToken = 1;
-    string accessExpireTime = 2;
+    int64 accessExpireTime = 2;
     string refreshToken = 3;
-    string refreshExpireTime = 4;
+    int64 refreshExpireTime = 4;
 }
 
 message LoginResponse {
@@ -42,7 +42,7 @@ message RegisterRequest {
 message RegisterResponse {}
 
 message GetUserInfoRequest {
-    string userId = 1[(api.query)="userId"];
+    int64 userId = 1[(api.query)="userId"];
 }
 
 message GetUserInfoResponse {
@@ -91,27 +91,27 @@ message RefreshResponse {
 
 service UserService {
     rpc Login(LoginRequest) returns (LoginResponse) {
-        option (api.post)="/v1/user/login";
+        option (api.post)="/api/v1/user/login";
     }
     rpc Register(RegisterRequest) returns (RegisterResponse) {
-        option (api.post)="/v1/user/register";
+        option (api.post)="/api/v1/user/register";
     }
     rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {
-        option (api.get)="/user/info";
+        option (api.get)="/api/v1/user/info";
     }
     rpc UploadAvatar(UploadAvatarRequest) returns (UploadAvatarResponse) {
-        option (api.put)="/user/avatar/upload";
+        option (api.put)="/api/v1/user/avatar/upload";
     }
     rpc GetMFA(GetMFARequest) returns (GetMFAResponse) {
-        option (api.get)="/user/mfa/qrcode";
+        option (api.get)="/api/v1/user/mfa/qrcode";
     }
     rpc BindMFA(BindMFARequest) returns (BindMFAResponse) {
-        option (api.post)="user/mfa/bind";
+        option (api.post)="/api/v1/user/mfa/bind";
     }
     rpc SearchImg(SearchImgRequest) returns (SearchImgResponse) {
-        option (api.post)="/user/image/search";
+        option (api.post)="/api/v1/user/image/search";
     }
     rpc Refresh(RefreshRequest) returns (RefreshResponse) {
-        option (api.get)="/refresh";
+        option (api.get)="/api/v1/refresh";
     }
 }

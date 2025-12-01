@@ -22,13 +22,21 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	var req api.LoginRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(api.LoginResponse)
+	data, err := rpc.LoginRPC(ctx, &user.LoginRequest{
+		Username: req.Username,
+		Password: req.Password,
+		Code:     req.Code,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	pack.RespData(c, data)
 }
 
 // Register .

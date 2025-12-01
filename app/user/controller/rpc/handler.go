@@ -26,10 +26,8 @@ func (s *UserHandler) Login(ctx context.Context, req *user.LoginRequest) (resp *
 		resp.Base = base.BuildBaseResp(err)
 		return
 	}
-
 	resp.Base = base.BuildSuccessResp()
-	resp.Data.User = build.BuildUser(u)
-	resp.Data.Token = build.BuildToken(t)
+	resp.Data = build.BuildUserWithToken(u, t)
 	return
 }
 
