@@ -1,0 +1,63 @@
+package logger
+
+import (
+	"os"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+)
+
+type config struct {
+	core zapcore.Core
+	enc  zapcore.Encoder
+	ws   zapcore.WriteSyncer
+	lvl  zapcore.Level
+}
+
+func buildConfig(core zapcore.Core) *config {
+	cfg := defaultConfig()
+	cfg.core = core
+	if cfg.core == nil {
+		cfg.core = zapcore.NewCore(cfg.enc, cfg.ws, cfg.lvl)
+	}
+
+	return cfg
+}
+
+func BuildLogger(cfg *config, opts ...zap.Option) *zap.Logger {
+	return zap.New(cfg.core, opts...)
+}
+
+func defaultConfig() *config {
+	return &config{
+		enc: defaultEnc(),
+		ws:  defaultWs(),
+		lvl: defaultLvl(),
+	}
+}
+
+// defaultEnc 可以在 debug 时使用 zapcore.NewConsoleEncoder
+func defaultEnc() zapcore.Encoder {
+	cfg := zapcore.EncoderConfig{
+		TimeKey:        "time",
+		LevelKey:       "level",
+		CallerKey:      "caller",
+		MessageKey:     "msg",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.CapitalLevelEncoder, // 日志等级大写
+		EncodeTime:     zapcore.ISO8601TimeEncoder,  // 时间格式
+		EncodeDuration: zapcore.StringDurationEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder,
+	}
+
+	// return zapcore.NewConsoleEncoder(cfg)
+	return zapcore.NewJSONEncoder(cfg)
+}
+
+func defaultWs() zapcore.WriteSyncer {
+	return os.Stdout
+}
+
+func defaultLvl() zapcore.Level {
+	return zapcore.DebugLevel
+}

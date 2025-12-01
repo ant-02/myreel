@@ -5,23 +5,28 @@ package user
 import (
 	"context"
 
+	api "myreel/app/gateway/model/api/user"
+	"myreel/app/gateway/pack"
+	"myreel/app/gateway/rpc"
+	"myreel/kitex_gen/user"
+	"myreel/pkg/errno"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	user "myreel/app/gateway/model/api/user"
 )
 
 // Login .
 // @router /user/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.LoginRequest
+	var req api.LoginRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(user.LoginResponse)
+	resp := new(api.LoginResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -30,30 +35,37 @@ func Login(ctx context.Context, c *app.RequestContext) {
 // @router /user/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.RegisterRequest
+	var req api.RegisterRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(user.RegisterResponse)
+	err = rpc.RegisterRPC(ctx, &user.RegisterRequest{
+		Username: req.Username,
+		Password: req.Password,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	pack.RespSuccess(c)
 }
 
 // GetUserInfo .
 // @router /user/info [GET]
 func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.GetUserInfoRequest
+	var req api.GetUserInfoRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(user.GetUserInfoResponse)
+	resp := new(api.GetUserInfoResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -62,14 +74,14 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 // @router /user/avatar/upload [PUT]
 func UploadAvatar(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.UploadAvatarRequest
+	var req api.UploadAvatarRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(user.UploadAvatarResponse)
+	resp := new(api.UploadAvatarResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -78,14 +90,14 @@ func UploadAvatar(ctx context.Context, c *app.RequestContext) {
 // @router /user/mfa/qrcode [GET]
 func GetMFA(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.GetMFARequest
+	var req api.GetMFARequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(user.GetMFAResponse)
+	resp := new(api.GetMFAResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -94,14 +106,14 @@ func GetMFA(ctx context.Context, c *app.RequestContext) {
 // @router user/mfa/bind [POST]
 func BindMFA(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.BindMFARequest
+	var req api.BindMFARequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(user.BindMFAResponse)
+	resp := new(api.BindMFAResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -110,14 +122,14 @@ func BindMFA(ctx context.Context, c *app.RequestContext) {
 // @router /user/image/search [POST]
 func SearchImg(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.SearchImgRequest
+	var req api.SearchImgRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(user.SearchImgResponse)
+	resp := new(api.SearchImgResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -126,14 +138,14 @@ func SearchImg(ctx context.Context, c *app.RequestContext) {
 // @router /refresh [GET]
 func Refresh(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.RefreshRequest
+	var req api.RefreshRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(user.RefreshResponse)
+	resp := new(api.RefreshResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }

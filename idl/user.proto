@@ -2,12 +2,12 @@ syntax = "proto3";
 
 package user;
 
-option go_package = "/api/user";
+option go_package = "/user";
 
 import "model.proto";
 
 message User {
-    string id = 1;
+    int64 id = 1;
     string username = 2;
     string password = 3;
     string avatarUrl = 4;
@@ -24,9 +24,9 @@ message LoginRequest {
 
 message Token {
     string accessToken = 1;
-    string accessExpireTime = 2;
+    int64 accessExpireTime = 2;
     string refreshToken = 3;
-    string refreshExpireTime = 4;
+    int64 refreshExpireTime = 4;
 }
 
 message UserWithToken {

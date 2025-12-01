@@ -4,9 +4,21 @@ package main
 
 import (
 	"myreel/app/gateway/router"
+	"myreel/app/gateway/rpc"
+	"myreel/config"
+	"myreel/pkg/constants"
+	"myreel/pkg/logger"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
+
+var serviceName = constants.GatewayServiceName
+
+func init() {
+	config.Init(serviceName)
+	logger.Init(serviceName, config.GetLoggerLevel())
+	rpc.Init()
+}
 
 func main() {
 	h := server.Default()

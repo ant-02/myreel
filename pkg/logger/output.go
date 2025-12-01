@@ -1,0 +1,95 @@
+package logger
+
+import (
+	"os"
+	"path/filepath"
+	"runtime"
+	"strings"
+
+	"go.uber.org/zap"
+)
+
+func Debug(msg string, fields ...zap.Field) {
+	control.debug(msg, fields...)
+}
+
+func Debugf(template string, args ...interface{}) {
+	control.debugf(template, args...)
+}
+
+func Info(msg string, fields ...zap.Field) {
+	control.info(msg, fields...)
+}
+
+func Infof(template string, args ...interface{}) {
+	control.infof(template, args...)
+}
+
+func Warn(msg string, fields ...zap.Field) {
+	control.warn(msg, fields...)
+}
+
+func Warnf(template string, args ...interface{}) {
+	control.warnf(template, args...)
+}
+
+func Error(msg string, fields ...zap.Field) {
+	control.error(msg, fields...)
+}
+
+func Errorf(template string, args ...interface{}) {
+	control.errorf(template, args...)
+}
+
+func Fatal(msg string, fields ...zap.Field) {
+	control.fatal(msg, fields...)
+}
+
+func Fatalf(template string, args ...interface{}) {
+	control.fatalf(template, args...)
+}
+
+func LogError(err error) {
+	if err != nil {
+		control.error(err.Error())
+	}
+}
+
+const permission = 0o755 // 用户具有读/写/执行权限，组用户和其它用户具有读写权限
+
+// getCurrentDirectory 会返回当前运行的目录
+func getCurrentDirectory(serviceName string) (string, error) {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		return "", err
+	}
+
+	path := strings.ReplaceAll(dir, "\\", "/")
+	paths := strings.Split(path, "/")
+
+	// 在容器下运行时, 让所有日志都集中于 output/log/$(ServiceName)
+	if paths[len(paths)-1] == serviceName {
+		path = path[:len(path)-len(serviceName)-1]
+	}
+
+	return path, nil
+}
+
+func checkAndOpenFile(path string) *os.File {
+	var err error
+	var handler *os.File
+	if err = os.MkdirAll(filepath.Dir(path), permission); err != nil {
+		panic(err)
+	}
+
+	handler, err = os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, permission)
+	if err != nil {
+		panic(err)
+	}
+	runtime.SetFinalizer(handler, func(fd *os.File) {
+		if err := fd.Close(); err != nil {
+			Infof("close file failed %v", err)
+		}
+	})
+	return handler
+}

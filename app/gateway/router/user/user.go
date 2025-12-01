@@ -4,7 +4,7 @@ package user
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	user "myreel/app/gateway/handler/user"
+	user "myreel/app/gateway/handler/api/user"
 )
 
 /*

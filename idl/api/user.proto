@@ -5,10 +5,9 @@ package user;
 option go_package = "/api/user";
 
 import "api.proto";
-import "model.proto";
 
 message User {
-    string id = 1;
+    int64 id = 1;
     string username = 2;
     string password = 3;
     string avatarUrl = 4;
@@ -30,14 +29,9 @@ message Token {
     string refreshExpireTime = 4;
 }
 
-message UserWithToken {
+message LoginResponse {
     User user = 1;
     Token token = 2;
-}
-
-message LoginResponse {
-    model.BaseResp base = 1;
-    UserWithToken data = 2;
 }
 
 message RegisterRequest {
@@ -45,17 +39,14 @@ message RegisterRequest {
     string password = 2[(api.body)="password"];
 }
 
-message RegisterResponse {
-    model.BaseResp base = 1;
-}
+message RegisterResponse {}
 
 message GetUserInfoRequest {
     string userId = 1[(api.query)="userId"];
 }
 
 message GetUserInfoResponse {
-    model.BaseResp base = 1;
-    User data = 2;
+    User data = 1;
 }
 
 message UploadAvatarRequest {
@@ -63,8 +54,7 @@ message UploadAvatarRequest {
 }
 
 message UploadAvatarResponse {
-    model.BaseResp base = 1;
-    User data = 2;
+    User data = 1;
 }
 
 message MFA {
@@ -75,8 +65,7 @@ message MFA {
 message GetMFARequest {}
 
 message GetMFAResponse {
-    model.BaseResp base = 1;
-    MFA data = 2;
+    MFA data = 1;
 }
 
 message BindMFARequest {
@@ -84,32 +73,28 @@ message BindMFARequest {
     string secret = 2[(api.body)="secret"];
 }
 
-message BindMFAResponse {
-    model.BaseResp base = 1;
-}
+message BindMFAResponse {}
 
 message SearchImgRequest {
     string data = 1[(api.body)="data"];
 }
 
 message SearchImgResponse {
-    model.BaseResp base = 1;
-    string data = 2;
+    string data = 1;
 }
 
 message RefreshRequest {}
 
 message RefreshResponse {
-    model.BaseResp base = 1;
-    Token data = 2;
+    Token data = 1;
 }
 
 service UserService {
     rpc Login(LoginRequest) returns (LoginResponse) {
-        option (api.post)="/user/login";
+        option (api.post)="/v1/user/login";
     }
     rpc Register(RegisterRequest) returns (RegisterResponse) {
-        option (api.post)="/user/register";
+        option (api.post)="/v1/user/register";
     }
     rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {
         option (api.get)="/user/info";
