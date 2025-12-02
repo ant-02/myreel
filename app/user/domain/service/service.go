@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"myreel/app/user/domain/model"
 	"myreel/pkg/constants"
 	"myreel/pkg/errno"
+	"myreel/pkg/upyun"
 	"myreel/pkg/util"
 	"time"
 
@@ -83,4 +85,38 @@ func (us *userService) GetUserById(ctx context.Context, uid int64) (*model.User,
 		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get user by id").WithError(err)
 	}
 	return u, nil
+}
+
+func (us *userService) GetUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error) {
+	saveKey := fmt.Sprintf("%s/%s/%d%s", constants.UpyunUserAvaterPath, time.Now().Format("2006/01/01"), uid, suffix)
+	up, err := upyun.GeneratePolicyAndSignature(saveKey, constants.UpyunUserAvatarNotifyPath)
+	if err != nil {
+		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get upyun token").WithError(err)
+	}
+
+	return up, nil
+}
+
+func (us *userService) Refresh(ctx context.Context, token string, uid int64) (string, error) {
+	key := us.cache.UserLoginKey(uid)
+
+	if exist := us.cache.IsExist(ctx, key); !exist {
+		return "", errno.NewErrNo(errno.InternalServiceErrorCode, "reject to issue access token")
+	}
+
+	refreshToken, err := us.cache.GetUserLogin(ctx, key)
+	if err != nil {
+		return "", errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get refresh token").WithError(err)
+	}
+
+	if refreshToken != token {
+		return "", errno.NewErrNo(errno.InternalServiceErrorCode, "reject to issue access token")
+	}
+
+	accessToken, err := util.CreateToken(constants.TypeAccessToken, uid)
+	if err != nil {
+		return "", errno.NewErrNo(errno.InternalServiceErrorCode, "failed to create token").WithError(err)
+	}
+
+	return accessToken, nil
 }

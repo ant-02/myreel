@@ -81,3 +81,37 @@ func GetUserByIdRPC(ctx context.Context, req *user.GetUserInfoRequest) (*api.Get
 		},
 	}, nil
 }
+
+func RefreshRPC(ctx context.Context, req *user.RefreshRequest) (*api.RefreshResponse, error) {
+	resp, err := userClient.Refresh(ctx, req)
+	if err != nil {
+		logger.Errorf("RefreshRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return &api.RefreshResponse{
+		Token: resp.Token,
+	}, nil
+}
+
+func GetUploadTokenRPC(ctx context.Context, req *user.GetUploadTokenRequest) (*api.GetUploadTokenResponse, error) {
+	resp, err := userClient.GetUploadToken(ctx, req)
+	if err != nil {
+		logger.Errorf("GetUploadTokenRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return &api.GetUploadTokenResponse{
+		Policy:        resp.Data.Policy,
+		Authorization: resp.Data.Authorization,
+		Bucket:        resp.Data.Bucket,
+	}, nil
+}

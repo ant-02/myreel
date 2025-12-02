@@ -36,10 +36,10 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
-	"UploadAvatar": kitex.NewMethodInfo(
-		uploadAvatarHandler,
-		newUploadAvatarArgs,
-		newUploadAvatarResult,
+	"GetUploadToken": kitex.NewMethodInfo(
+		getUploadTokenHandler,
+		newGetUploadTokenArgs,
+		newGetUploadTokenResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
@@ -68,6 +68,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		refreshHandler,
 		newRefreshArgs,
 		newRefreshResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"AvatarNotify": kitex.NewMethodInfo(
+		avatarNotifyHandler,
+		newAvatarNotifyArgs,
+		newAvatarNotifyResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
@@ -470,52 +477,52 @@ func (p *GetUserInfoResult) GetResult() interface{} {
 	return p.Success
 }
 
-func uploadAvatarHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+func getUploadTokenHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
 		st := s.Stream
-		req := new(user.UploadAvatarRequest)
+		req := new(user.GetUploadTokenRequest)
 		if err := st.RecvMsg(req); err != nil {
 			return err
 		}
-		resp, err := handler.(user.UserService).UploadAvatar(ctx, req)
+		resp, err := handler.(user.UserService).GetUploadToken(ctx, req)
 		if err != nil {
 			return err
 		}
 		return st.SendMsg(resp)
-	case *UploadAvatarArgs:
-		success, err := handler.(user.UserService).UploadAvatar(ctx, s.Req)
+	case *GetUploadTokenArgs:
+		success, err := handler.(user.UserService).GetUploadToken(ctx, s.Req)
 		if err != nil {
 			return err
 		}
-		realResult := result.(*UploadAvatarResult)
+		realResult := result.(*GetUploadTokenResult)
 		realResult.Success = success
 		return nil
 	default:
 		return errInvalidMessageType
 	}
 }
-func newUploadAvatarArgs() interface{} {
-	return &UploadAvatarArgs{}
+func newGetUploadTokenArgs() interface{} {
+	return &GetUploadTokenArgs{}
 }
 
-func newUploadAvatarResult() interface{} {
-	return &UploadAvatarResult{}
+func newGetUploadTokenResult() interface{} {
+	return &GetUploadTokenResult{}
 }
 
-type UploadAvatarArgs struct {
-	Req *user.UploadAvatarRequest
+type GetUploadTokenArgs struct {
+	Req *user.GetUploadTokenRequest
 }
 
-func (p *UploadAvatarArgs) Marshal(out []byte) ([]byte, error) {
+func (p *GetUploadTokenArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
 		return out, nil
 	}
 	return proto.Marshal(p.Req)
 }
 
-func (p *UploadAvatarArgs) Unmarshal(in []byte) error {
-	msg := new(user.UploadAvatarRequest)
+func (p *GetUploadTokenArgs) Unmarshal(in []byte) error {
+	msg := new(user.GetUploadTokenRequest)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -523,38 +530,38 @@ func (p *UploadAvatarArgs) Unmarshal(in []byte) error {
 	return nil
 }
 
-var UploadAvatarArgs_Req_DEFAULT *user.UploadAvatarRequest
+var GetUploadTokenArgs_Req_DEFAULT *user.GetUploadTokenRequest
 
-func (p *UploadAvatarArgs) GetReq() *user.UploadAvatarRequest {
+func (p *GetUploadTokenArgs) GetReq() *user.GetUploadTokenRequest {
 	if !p.IsSetReq() {
-		return UploadAvatarArgs_Req_DEFAULT
+		return GetUploadTokenArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *UploadAvatarArgs) IsSetReq() bool {
+func (p *GetUploadTokenArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *UploadAvatarArgs) GetFirstArgument() interface{} {
+func (p *GetUploadTokenArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-type UploadAvatarResult struct {
-	Success *user.UploadAvatarResponse
+type GetUploadTokenResult struct {
+	Success *user.GetUploadTokenResponse
 }
 
-var UploadAvatarResult_Success_DEFAULT *user.UploadAvatarResponse
+var GetUploadTokenResult_Success_DEFAULT *user.GetUploadTokenResponse
 
-func (p *UploadAvatarResult) Marshal(out []byte) ([]byte, error) {
+func (p *GetUploadTokenResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
 		return out, nil
 	}
 	return proto.Marshal(p.Success)
 }
 
-func (p *UploadAvatarResult) Unmarshal(in []byte) error {
-	msg := new(user.UploadAvatarResponse)
+func (p *GetUploadTokenResult) Unmarshal(in []byte) error {
+	msg := new(user.GetUploadTokenResponse)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -562,22 +569,22 @@ func (p *UploadAvatarResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *UploadAvatarResult) GetSuccess() *user.UploadAvatarResponse {
+func (p *GetUploadTokenResult) GetSuccess() *user.GetUploadTokenResponse {
 	if !p.IsSetSuccess() {
-		return UploadAvatarResult_Success_DEFAULT
+		return GetUploadTokenResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *UploadAvatarResult) SetSuccess(x interface{}) {
-	p.Success = x.(*user.UploadAvatarResponse)
+func (p *GetUploadTokenResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.GetUploadTokenResponse)
 }
 
-func (p *UploadAvatarResult) IsSetSuccess() bool {
+func (p *GetUploadTokenResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *UploadAvatarResult) GetResult() interface{} {
+func (p *GetUploadTokenResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -1025,6 +1032,117 @@ func (p *RefreshResult) GetResult() interface{} {
 	return p.Success
 }
 
+func avatarNotifyHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.AvatarNotifyRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserService).AvatarNotify(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *AvatarNotifyArgs:
+		success, err := handler.(user.UserService).AvatarNotify(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*AvatarNotifyResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newAvatarNotifyArgs() interface{} {
+	return &AvatarNotifyArgs{}
+}
+
+func newAvatarNotifyResult() interface{} {
+	return &AvatarNotifyResult{}
+}
+
+type AvatarNotifyArgs struct {
+	Req *user.AvatarNotifyRequest
+}
+
+func (p *AvatarNotifyArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *AvatarNotifyArgs) Unmarshal(in []byte) error {
+	msg := new(user.AvatarNotifyRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AvatarNotifyArgs_Req_DEFAULT *user.AvatarNotifyRequest
+
+func (p *AvatarNotifyArgs) GetReq() *user.AvatarNotifyRequest {
+	if !p.IsSetReq() {
+		return AvatarNotifyArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AvatarNotifyArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AvatarNotifyArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type AvatarNotifyResult struct {
+	Success *user.AvatarNotifyResponse
+}
+
+var AvatarNotifyResult_Success_DEFAULT *user.AvatarNotifyResponse
+
+func (p *AvatarNotifyResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *AvatarNotifyResult) Unmarshal(in []byte) error {
+	msg := new(user.AvatarNotifyResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AvatarNotifyResult) GetSuccess() *user.AvatarNotifyResponse {
+	if !p.IsSetSuccess() {
+		return AvatarNotifyResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AvatarNotifyResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.AvatarNotifyResponse)
+}
+
+func (p *AvatarNotifyResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AvatarNotifyResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -1065,11 +1183,11 @@ func (p *kClient) GetUserInfo(ctx context.Context, Req *user.GetUserInfoRequest)
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) UploadAvatar(ctx context.Context, Req *user.UploadAvatarRequest) (r *user.UploadAvatarResponse, err error) {
-	var _args UploadAvatarArgs
+func (p *kClient) GetUploadToken(ctx context.Context, Req *user.GetUploadTokenRequest) (r *user.GetUploadTokenResponse, err error) {
+	var _args GetUploadTokenArgs
 	_args.Req = Req
-	var _result UploadAvatarResult
-	if err = p.c.Call(ctx, "UploadAvatar", &_args, &_result); err != nil {
+	var _result GetUploadTokenResult
+	if err = p.c.Call(ctx, "GetUploadToken", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -1110,6 +1228,16 @@ func (p *kClient) Refresh(ctx context.Context, Req *user.RefreshRequest) (r *use
 	_args.Req = Req
 	var _result RefreshResult
 	if err = p.c.Call(ctx, "Refresh", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) AvatarNotify(ctx context.Context, Req *user.AvatarNotifyRequest) (r *user.AvatarNotifyResponse, err error) {
+	var _args AvatarNotifyArgs
+	_args.Req = Req
+	var _result AvatarNotifyResult
+	if err = p.c.Call(ctx, "AvatarNotify", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

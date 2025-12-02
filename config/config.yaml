@@ -32,3 +32,12 @@ services:
     load-balance: false
     addr:
       - 0.0.0.0:20002
+
+upyun:
+  bucket: "myreel-img"
+  operator: "zll141363"
+  password: "39c1d6a1f587e00ee4e5c2c531f64946"
+  expiration: 30
+  maxSize: 20971520
+  domain: "http://myreel-img.test.upcdn.net"
+  notifyUrl: "http://localhost:8888"

@@ -57,14 +57,21 @@ message GetUserInfoResponse {
     User data = 2;
 }
 
-message UploadAvatarRequest {
-    string data = 1;
+message GetUploadTokenRequest {
+    string suffix = 1;
+    int64 userId = 2;
 }
 
-message UploadAvatarResponse {
+message GetUploadTokenResponse {
     model.BaseResp base = 1;
-    User data = 2;
+    model.UpyunToken data = 2;
 }
+
+message AvatarNotifyRequest {
+    string url = 3;
+}
+
+message AvatarNotifyResponse {}
 
 message MFA {
     string secret = 1;
@@ -96,20 +103,24 @@ message SearchImgResponse {
     string data = 2;
 }
 
-message RefreshRequest {}
+message RefreshRequest {
+    string token = 1;
+    int64 userId = 2;
+}
 
 message RefreshResponse {
     model.BaseResp base = 1;
-    Token data = 2;
+    string token = 2;
 }
 
 service UserService {
     rpc Login(LoginRequest) returns (LoginResponse);
     rpc Register(RegisterRequest) returns (RegisterResponse);
     rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse); 
-    rpc UploadAvatar(UploadAvatarRequest) returns (UploadAvatarResponse);
+    rpc GetUploadToken(GetUploadTokenRequest) returns (GetUploadTokenResponse);
     rpc GetMFA(GetMFARequest) returns (GetMFAResponse);
     rpc BindMFA(BindMFARequest) returns (BindMFAResponse);
     rpc SearchImg(SearchImgRequest) returns (SearchImgResponse);
     rpc Refresh(RefreshRequest) returns (RefreshResponse);
+    rpc AvatarNotify(AvatarNotifyRequest) returns (AvatarNotifyResponse);
 }

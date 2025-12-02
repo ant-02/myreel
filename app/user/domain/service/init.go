@@ -4,6 +4,7 @@ import (
 	"context"
 	"myreel/app/user/domain/model"
 	"myreel/app/user/domain/repository"
+	"myreel/pkg/upyun"
 	"myreel/pkg/util"
 )
 
@@ -21,6 +22,8 @@ type UserService interface {
 	CheckPassword(ctx context.Context, ePwd, pwd string) error
 	UserLogin(ctx context.Context, uid int64) (*model.Token, error)
 	GetUserById(ctx context.Context, uid int64) (*model.User, error)
+	Refresh(ctx context.Context, token string, uid int64) (string, error)
+	GetUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
 }
 
 func NewUserService(db repository.UserDB, sf *util.Snowflake, cache repository.UserCache) UserService {

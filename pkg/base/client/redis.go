@@ -40,22 +40,3 @@ func InitRedis(db int) (*redis.Client, error) {
 
 	return client, nil
 }
-
-func NewRedisClient(db int) (*redis.Client, error) {
-	if config.Redis == nil {
-		return nil, errors.New("redis config is nil")
-	}
-	client := redis.NewClient(&redis.Options{
-		Addr:     config.Redis.Addr,
-		Password: config.Redis.Password,
-		DB:       db,
-	})
-	l := logger.GetRedisLogger()
-	redis.SetLogger(l)
-	client.AddHook(l)
-	_, err := client.Ping(context.TODO()).Result()
-	if err != nil {
-		return nil, errno.NewErrNo(errno.InternalRedisErrorCode, fmt.Sprintf("client.NewRedisClient: ping redis failed: %v", err))
-	}
-	return client, nil
-}

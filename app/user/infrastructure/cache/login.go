@@ -14,6 +14,14 @@ func (c *userCache) SetUserLogin(ctx context.Context, key string, token string) 
 	return nil
 }
 
+func (c *userCache) GetUserLogin(ctx context.Context, key string) (string, error) {
+	token, err := c.client.Get(ctx, key).Result()
+	if err != nil {
+		return "", errno.Errorf(errno.InternalRedisErrorCode, "userCache.GetUserLogin failed, %v", err)
+	}
+	return token, nil
+}
+
 func (c *userCache) DeleteUserLogin(ctx context.Context, key string) error {
 	err := c.client.Del(ctx, key).Err()
 	if err != nil {

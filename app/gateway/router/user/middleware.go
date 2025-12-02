@@ -15,7 +15,9 @@ func rootMw() []app.HandlerFunc {
 
 func _refreshMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }
 
 func _userMw() []app.HandlerFunc {
@@ -41,11 +43,6 @@ func _registerMw() []app.HandlerFunc {
 }
 
 func _avatarMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _uploadavatarMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
@@ -80,12 +77,19 @@ func _v1Mw() []app.HandlerFunc {
 	return nil
 }
 
-func _user0Mw() []app.HandlerFunc {
+func _apiMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
 
-func _apiMw() []app.HandlerFunc {
+func _getuploadtokenMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
+}
+
+func _avatarnotifyMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

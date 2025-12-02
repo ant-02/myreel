@@ -60,8 +60,17 @@ func (s *UserHandler) GetUserInfo(ctx context.Context, req *user.GetUserInfoRequ
 }
 
 // UploadAvatar implements the UserServiceImpl interface.
-func (s *UserHandler) UploadAvatar(ctx context.Context, req *user.UploadAvatarRequest) (resp *user.UploadAvatarResponse, err error) {
-	// TODO: Your code here...
+func (s *UserHandler) GetUploadToken(ctx context.Context, req *user.GetUploadTokenRequest) (resp *user.GetUploadTokenResponse, err error) {
+	resp = new(user.GetUploadTokenResponse)
+
+	t, err := s.useCase.GetLoadToken(ctx, req.Suffix, req.UserId)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildUpyunToken(t)
 	return
 }
 
@@ -85,6 +94,20 @@ func (s *UserHandler) SearchImg(ctx context.Context, req *user.SearchImgRequest)
 
 // Refresh implements the UserServiceImpl interface.
 func (s *UserHandler) Refresh(ctx context.Context, req *user.RefreshRequest) (resp *user.RefreshResponse, err error) {
+	resp = new(user.RefreshResponse)
+
+	token, err := s.useCase.Refresh(ctx, req.Token, req.UserId)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Token = token
+	return
+}
+
+func (s *UserHandler) AvatarNotify(ctx context.Context, req *user.AvatarNotifyRequest) (resp *user.AvatarNotifyResponse, err error) {
 	// TODO: Your code here...
 	return
 }

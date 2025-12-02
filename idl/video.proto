@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package video;
+
+option go_package = "/video";
+
+message Video {
+    string id = 1;
+    string uid = 2;
+    string coverUrl = 3;
+    string videoUrl = 4;
+    string title = 5;
+    string description = 6;
+    optional int64 visitCount = 7;
+    optional int64 likeCount = 8;
+    optional int64 commentCount = 9;
+    string createdAt = 10;
+    string updatedAt = 11;
+    string deletedAt = 12;
+}
+
+message VideoList {
+    repeated Video items = 1;
+    optional int64 total = 2;
+}
+
+message VideoStreamRequest {
+    string latestTime = 1;
+}
+
+message VideoStreamResponse {
+    base.Base base = 1;
+    VideoList data = 2;
+}
+
+message PublishRequest {
+    string data = 1;
+    string title = 2;
+    string description = 3;
+}
+
+message PublishResponse {
+    base.Base base = 1;
+}
+
+message PublishListRequest {
+    string uid = 1;
+    int64 pageNum = 2;
+    int64 pageSize = 3;
+}
+
+message PublishListResponse {
+    base.Base base = 1;
+    VideoList data = 2;
+}
+
+message PopularRequest {
+    int64 pageNum = 1;
+    int64 pageSize = 2;
+}
+
+message PopularResponse {
+    base.Base base = 1;
+    VideoList data = 2;
+}
+
+message SearchRequest {
+    string keywords = 1;
+    int64 pageNum = 2;
+    int64 pageSize = 3;
+    string fromDate = 4;
+    string toDate = 5;
+    string username = 6;
+}
+
+message SearchResponse {
+    base.Base base = 1;
+    VideoList data = 2;
+}
+
+service VideoService {
+    rpc VideoStream(VideoStreamRequest) returns (VideoStreamResponse);
+    rpc Publish(PublishRequest) returns (PublishResponse);
+    rpc PublishList(PublishListRequest) returns (PublishListResponse);
+    rpc Popular(PopularRequest) returns (PopularResponse);
+    rpc Search(SearchRequest) returns (SearchResponse);
+}

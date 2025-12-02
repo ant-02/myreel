@@ -1,5 +1,7 @@
 package config
 
+import "time"
+
 type server struct {
 	Secret      string `mapstructure:"private-key"`
 	PublicKey   string `mapstructure:"public-key"`
@@ -31,10 +33,21 @@ type config struct {
 	Snowflake snowflake
 	MySQL     mySQL
 	Redis     redis
+	Upyun     upyun
 }
 
 type service struct {
 	Name     string
 	AddrList []string
 	LB       bool `mapstructure:"load-balance"`
+}
+
+type upyun struct {
+	Bucket     string
+	Operator   string
+	Password   string
+	Expiration time.Duration
+	MaxSize    int64
+	Domain     string
+	NotifyUrl  string
 }

@@ -23,7 +23,7 @@ func InjectUserHandler() user.UserService {
 		panic(err)
 	}
 
-	re, err := client.NewRedisClient(constants.RedisDBGateWay) // 使用和网关同一个数据库，目前仅用作登录登出
+	re, err := client.InitRedis(constants.RedisDBGateWay) // 使用和网关同一个数据库，目前仅用作登录登出
 	if err != nil {
 		panic(err)
 	}

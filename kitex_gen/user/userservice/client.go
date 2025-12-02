@@ -14,11 +14,12 @@ type Client interface {
 	Login(ctx context.Context, Req *user.LoginRequest, callOptions ...callopt.Option) (r *user.LoginResponse, err error)
 	Register(ctx context.Context, Req *user.RegisterRequest, callOptions ...callopt.Option) (r *user.RegisterResponse, err error)
 	GetUserInfo(ctx context.Context, Req *user.GetUserInfoRequest, callOptions ...callopt.Option) (r *user.GetUserInfoResponse, err error)
-	UploadAvatar(ctx context.Context, Req *user.UploadAvatarRequest, callOptions ...callopt.Option) (r *user.UploadAvatarResponse, err error)
+	GetUploadToken(ctx context.Context, Req *user.GetUploadTokenRequest, callOptions ...callopt.Option) (r *user.GetUploadTokenResponse, err error)
 	GetMFA(ctx context.Context, Req *user.GetMFARequest, callOptions ...callopt.Option) (r *user.GetMFAResponse, err error)
 	BindMFA(ctx context.Context, Req *user.BindMFARequest, callOptions ...callopt.Option) (r *user.BindMFAResponse, err error)
 	SearchImg(ctx context.Context, Req *user.SearchImgRequest, callOptions ...callopt.Option) (r *user.SearchImgResponse, err error)
 	Refresh(ctx context.Context, Req *user.RefreshRequest, callOptions ...callopt.Option) (r *user.RefreshResponse, err error)
+	AvatarNotify(ctx context.Context, Req *user.AvatarNotifyRequest, callOptions ...callopt.Option) (r *user.AvatarNotifyResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -65,9 +66,9 @@ func (p *kUserServiceClient) GetUserInfo(ctx context.Context, Req *user.GetUserI
 	return p.kClient.GetUserInfo(ctx, Req)
 }
 
-func (p *kUserServiceClient) UploadAvatar(ctx context.Context, Req *user.UploadAvatarRequest, callOptions ...callopt.Option) (r *user.UploadAvatarResponse, err error) {
+func (p *kUserServiceClient) GetUploadToken(ctx context.Context, Req *user.GetUploadTokenRequest, callOptions ...callopt.Option) (r *user.GetUploadTokenResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UploadAvatar(ctx, Req)
+	return p.kClient.GetUploadToken(ctx, Req)
 }
 
 func (p *kUserServiceClient) GetMFA(ctx context.Context, Req *user.GetMFARequest, callOptions ...callopt.Option) (r *user.GetMFAResponse, err error) {
@@ -88,4 +89,9 @@ func (p *kUserServiceClient) SearchImg(ctx context.Context, Req *user.SearchImgR
 func (p *kUserServiceClient) Refresh(ctx context.Context, Req *user.RefreshRequest, callOptions ...callopt.Option) (r *user.RefreshResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.Refresh(ctx, Req)
+}
+
+func (p *kUserServiceClient) AvatarNotify(ctx context.Context, Req *user.AvatarNotifyRequest, callOptions ...callopt.Option) (r *user.AvatarNotifyResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.AvatarNotify(ctx, Req)
 }

@@ -21,5 +21,6 @@ type UserCache interface {
 	UserBanedKey(uid int64) string
 	UserLoginKey(uid int64) string
 	SetUserLogin(ctx context.Context, key string, token string) error
+	GetUserLogin(ctx context.Context, key string) (string, error)
 	DeleteUserLogin(ctx context.Context, key string) error
 }

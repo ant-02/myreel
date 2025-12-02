@@ -2,7 +2,9 @@ package pack
 
 import (
 	domainModel "myreel/app/user/domain/model"
+	"myreel/kitex_gen/model"
 	"myreel/kitex_gen/user"
+	"myreel/pkg/upyun"
 )
 
 func BuildUser(u *domainModel.User) *user.User {
@@ -20,6 +22,14 @@ func BuildToken(t *domainModel.Token) *user.Token {
 		AccessExpireTime:  t.AccessExpireTime,
 		RefreshToken:      t.RefreshToken,
 		RefreshExpireTime: t.RefreshExpireTime,
+	}
+}
+
+func BuildUpyunToken(t *upyun.UpyunToken) *model.UpyunToken {
+	return &model.UpyunToken{
+		Policy:        t.Policy,
+		Authorization: t.Authorization,
+		Bucket:        t.Bucket,
 	}
 }
 

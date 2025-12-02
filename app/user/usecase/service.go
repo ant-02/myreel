@@ -5,6 +5,7 @@ import (
 	"errors"
 	"myreel/app/user/domain/model"
 	"myreel/pkg/errno"
+	"myreel/pkg/upyun"
 )
 
 func (uc *useCase) Register(ctx context.Context, username, password string) error {
@@ -55,4 +56,12 @@ func (uc *useCase) Login(ctx context.Context, username, password string) (*model
 
 func (uc *useCase) GetUserById(ctx context.Context, uid int64) (*model.User, error) {
 	return uc.svc.GetUserById(ctx, uid)
+}
+
+func (uc *useCase) Refresh(ctx context.Context, token string, uid int64) (string, error) {
+	return uc.svc.Refresh(ctx, token, uid)
+}
+
+func (uc *useCase) GetLoadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error) {
+	return uc.svc.GetUploadToken(ctx, suffix, uid)
 }

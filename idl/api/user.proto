@@ -49,12 +49,22 @@ message GetUserInfoResponse {
     User user = 1;
 }
 
-message UploadAvatarRequest {
-    string data = 1[(api.body)="data"];
+message AvatarNotifyRequest {
+    int64 code = 1;
+    string message = 2;
+    string url = 3;
 }
 
-message UploadAvatarResponse {
-    User user = 1;
+message AvatarNotifyResponse {}
+
+message GetUploadTokenRequest {
+    string suffix = 1[(api.body)="suffix"];
+}
+
+message GetUploadTokenResponse {
+    string policy = 1;     
+    string authorization = 2;  
+    string bucket = 3;
 }
 
 message MFA {
@@ -86,7 +96,7 @@ message SearchImgResponse {
 message RefreshRequest {}
 
 message RefreshResponse {
-    Token data = 1;
+    string token = 1;
 }
 
 service UserService {
@@ -99,8 +109,8 @@ service UserService {
     rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {
         option (api.get)="/api/v1/user/info";
     }
-    rpc UploadAvatar(UploadAvatarRequest) returns (UploadAvatarResponse) {
-        option (api.put)="/api/v1/user/avatar/upload";
+    rpc GetUploadToken(GetUploadTokenRequest) returns (GetUploadTokenResponse) {
+        option (api.post)="/api/v1/user/avatar/token";
     }
     rpc GetMFA(GetMFARequest) returns (GetMFAResponse) {
         option (api.get)="/api/v1/user/mfa/qrcode";
@@ -113,5 +123,8 @@ service UserService {
     }
     rpc Refresh(RefreshRequest) returns (RefreshResponse) {
         option (api.get)="/api/v1/refresh";
+    }
+    rpc AvatarNotify(AvatarNotifyRequest) returns (AvatarNotifyResponse) {
+        option (api.post)="/api/v1/user/avatar/notify";
     }
 }

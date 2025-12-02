@@ -28,3 +28,36 @@ func (x *BaseResp) GetMsg() string {
 	}
 	return ""
 }
+
+type UpyunToken struct {
+	Policy        string `protobuf:"bytes,1,opt,name=policy" json:"policy,omitempty"`
+	Authorization string `protobuf:"bytes,2,opt,name=authorization" json:"authorization,omitempty"`
+	Bucket        string `protobuf:"bytes,3,opt,name=bucket" json:"bucket,omitempty"`
+}
+
+func (x *UpyunToken) Reset() { *x = UpyunToken{} }
+
+func (x *UpyunToken) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *UpyunToken) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *UpyunToken) GetPolicy() string {
+	if x != nil {
+		return x.Policy
+	}
+	return ""
+}
+
+func (x *UpyunToken) GetAuthorization() string {
+	if x != nil {
+		return x.Authorization
+	}
+	return ""
+}
+
+func (x *UpyunToken) GetBucket() string {
+	if x != nil {
+		return x.Bucket
+	}
+	return ""
+}

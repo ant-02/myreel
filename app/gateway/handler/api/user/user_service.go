@@ -4,11 +4,13 @@ package user
 
 import (
 	"context"
+	"fmt"
 
 	api "myreel/app/gateway/model/api/user"
 	"myreel/app/gateway/pack"
 	"myreel/app/gateway/rpc"
 	"myreel/kitex_gen/user"
+	"myreel/pkg/constants"
 	"myreel/pkg/errno"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -84,22 +86,6 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 	pack.RespData(c, data)
 }
 
-// UploadAvatar .
-// @router /user/avatar/upload [PUT]
-func UploadAvatar(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.UploadAvatarRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(api.UploadAvatarResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
 // GetMFA .
 // @router /user/mfa/qrcode [GET]
 func GetMFA(ctx context.Context, c *app.RequestContext) {
@@ -155,11 +141,80 @@ func Refresh(ctx context.Context, c *app.RequestContext) {
 	var req api.RefreshRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(api.RefreshResponse)
+	token := string(c.GetHeader(constants.AuthHeader))
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+
+	data, err := rpc.RefreshRPC(ctx, &user.RefreshRequest{
+		Token:  token,
+		UserId: uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespData(c, data)
+}
+
+// GetUploadToken .
+// @router /api/v1/user/avatar/token [PUT]
+func GetUploadToken(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.GetUploadTokenRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
+		return
+	}
+
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+
+	data, err := rpc.GetUploadTokenRPC(ctx, &user.GetUploadTokenRequest{
+		Suffix: req.Suffix,
+		UserId: uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespData(c, data)
+}
+
+// AvatarNotify .
+// @router /api/v1/user/avatar/notify [POST]
+func AvatarNotify(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.AvatarNotifyRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	fmt.Printf("------------%v", req)
+	resp := new(user.AvatarNotifyResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }

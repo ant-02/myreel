@@ -282,47 +282,85 @@ func (x *GetUserInfoResponse) GetData() *User {
 	return nil
 }
 
-type UploadAvatarRequest struct {
-	Data string `protobuf:"bytes,1,opt,name=data" json:"data,omitempty"`
+type GetUploadTokenRequest struct {
+	Suffix string `protobuf:"bytes,1,opt,name=suffix" json:"suffix,omitempty"`
+	UserId int64  `protobuf:"varint,2,opt,name=userId" json:"userId,omitempty"`
 }
 
-func (x *UploadAvatarRequest) Reset() { *x = UploadAvatarRequest{} }
+func (x *GetUploadTokenRequest) Reset() { *x = GetUploadTokenRequest{} }
 
-func (x *UploadAvatarRequest) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+func (x *GetUploadTokenRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
 
-func (x *UploadAvatarRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+func (x *GetUploadTokenRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
-func (x *UploadAvatarRequest) GetData() string {
+func (x *GetUploadTokenRequest) GetSuffix() string {
 	if x != nil {
-		return x.Data
+		return x.Suffix
 	}
 	return ""
 }
 
-type UploadAvatarResponse struct {
-	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
-	Data *User           `protobuf:"bytes,2,opt,name=data" json:"data,omitempty"`
+func (x *GetUploadTokenRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
-func (x *UploadAvatarResponse) Reset() { *x = UploadAvatarResponse{} }
+type GetUploadTokenResponse struct {
+	Base *model.BaseResp   `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+	Data *model.UpyunToken `protobuf:"bytes,2,opt,name=data" json:"data,omitempty"`
+}
 
-func (x *UploadAvatarResponse) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+func (x *GetUploadTokenResponse) Reset() { *x = GetUploadTokenResponse{} }
 
-func (x *UploadAvatarResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+func (x *GetUploadTokenResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
 
-func (x *UploadAvatarResponse) GetBase() *model.BaseResp {
+func (x *GetUploadTokenResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GetUploadTokenResponse) GetBase() *model.BaseResp {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *UploadAvatarResponse) GetData() *User {
+func (x *GetUploadTokenResponse) GetData() *model.UpyunToken {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
+
+type AvatarNotifyRequest struct {
+	Url string `protobuf:"bytes,3,opt,name=url" json:"url,omitempty"`
+}
+
+func (x *AvatarNotifyRequest) Reset() { *x = AvatarNotifyRequest{} }
+
+func (x *AvatarNotifyRequest) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *AvatarNotifyRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *AvatarNotifyRequest) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+type AvatarNotifyResponse struct {
+}
+
+func (x *AvatarNotifyResponse) Reset() { *x = AvatarNotifyResponse{} }
+
+func (x *AvatarNotifyResponse) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *AvatarNotifyResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
 type MFA struct {
 	Secret string `protobuf:"bytes,1,opt,name=secret" json:"secret,omitempty"`
@@ -468,6 +506,8 @@ func (x *SearchImgResponse) GetData() string {
 }
 
 type RefreshRequest struct {
+	Token  string `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	UserId int64  `protobuf:"varint,2,opt,name=userId" json:"userId,omitempty"`
 }
 
 func (x *RefreshRequest) Reset() { *x = RefreshRequest{} }
@@ -476,9 +516,23 @@ func (x *RefreshRequest) Marshal(in []byte) ([]byte, error) { return prutal.Mars
 
 func (x *RefreshRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
+func (x *RefreshRequest) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *RefreshRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 type RefreshResponse struct {
-	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
-	Data *Token          `protobuf:"bytes,2,opt,name=data" json:"data,omitempty"`
+	Base  *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+	Token string          `protobuf:"bytes,2,opt,name=token" json:"token,omitempty"`
 }
 
 func (x *RefreshResponse) Reset() { *x = RefreshResponse{} }
@@ -494,20 +548,21 @@ func (x *RefreshResponse) GetBase() *model.BaseResp {
 	return nil
 }
 
-func (x *RefreshResponse) GetData() *Token {
+func (x *RefreshResponse) GetToken() string {
 	if x != nil {
-		return x.Data
+		return x.Token
 	}
-	return nil
+	return ""
 }
 
 type UserService interface {
 	Login(ctx context.Context, req *LoginRequest) (res *LoginResponse, err error)
 	Register(ctx context.Context, req *RegisterRequest) (res *RegisterResponse, err error)
 	GetUserInfo(ctx context.Context, req *GetUserInfoRequest) (res *GetUserInfoResponse, err error)
-	UploadAvatar(ctx context.Context, req *UploadAvatarRequest) (res *UploadAvatarResponse, err error)
+	GetUploadToken(ctx context.Context, req *GetUploadTokenRequest) (res *GetUploadTokenResponse, err error)
 	GetMFA(ctx context.Context, req *GetMFARequest) (res *GetMFAResponse, err error)
 	BindMFA(ctx context.Context, req *BindMFARequest) (res *BindMFAResponse, err error)
 	SearchImg(ctx context.Context, req *SearchImgRequest) (res *SearchImgResponse, err error)
 	Refresh(ctx context.Context, req *RefreshRequest) (res *RefreshResponse, err error)
+	AvatarNotify(ctx context.Context, req *AvatarNotifyRequest) (res *AvatarNotifyResponse, err error)
 }

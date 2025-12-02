@@ -15,6 +15,7 @@ var (
 	Snowflake    *snowflake
 	Redis        *redis
 	Service      *service
+	Upyun        *upyun
 	runtimeViper = viper.New()
 )
 
@@ -48,6 +49,7 @@ func configMapping(srv string) {
 	Server = &c.Server
 	Mysql = &c.MySQL
 	Redis = &c.Redis
+	Upyun = &c.Upyun
 	Service = getService(srv)
 }
 
