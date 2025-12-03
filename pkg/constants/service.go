@@ -4,6 +4,7 @@ package constants
 const (
 	GatewayServiceName = "gateway"
 	UserServiceName    = "user"
+	VideoServiceName   = "video"
 )
 
 // UserService

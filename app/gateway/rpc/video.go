@@ -1,0 +1,75 @@
+package rpc
+
+import (
+	"context"
+	api "myreel/app/gateway/model/api/video"
+	"myreel/kitex_gen/video"
+	"myreel/kitex_gen/video/videoservice"
+	"myreel/pkg/constants"
+	"myreel/pkg/errno"
+	"myreel/pkg/logger"
+	"myreel/pkg/util"
+
+	"github.com/cloudwego/kitex/client"
+)
+
+func InitVideoClient() {
+	c, err := videoservice.NewClient(constants.VideoServiceName, client.WithHostPorts("0.0.0.0:20003"))
+	if err != nil {
+		logger.Fatalf("api.rpc.video InitVideoRPC failed, err is %v", err)
+	}
+	videoClient = c
+}
+
+func VideoSteamRPC(ctx context.Context, req *video.VideoStreamRequest) (*api.VideoStreamResponse, error) {
+	resp, err := videoClient.VideoStream(ctx, req)
+	if err != nil {
+		logger.Errorf("VideoSteamRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	l := len(resp.Data.Items)
+	items := make([]*api.Video, 0, l)
+	if l > 0 {
+		for i, v := range resp.Data.Items {
+			vc, lc, cc := *v.VisitCount, *v.LikeCount, *v.CommentCount
+			items[i] = &api.Video{
+				Id:           v.Id,
+				Uid:          v.Uid,
+				CoverUrl:     v.CoverUrl,
+				VideoUrl:     v.VideoUrl,
+				Title:        v.Title,
+				Description:  v.Description,
+				VisitCount:   &vc,
+				LikeCount:    &lc,
+				CommentCount: &cc,
+			}
+		}
+	}
+
+	return &api.VideoStreamResponse{
+		Items: items,
+		Total: resp.Data.Total,
+	}, nil
+}
+
+func GetVideoUploadTokenRPC(ctx context.Context, req *video.GetVideoUploadTokenRequest) (*api.GetVideoUploadTokenResponse, error) {
+	resp, err := videoClient.GetVideoUploadToken(ctx, req)
+	if err != nil {
+		logger.Errorf("GetVideoUploadTokenRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return &api.GetVideoUploadTokenResponse{
+		Policy:        resp.Data.Policy,
+		Authorization: resp.Data.Authorization,
+		Bucket:        resp.Data.Bucket,
+		Uid:           req.UserId,
+	}, nil
+}

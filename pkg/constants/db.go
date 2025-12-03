@@ -18,4 +18,5 @@ const (
 
 const (
 	UserTableName = "users"
+	VideoTableName = "videos"
 )

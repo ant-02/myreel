@@ -7,8 +7,8 @@ option go_package = "/api/video";
 import "api.proto";
 
 message Video {
-    string id = 1[(api.body)="id"];
-    string uid = 2[(api.body)="uid"];
+    int64 id = 1[(api.body)="id"];
+    int64 uid = 2[(api.body)="uid"];
     string coverUrl = 3[(api.body)="coverUrl"];
     string videoUrl = 4[(api.body)="videoUrl"];
     string title = 5[(api.body)="title"];
@@ -16,9 +16,6 @@ message Video {
     optional int64 visitCount = 7[(api.body)="visitCount"];
     optional int64 likeCount = 8[(api.body)="likeCount"];
     optional int64 commentCount = 9[(api.body)="commentCount"];
-    string createdAt = 10[(api.body)="createdAt"];
-    string updatedAt = 11[(api.body)="updatedAt"];
-    string deletedAt = 12[(api.body)="deletedAt"];
 }
 
 message VideoStreamRequest {
@@ -30,13 +27,16 @@ message VideoStreamResponse {
     optional int64 total = 2;
 }
 
-message PublishRequest {
-    string data = 1[(api.body)="data"];
-    string title = 2[(api.body)="title"];
-    string description = 3[(api.body)="description"];
+message GetVideoUploadTokenRequest {
+    string suffix = 1[(api.body)="suffix"];
 }
 
-message PublishResponse {}
+message GetVideoUploadTokenResponse {
+    string policy = 1;     
+    string authorization = 2;  
+    string bucket = 3;
+    int64 uid = 4;
+}
 
 message PublishListRequest {
     string uid = 1[(api.body)="uid"];
@@ -77,8 +77,8 @@ service VideoService {
     rpc VideoStream(VideoStreamRequest) returns (VideoStreamResponse) {
         option (api.get)="/api/v1/video/feed"; 
     }
-    rpc Publish(PublishRequest) returns (PublishResponse) {
-        option (api.post)="/api/v1/video/publish";
+    rpc GetVideoUploadToken(GetVideoUploadTokenRequest) returns (GetVideoUploadTokenResponse) {
+        option (api.post)="/api/v1/video/upload/token";
     }
     rpc PublishList(PublishListRequest) returns (PublishListResponse) {
         option (api.get)="/api/v1/video/list";

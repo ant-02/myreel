@@ -9,6 +9,7 @@ import (
 	"myreel/pkg/errno"
 	"myreel/pkg/upyun"
 	"myreel/pkg/util"
+	"strconv"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -90,7 +91,7 @@ func (us *userService) GetUserById(ctx context.Context, uid int64) (*model.User,
 
 func (us *userService) GetUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error) {
 	saveKey := fmt.Sprintf("%s/%s/%d%s", constants.UpyunUserAvaterPath, time.Now().Format("2006/01/02"), uid, suffix)
-	up, err := upyun.GeneratePolicyAndSignature(uid, saveKey, constants.UpyunUserAvatarNotifyPath)
+	up, err := upyun.GeneratePolicyAndSignature(uid, saveKey, constants.UpyunUserAvatarNotifyPath, strconv.FormatInt(uid, 10))
 	if err != nil {
 		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get upyun token").WithError(err)
 	}

@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"myreel/config"
-	"strconv"
 	"time"
 )
 
@@ -17,7 +16,7 @@ type UpyunToken struct {
 	Bucket        string
 }
 
-func GeneratePolicyAndSignature(uid int64, saveKey string, path string) (*UpyunToken, error) {
+func GeneratePolicyAndSignature(uid int64, saveKey string, path string, extParam any) (*UpyunToken, error) {
 	expire := time.Now().Add(config.Upyun.Expiration * time.Minute).Unix()
 
 	// 上传策略
@@ -27,7 +26,7 @@ func GeneratePolicyAndSignature(uid int64, saveKey string, path string) (*UpyunT
 		"expiration":           expire,
 		"content-length-range": fmt.Sprintf("0,%d", config.Upyun.MaxSize),
 		"notify-url":           fmt.Sprintf("%s%s", config.Upyun.NotifyUrl, path),
-		"ext-param":            strconv.FormatInt(uid, 10),
+		"ext-param":            extParam,
 	}
 
 	jsonBytes, _ := json.Marshal(p)

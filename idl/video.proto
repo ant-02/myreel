@@ -4,9 +4,11 @@ package video;
 
 option go_package = "/video";
 
+import "model.proto";
+
 message Video {
-    string id = 1;
-    string uid = 2;
+    int64 id = 1;
+    int64 uid = 2;
     string coverUrl = 3;
     string videoUrl = 4;
     string title = 5;
@@ -14,9 +16,6 @@ message Video {
     optional int64 visitCount = 7;
     optional int64 likeCount = 8;
     optional int64 commentCount = 9;
-    string createdAt = 10;
-    string updatedAt = 11;
-    string deletedAt = 12;
 }
 
 message VideoList {
@@ -29,18 +28,18 @@ message VideoStreamRequest {
 }
 
 message VideoStreamResponse {
-    base.Base base = 1;
+    model.BaseResp base = 1;
     VideoList data = 2;
 }
 
-message PublishRequest {
-    string data = 1;
-    string title = 2;
-    string description = 3;
+message GetVideoUploadTokenRequest {
+    string suffix = 1;
+    int64 userId = 2;
 }
 
-message PublishResponse {
-    base.Base base = 1;
+message GetVideoUploadTokenResponse {
+    model.BaseResp base = 1;
+    model.UpyunToken data = 2;
 }
 
 message PublishListRequest {
@@ -50,7 +49,7 @@ message PublishListRequest {
 }
 
 message PublishListResponse {
-    base.Base base = 1;
+    model.BaseResp base = 1;
     VideoList data = 2;
 }
 
@@ -60,7 +59,7 @@ message PopularRequest {
 }
 
 message PopularResponse {
-    base.Base base = 1;
+    model.BaseResp base = 1;
     VideoList data = 2;
 }
 
@@ -74,13 +73,13 @@ message SearchRequest {
 }
 
 message SearchResponse {
-    base.Base base = 1;
+    model.BaseResp base = 1;
     VideoList data = 2;
 }
 
 service VideoService {
     rpc VideoStream(VideoStreamRequest) returns (VideoStreamResponse);
-    rpc Publish(PublishRequest) returns (PublishResponse);
+    rpc GetVideoUploadToken(GetVideoUploadTokenRequest) returns (GetVideoUploadTokenResponse);
     rpc PublishList(PublishListRequest) returns (PublishListResponse);
     rpc Popular(PopularRequest) returns (PopularResponse);
     rpc Search(SearchRequest) returns (SearchResponse);
