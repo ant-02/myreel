@@ -70,7 +70,7 @@ func (db *userDB) GetUserById(ctx context.Context, id int64) (*model.User, error
 	}, nil
 }
 
-func (db *userDB) SetAvatar(ctx context.Context, id string, url string) error {
+func (db *userDB) SetAvatar(ctx context.Context, id int64, url string) error {
 	if err := db.client.WithContext(ctx).Model(&User{}).Where("id = ?", id).Update("avatar_url", url).Error; err != nil {
 		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to set avatar: %v", err)
 	}

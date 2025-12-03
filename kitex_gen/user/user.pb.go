@@ -336,31 +336,51 @@ func (x *GetUploadTokenResponse) GetData() *model.UpyunToken {
 	return nil
 }
 
-type AvatarNotifyRequest struct {
-	Url string `protobuf:"bytes,3,opt,name=url" json:"url,omitempty"`
+type SetUserAvatarUrlRequest struct {
+	UserId int64  `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
+	Url    string `protobuf:"bytes,2,opt,name=url" json:"url,omitempty"`
 }
 
-func (x *AvatarNotifyRequest) Reset() { *x = AvatarNotifyRequest{} }
+func (x *SetUserAvatarUrlRequest) Reset() { *x = SetUserAvatarUrlRequest{} }
 
-func (x *AvatarNotifyRequest) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+func (x *SetUserAvatarUrlRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
 
-func (x *AvatarNotifyRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+func (x *SetUserAvatarUrlRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
-func (x *AvatarNotifyRequest) GetUrl() string {
+func (x *SetUserAvatarUrlRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *SetUserAvatarUrlRequest) GetUrl() string {
 	if x != nil {
 		return x.Url
 	}
 	return ""
 }
 
-type AvatarNotifyResponse struct {
+type SetUserAvatarUrlResponse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
 }
 
-func (x *AvatarNotifyResponse) Reset() { *x = AvatarNotifyResponse{} }
+func (x *SetUserAvatarUrlResponse) Reset() { *x = SetUserAvatarUrlResponse{} }
 
-func (x *AvatarNotifyResponse) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+func (x *SetUserAvatarUrlResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
 
-func (x *AvatarNotifyResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+func (x *SetUserAvatarUrlResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *SetUserAvatarUrlResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
 
 type MFA struct {
 	Secret string `protobuf:"bytes,1,opt,name=secret" json:"secret,omitempty"`
@@ -564,5 +584,5 @@ type UserService interface {
 	BindMFA(ctx context.Context, req *BindMFARequest) (res *BindMFAResponse, err error)
 	SearchImg(ctx context.Context, req *SearchImgRequest) (res *SearchImgResponse, err error)
 	Refresh(ctx context.Context, req *RefreshRequest) (res *RefreshResponse, err error)
-	AvatarNotify(ctx context.Context, req *AvatarNotifyRequest) (res *AvatarNotifyResponse, err error)
+	SetUserAvatarUrl(ctx context.Context, req *SetUserAvatarUrlRequest) (res *SetUserAvatarUrlResponse, err error)
 }

@@ -107,7 +107,15 @@ func (s *UserHandler) Refresh(ctx context.Context, req *user.RefreshRequest) (re
 	return
 }
 
-func (s *UserHandler) AvatarNotify(ctx context.Context, req *user.AvatarNotifyRequest) (resp *user.AvatarNotifyResponse, err error) {
-	// TODO: Your code here...
+func (s *UserHandler) SetUserAvatarUrl(ctx context.Context, req *user.SetUserAvatarUrlRequest) (resp *user.SetUserAvatarUrlResponse, err error) {
+	resp = new(user.SetUserAvatarUrlResponse)
+
+	err = s.useCase.SetAvatar(ctx, req.UserId, req.Url)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
 	return
 }

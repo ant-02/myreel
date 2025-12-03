@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"myreel/app/user/domain/model"
+	"myreel/config"
 	"myreel/pkg/constants"
 	"myreel/pkg/errno"
 	"myreel/pkg/upyun"
@@ -88,8 +89,8 @@ func (us *userService) GetUserById(ctx context.Context, uid int64) (*model.User,
 }
 
 func (us *userService) GetUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error) {
-	saveKey := fmt.Sprintf("%s/%s/%d%s", constants.UpyunUserAvaterPath, time.Now().Format("2006/01/01"), uid, suffix)
-	up, err := upyun.GeneratePolicyAndSignature(saveKey, constants.UpyunUserAvatarNotifyPath)
+	saveKey := fmt.Sprintf("%s/%s/%d%s", constants.UpyunUserAvaterPath, time.Now().Format("2006/01/02"), uid, suffix)
+	up, err := upyun.GeneratePolicyAndSignature(uid, saveKey, constants.UpyunUserAvatarNotifyPath)
 	if err != nil {
 		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get upyun token").WithError(err)
 	}
@@ -119,4 +120,11 @@ func (us *userService) Refresh(ctx context.Context, token string, uid int64) (st
 	}
 
 	return accessToken, nil
+}
+
+func (uc *userService) SetAvatar(ctx context.Context, uid int64, url string) error {
+	if err := uc.db.SetAvatar(ctx, uid, fmt.Sprintf("%s%s", config.Upyun.Domain, url)); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to set user avatar").WithError(err)
+	}
+	return nil
 }

@@ -19,7 +19,7 @@ type Client interface {
 	BindMFA(ctx context.Context, Req *user.BindMFARequest, callOptions ...callopt.Option) (r *user.BindMFAResponse, err error)
 	SearchImg(ctx context.Context, Req *user.SearchImgRequest, callOptions ...callopt.Option) (r *user.SearchImgResponse, err error)
 	Refresh(ctx context.Context, Req *user.RefreshRequest, callOptions ...callopt.Option) (r *user.RefreshResponse, err error)
-	AvatarNotify(ctx context.Context, Req *user.AvatarNotifyRequest, callOptions ...callopt.Option) (r *user.AvatarNotifyResponse, err error)
+	SetUserAvatarUrl(ctx context.Context, Req *user.SetUserAvatarUrlRequest, callOptions ...callopt.Option) (r *user.SetUserAvatarUrlResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -91,7 +91,7 @@ func (p *kUserServiceClient) Refresh(ctx context.Context, Req *user.RefreshReque
 	return p.kClient.Refresh(ctx, Req)
 }
 
-func (p *kUserServiceClient) AvatarNotify(ctx context.Context, Req *user.AvatarNotifyRequest, callOptions ...callopt.Option) (r *user.AvatarNotifyResponse, err error) {
+func (p *kUserServiceClient) SetUserAvatarUrl(ctx context.Context, Req *user.SetUserAvatarUrlRequest, callOptions ...callopt.Option) (r *user.SetUserAvatarUrlResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.AvatarNotify(ctx, Req)
+	return p.kClient.SetUserAvatarUrl(ctx, Req)
 }

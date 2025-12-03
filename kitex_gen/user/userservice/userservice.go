@@ -71,10 +71,10 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
-	"AvatarNotify": kitex.NewMethodInfo(
-		avatarNotifyHandler,
-		newAvatarNotifyArgs,
-		newAvatarNotifyResult,
+	"SetUserAvatarUrl": kitex.NewMethodInfo(
+		setUserAvatarUrlHandler,
+		newSetUserAvatarUrlArgs,
+		newSetUserAvatarUrlResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
@@ -1032,52 +1032,52 @@ func (p *RefreshResult) GetResult() interface{} {
 	return p.Success
 }
 
-func avatarNotifyHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+func setUserAvatarUrlHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
 		st := s.Stream
-		req := new(user.AvatarNotifyRequest)
+		req := new(user.SetUserAvatarUrlRequest)
 		if err := st.RecvMsg(req); err != nil {
 			return err
 		}
-		resp, err := handler.(user.UserService).AvatarNotify(ctx, req)
+		resp, err := handler.(user.UserService).SetUserAvatarUrl(ctx, req)
 		if err != nil {
 			return err
 		}
 		return st.SendMsg(resp)
-	case *AvatarNotifyArgs:
-		success, err := handler.(user.UserService).AvatarNotify(ctx, s.Req)
+	case *SetUserAvatarUrlArgs:
+		success, err := handler.(user.UserService).SetUserAvatarUrl(ctx, s.Req)
 		if err != nil {
 			return err
 		}
-		realResult := result.(*AvatarNotifyResult)
+		realResult := result.(*SetUserAvatarUrlResult)
 		realResult.Success = success
 		return nil
 	default:
 		return errInvalidMessageType
 	}
 }
-func newAvatarNotifyArgs() interface{} {
-	return &AvatarNotifyArgs{}
+func newSetUserAvatarUrlArgs() interface{} {
+	return &SetUserAvatarUrlArgs{}
 }
 
-func newAvatarNotifyResult() interface{} {
-	return &AvatarNotifyResult{}
+func newSetUserAvatarUrlResult() interface{} {
+	return &SetUserAvatarUrlResult{}
 }
 
-type AvatarNotifyArgs struct {
-	Req *user.AvatarNotifyRequest
+type SetUserAvatarUrlArgs struct {
+	Req *user.SetUserAvatarUrlRequest
 }
 
-func (p *AvatarNotifyArgs) Marshal(out []byte) ([]byte, error) {
+func (p *SetUserAvatarUrlArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
 		return out, nil
 	}
 	return proto.Marshal(p.Req)
 }
 
-func (p *AvatarNotifyArgs) Unmarshal(in []byte) error {
-	msg := new(user.AvatarNotifyRequest)
+func (p *SetUserAvatarUrlArgs) Unmarshal(in []byte) error {
+	msg := new(user.SetUserAvatarUrlRequest)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -1085,38 +1085,38 @@ func (p *AvatarNotifyArgs) Unmarshal(in []byte) error {
 	return nil
 }
 
-var AvatarNotifyArgs_Req_DEFAULT *user.AvatarNotifyRequest
+var SetUserAvatarUrlArgs_Req_DEFAULT *user.SetUserAvatarUrlRequest
 
-func (p *AvatarNotifyArgs) GetReq() *user.AvatarNotifyRequest {
+func (p *SetUserAvatarUrlArgs) GetReq() *user.SetUserAvatarUrlRequest {
 	if !p.IsSetReq() {
-		return AvatarNotifyArgs_Req_DEFAULT
+		return SetUserAvatarUrlArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *AvatarNotifyArgs) IsSetReq() bool {
+func (p *SetUserAvatarUrlArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *AvatarNotifyArgs) GetFirstArgument() interface{} {
+func (p *SetUserAvatarUrlArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-type AvatarNotifyResult struct {
-	Success *user.AvatarNotifyResponse
+type SetUserAvatarUrlResult struct {
+	Success *user.SetUserAvatarUrlResponse
 }
 
-var AvatarNotifyResult_Success_DEFAULT *user.AvatarNotifyResponse
+var SetUserAvatarUrlResult_Success_DEFAULT *user.SetUserAvatarUrlResponse
 
-func (p *AvatarNotifyResult) Marshal(out []byte) ([]byte, error) {
+func (p *SetUserAvatarUrlResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
 		return out, nil
 	}
 	return proto.Marshal(p.Success)
 }
 
-func (p *AvatarNotifyResult) Unmarshal(in []byte) error {
-	msg := new(user.AvatarNotifyResponse)
+func (p *SetUserAvatarUrlResult) Unmarshal(in []byte) error {
+	msg := new(user.SetUserAvatarUrlResponse)
 	if err := proto.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -1124,22 +1124,22 @@ func (p *AvatarNotifyResult) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *AvatarNotifyResult) GetSuccess() *user.AvatarNotifyResponse {
+func (p *SetUserAvatarUrlResult) GetSuccess() *user.SetUserAvatarUrlResponse {
 	if !p.IsSetSuccess() {
-		return AvatarNotifyResult_Success_DEFAULT
+		return SetUserAvatarUrlResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *AvatarNotifyResult) SetSuccess(x interface{}) {
-	p.Success = x.(*user.AvatarNotifyResponse)
+func (p *SetUserAvatarUrlResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.SetUserAvatarUrlResponse)
 }
 
-func (p *AvatarNotifyResult) IsSetSuccess() bool {
+func (p *SetUserAvatarUrlResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *AvatarNotifyResult) GetResult() interface{} {
+func (p *SetUserAvatarUrlResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -1233,11 +1233,11 @@ func (p *kClient) Refresh(ctx context.Context, Req *user.RefreshRequest) (r *use
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) AvatarNotify(ctx context.Context, Req *user.AvatarNotifyRequest) (r *user.AvatarNotifyResponse, err error) {
-	var _args AvatarNotifyArgs
+func (p *kClient) SetUserAvatarUrl(ctx context.Context, Req *user.SetUserAvatarUrlRequest) (r *user.SetUserAvatarUrlResponse, err error) {
+	var _args SetUserAvatarUrlArgs
 	_args.Req = Req
-	var _result AvatarNotifyResult
-	if err = p.c.Call(ctx, "AvatarNotify", &_args, &_result); err != nil {
+	var _result SetUserAvatarUrlResult
+	if err = p.c.Call(ctx, "SetUserAvatarUrl", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

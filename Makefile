@@ -1,41 +1,62 @@
 SHELL := /bin/bash
 
-# 获取 goenv 的 go 路径，如果 goenv 不可用则回退到 go
+# 获取 go 路径（兼容 goenv）
 GO := $(shell command -v goenv >/dev/null 2>&1 && goenv which go || echo go)
 
 OUTPUT_DIR := output
 GATEWAY_DIR := $(OUTPUT_DIR)/gateway
 USER_DIR := $(OUTPUT_DIR)/user
 TMUX_SESSION := go-apps
+DOCKER_COMPOSE_DIR := docker
+DOCKER_COMPOSE_FILE := $(DOCKER_COMPOSE_DIR)/docker-compose.yml
 
-.PHONY: build build-gateway build-user run-tmux clean
+.PHONY: build build-gateway build-user run-tmux clean up down up-and-run
 
+# 启动 Docker 容器
+up:
+	@echo "🐳 Starting Docker containers..."
+	@cd $(DOCKER_COMPOSE_DIR) && docker compose up -d
+
+# 停止 Docker 容器
+down:
+	@echo "🛑 Stopping Docker containers..."
+	@cd $(DOCKER_COMPOSE_DIR) && docker compose down
+
+# 构建 Go 服务
 build: build-gateway build-user
 
 build-gateway:
-	go build -o $(GATEWAY_DIR) ./cmd/gateway
+	$(GO) build -o $(GATEWAY_DIR) ./cmd/gateway
 
 build-user:
-	go build -o $(USER_DIR) ./cmd/user
+	$(GO) build -o $(USER_DIR) ./cmd/user
 
-run-tmux:
-	@mkdir -p $(OUTPUT_DIR)
-	@echo "🔧 Building services..."
+# 启动 Docker + Go 服务（一体化）
+up-and-run: up
+	@echo "⏳ Waiting for services to be ready..."
+	# 可选：等待 MySQL/Redis 就绪（简单 sleep）
+	sleep 5
+
+	@echo "🔧 Building Go services..."
 	@$(MAKE) build
 
 	@if [ ! -f "$(USER_DIR)" ]; then echo "❌ $(USER_DIR) not built!"; exit 1; fi
-	@if [ ! -f "$(GATEWAY_DIR)" ]; then echo "❌ $(GATEWAY_DIR) not built!"; exit 1; fi
+	@if [ -f "$(GATEWAY_DIR)" ]; then echo "✅ Gateway built"; else echo "❌ $(GATEWAY_DIR) not built!"; exit 1; fi
 
-	@echo "🧹 Killing old session..."
+	@echo "🧹 Killing old tmux session..."
 	-tmux kill-session -t $(TMUX_SESSION) 2>/dev/null
 
-	@echo "🚀 Starting gateway and user in tmux..."
+	@echo "🚀 Starting Go services in tmux..."
 	tmux new-session -d -s $(TMUX_SESSION) "$(GATEWAY_DIR)"
 	sleep 0.2
 	tmux split-window -h -t $(TMUX_SESSION) "$(USER_DIR)"
 
 	@echo "✅ Attaching to tmux session: $(TMUX_SESSION)"
-	tmux -CC attach -t $(TMUX_SESSION)
+	tmux attach -t $(TMUX_SESSION)
 
+# 清理 Go 构建产物
 clean:
 	rm -rf $(OUTPUT_DIR)
+
+# 完整清理：停容器 + 清构建
+up-and-run-clean: down clean

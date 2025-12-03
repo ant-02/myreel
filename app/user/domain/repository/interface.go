@@ -10,7 +10,7 @@ type UserDB interface {
 	CreateUser(ctx context.Context, user *model.User) error
 	GetUserByUsername(ctx context.Context, username string) (*model.User, error)
 	GetUserById(ctx context.Context, id int64) (*model.User, error)
-	// SetAvatar(ctx context.Context, id string, url string) error
+	SetAvatar(ctx context.Context, id int64, url string) error
 }
 
 type UserCache interface {

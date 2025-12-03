@@ -65,3 +65,7 @@ func (uc *useCase) Refresh(ctx context.Context, token string, uid int64) (string
 func (uc *useCase) GetLoadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error) {
 	return uc.svc.GetUploadToken(ctx, suffix, uid)
 }
+
+func (uc *useCase) SetAvatar(ctx context.Context, uid int64, url string) error {
+	return uc.svc.SetAvatar(ctx, uid, url)
+}

@@ -113,5 +113,20 @@ func GetUploadTokenRPC(ctx context.Context, req *user.GetUploadTokenRequest) (*a
 		Policy:        resp.Data.Policy,
 		Authorization: resp.Data.Authorization,
 		Bucket:        resp.Data.Bucket,
+		Uid:           req.UserId,
 	}, nil
+}
+
+func SetUseravatarRPC(ctx context.Context, req *user.SetUserAvatarUrlRequest) error {
+	resp, err := userClient.SetUserAvatarUrl(ctx, req)
+	if err != nil {
+		logger.Errorf("SetUseravatarRPC: RPC called failed: %v", err.Error())
+		return errno.InternalServiceError.WithError(err)
+	}
+
+	if !util.IsSuccess(resp.Base) {
+		return errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return nil
 }

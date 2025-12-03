@@ -4,7 +4,7 @@ package user
 
 import (
 	"context"
-	"fmt"
+	"strconv"
 
 	api "myreel/app/gateway/model/api/user"
 	"myreel/app/gateway/pack"
@@ -207,14 +207,28 @@ func GetUploadToken(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/user/avatar/notify [POST]
 func AvatarNotify(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.AvatarNotifyRequest
+	var req api.AvatarNotifyRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespData(c, "fail")
 		return
 	}
-	fmt.Printf("------------%v", req)
-	resp := new(user.AvatarNotifyResponse)
 
-	c.JSON(consts.StatusOK, resp)
+	if req.Code != constants.UpyunNotifySuccess {
+		pack.RespData(c, "fail")
+		return
+	}
+
+	pack.RespSuccess(c)
+
+	uid, err := strconv.ParseInt(req.Uid, 10, 64)
+	if err != nil {
+		pack.RespData(c, "fail")
+		return
+	}
+
+	rpc.SetUseravatarRPC(ctx, &user.SetUserAvatarUrlRequest{
+		UserId: uid,
+		Url:    req.Url,
+	})
 }

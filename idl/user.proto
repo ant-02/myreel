@@ -67,11 +67,14 @@ message GetUploadTokenResponse {
     model.UpyunToken data = 2;
 }
 
-message AvatarNotifyRequest {
-    string url = 3;
+message SetUserAvatarUrlRequest {
+    int64 userId =1;
+    string url = 2;
 }
 
-message AvatarNotifyResponse {}
+message SetUserAvatarUrlResponse {
+    model.BaseResp base = 1;
+}
 
 message MFA {
     string secret = 1;
@@ -122,5 +125,5 @@ service UserService {
     rpc BindMFA(BindMFARequest) returns (BindMFAResponse);
     rpc SearchImg(SearchImgRequest) returns (SearchImgResponse);
     rpc Refresh(RefreshRequest) returns (RefreshResponse);
-    rpc AvatarNotify(AvatarNotifyRequest) returns (AvatarNotifyResponse);
+    rpc SetUserAvatarUrl(SetUserAvatarUrlRequest) returns (SetUserAvatarUrlResponse);
 }

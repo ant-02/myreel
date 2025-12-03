@@ -40,4 +40,4 @@ upyun:
   expiration: 30
   maxSize: 20971520
   domain: "http://myreel-img.test.upcdn.net"
-  notifyUrl: "http://localhost:8888"
+  notifyUrl: "http://xhhx.xyz:8888"
