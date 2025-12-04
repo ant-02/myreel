@@ -36,3 +36,7 @@ func (us *useCase) SaveVideo(ctx context.Context, video *model.Video) error {
 
 	return nil
 }
+
+func (us *useCase) GetVideosByUserId(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
+	return us.svc.GetVideosByUserId(ctx, uid, cursor, limit)
+}

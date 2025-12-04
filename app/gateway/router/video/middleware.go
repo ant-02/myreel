@@ -30,14 +30,14 @@ func _videoMw() []app.HandlerFunc {
 
 func _videostreamMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{
-		mv.Auth(),
-	}
+	return nil
 }
 
 func _publishlistMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }
 
 func _popularMw() []app.HandlerFunc {

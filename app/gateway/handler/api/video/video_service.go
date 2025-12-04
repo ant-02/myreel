@@ -42,16 +42,33 @@ func VideoStream(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/video/list [GET]
 func PublishList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req video.PublishListRequest
+	var req api.PublishListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
+		return
+	}
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+	}
+	
+	data, err := rpc.PublishListRPC(ctx, &video.PublishListRequest{
+		Cursor: req.Cursor,
+		Limit:  req.Limit,
+		Uid:    uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
 		return
 	}
 
-	resp := new(video.PublishListResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	pack.RespData(c, data)
 }
 
 // Popular .

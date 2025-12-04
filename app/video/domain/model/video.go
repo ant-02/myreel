@@ -11,3 +11,9 @@ type Video struct {
 	LikeCount    int64
 	CommentCount int64
 }
+
+type Pagination struct {
+	NextCursor int64
+	PrevCursor int64
+	Total      int64
+}

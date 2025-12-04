@@ -32,7 +32,7 @@ func VideoSteamRPC(ctx context.Context, req *video.VideoStreamRequest) (*api.Vid
 	}
 
 	l := len(resp.Data.Items)
-	items := make([]*api.Video, 0, l)
+	items := make([]*api.Video, l)
 	if l > 0 {
 		for i, v := range resp.Data.Items {
 			vc, lc, cc := *v.VisitCount, *v.LikeCount, *v.CommentCount
@@ -52,7 +52,7 @@ func VideoSteamRPC(ctx context.Context, req *video.VideoStreamRequest) (*api.Vid
 
 	return &api.VideoStreamResponse{
 		Items: items,
-		Total: resp.Data.Total,
+		Total: &resp.Data.Pagination.Total,
 	}, nil
 }
 
@@ -101,4 +101,42 @@ func SaveVideoRPC(ctx context.Context, req *video.SaveVideoRequest) error {
 	}
 
 	return nil
+}
+
+func PublishListRPC(ctx context.Context, req *video.PublishListRequest) (*api.PublishListResponse, error) {
+	resp, err := videoClient.PublishList(ctx, req)
+	if err != nil {
+		logger.Errorf("PublishListRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	l := len(resp.Data.Items)
+	videos := make([]*api.Video, l)
+	if l > 0 {
+		for i, v := range resp.Data.Items {
+			videos[i] = &api.Video{
+				Id:           v.Id,
+				Uid:          v.Uid,
+				Title:        v.Title,
+				Description:  v.Description,
+				VideoUrl:     v.VideoUrl,
+				CoverUrl:     v.CoverUrl,
+				VisitCount:   v.VisitCount,
+				LikeCount:    v.LikeCount,
+				CommentCount: v.CommentCount,
+			}
+		}
+	}
+
+	return &api.PublishListResponse{
+		Items: videos,
+		Pagination: &api.Pagination{
+			NextCursor: resp.Data.Pagination.NextCursor,
+			PrevCursor: resp.Data.Pagination.PrevCursor,
+			Total:      resp.Data.Pagination.Total,
+		},
+	}, nil
 }

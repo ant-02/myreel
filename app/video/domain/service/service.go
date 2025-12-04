@@ -59,3 +59,23 @@ func (vs *videoService) SaveVideo(ctx context.Context, video *model.Video) error
 	}
 	return nil
 }
+
+func (vs *videoService) GetVideosByUserId(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
+	videos, total, err := vs.db.GetVideosByUid(ctx, uid, cursor, limit)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get videos info by user id").WithError(err)
+	}
+
+	pagination := &model.Pagination{
+		PrevCursor: cursor,
+		Total:      total,
+	}
+	l := len(videos)
+	if l == 0 {
+		pagination.NextCursor = cursor
+	} else {
+		pagination.NextCursor = videos[l-1].Id
+	}
+
+	return videos, pagination, nil
+}

@@ -29,7 +29,7 @@ func (s *VideoServiceImpl) VideoStream(ctx context.Context, req *video.VideoStre
 	}
 
 	resp.Base = base.BuildSuccessResp()
-	resp.Data = build.BuildVideoList(build.BuildVideos(videos), int64(len(videos)))
+	resp.Data = build.BuildVideoList(build.BuildVideos(videos), &video.Pagination{Total: int64(len(videos))})
 	return
 }
 
@@ -85,7 +85,16 @@ func (s *VideoServiceImpl) SaveVideo(ctx context.Context, req *video.SaveVideoRe
 
 // PublishList implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) PublishList(ctx context.Context, req *video.PublishListRequest) (resp *video.PublishListResponse, err error) {
-	// TODO: Your code here...
+	resp = new(video.PublishListResponse)
+
+	videos, pagination, err := s.useCase.GetVideosByUserId(ctx, req.Uid, req.Cursor, req.Limit)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildVideoList(build.BuildVideos(videos), build.BuildPagination(pagination))
 	return
 }
 

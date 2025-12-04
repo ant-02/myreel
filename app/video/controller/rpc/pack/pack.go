@@ -32,17 +32,25 @@ func BuildVideos(vs []*domainModel.Video) []*video.Video {
 		return nil
 	}
 
-	videos := make([]*video.Video, 0, l)
+	videos := make([]*video.Video, l)
 	for i, v := range vs {
 		videos[i] = BuildVideo(v)
 	}
 	return videos
 }
 
-func BuildVideoList(vs []*video.Video, t int64) *video.VideoList {
+func BuildPagination(p *domainModel.Pagination) *video.Pagination {
+	return &video.Pagination{
+		NextCursor: p.NextCursor,
+		PrevCursor: p.PrevCursor,
+		Total:      p.Total,
+	}
+}
+
+func BuildVideoList(vs []*video.Video, pagination *video.Pagination) *video.VideoList {
 	return &video.VideoList{
-		Items: vs,
-		Total: &t,
+		Items:      vs,
+		Pagination: pagination,
 	}
 }
 

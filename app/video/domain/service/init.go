@@ -20,6 +20,7 @@ type VideoService interface {
 	GetVideoCoverUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
 	GenerateVideoId() (int64, error)
 	SaveVideo(ctx context.Context, video *model.Video) error
+	GetVideosByUserId(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 }
 
 func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository.VideoCache) VideoService {

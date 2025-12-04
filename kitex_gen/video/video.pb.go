@@ -90,9 +90,42 @@ func (x *Video) GetCommentCount() int64 {
 	return 0
 }
 
+type Pagination struct {
+	NextCursor int64 `protobuf:"varint,1,opt,name=nextCursor" json:"nextCursor,omitempty"`
+	PrevCursor int64 `protobuf:"varint,2,opt,name=prevCursor" json:"prevCursor,omitempty"`
+	Total      int64 `protobuf:"varint,3,opt,name=total" json:"total,omitempty"`
+}
+
+func (x *Pagination) Reset() { *x = Pagination{} }
+
+func (x *Pagination) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *Pagination) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *Pagination) GetNextCursor() int64 {
+	if x != nil {
+		return x.NextCursor
+	}
+	return 0
+}
+
+func (x *Pagination) GetPrevCursor() int64 {
+	if x != nil {
+		return x.PrevCursor
+	}
+	return 0
+}
+
+func (x *Pagination) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 type VideoList struct {
-	Items []*Video `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
-	Total *int64   `protobuf:"varint,2,opt,name=total" json:"total,omitempty"`
+	Items      []*Video    `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
+	Pagination *Pagination `protobuf:"bytes,2,opt,name=pagination" json:"pagination,omitempty"`
 }
 
 func (x *VideoList) Reset() { *x = VideoList{} }
@@ -108,11 +141,11 @@ func (x *VideoList) GetItems() []*Video {
 	return nil
 }
 
-func (x *VideoList) GetTotal() int64 {
-	if x != nil && x.Total != nil {
-		return *x.Total
+func (x *VideoList) GetPagination() *Pagination {
+	if x != nil {
+		return x.Pagination
 	}
-	return 0
+	return nil
 }
 
 type VideoStreamRequest struct {
@@ -332,9 +365,9 @@ func (x *SaveVideoResponse) GetBase() *model.BaseResp {
 }
 
 type PublishListRequest struct {
-	Uid      string `protobuf:"bytes,1,opt,name=uid" json:"uid,omitempty"`
-	PageNum  int64  `protobuf:"varint,2,opt,name=pageNum" json:"pageNum,omitempty"`
-	PageSize int64  `protobuf:"varint,3,opt,name=pageSize" json:"pageSize,omitempty"`
+	Uid    int64 `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
+	Cursor int64 `protobuf:"varint,2,opt,name=cursor" json:"cursor,omitempty"`
+	Limit  int64 `protobuf:"varint,3,opt,name=limit" json:"limit,omitempty"`
 }
 
 func (x *PublishListRequest) Reset() { *x = PublishListRequest{} }
@@ -343,23 +376,23 @@ func (x *PublishListRequest) Marshal(in []byte) ([]byte, error) { return prutal.
 
 func (x *PublishListRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
-func (x *PublishListRequest) GetUid() string {
+func (x *PublishListRequest) GetUid() int64 {
 	if x != nil {
 		return x.Uid
-	}
-	return ""
-}
-
-func (x *PublishListRequest) GetPageNum() int64 {
-	if x != nil {
-		return x.PageNum
 	}
 	return 0
 }
 
-func (x *PublishListRequest) GetPageSize() int64 {
+func (x *PublishListRequest) GetCursor() int64 {
 	if x != nil {
-		return x.PageSize
+		return x.Cursor
+	}
+	return 0
+}
+
+func (x *PublishListRequest) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
 	}
 	return 0
 }

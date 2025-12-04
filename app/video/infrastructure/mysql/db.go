@@ -41,7 +41,7 @@ func (db *videoDB) GetVideosByLatestTime(ctx context.Context, latestTime int64) 
 		return nil, nil
 	}
 
-	result := make([]*model.Video, 0, l)
+	result := make([]*model.Video, l)
 	for i, v := range videos {
 		result[i] = &model.Video{
 			Id:           v.Id,
@@ -75,31 +75,48 @@ func (db *videoDB) CreateVideo(ctx context.Context, video *model.Video) error {
 	return nil
 }
 
-// func (db *videoDB) GetVideosByUid(uid string, pageNum, pageSize int64) ([]*Video, int64, error) {
-// 	var videos []*Video
-// 	var total int64
-// 	var err error
+func (db *videoDB) GetVideosByUid(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, int64, error) {
+	var videos []*Video
+	var total int64
+	var err error
 
-// 	tx := db.client.Model(&Video{}).
-// 		Where("uid = ?", uid).
-// 		Where("deleted_at IS NULL")
+	tx := db.client.WithContext(ctx).Model(&Video{}).
+		Where("uid = ?", uid).
+		Where("deleted_at IS NULL")
 
-// 	err = tx.Count(&total).Error
-// 	if err != nil {
-// 		return nil, 0, err
-// 	}
+	err = tx.Count(&total).Error
+	if err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video count by user id: %v", err)
+	}
 
-// 	err = db.client.Where("uid = ?", uid).
-// 		Where("deleted_at IS NULL").
-// 		Offset((int(pageNum) - 1) * int(pageSize)).
-// 		Limit(int(pageSize)).
-// 		Find(&videos).Error
-// 	if err != nil {
-// 		return nil, 0, err
-// 	}
+	err = tx.Where("id > ?", cursor).
+		Limit(int(limit)).
+		Order("id").
+		Find(&videos).Error
+	if err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get videos by user id: %v", err)
+	}
 
-// 	return videos, total, nil
-// }
+	l := len(videos)
+	result := make([]*model.Video, l)
+	if l > 0 {
+		for i, v := range videos {
+			result[i] = &model.Video{
+				Id:           v.Id,
+				Uid:          v.Uid,
+				Title:        v.Title,
+				Description:  v.Description,
+				VideoUrl:     v.VideoUrl,
+				CoverUrl:     v.CoverUrl,
+				VisitCount:   v.VisitCount,
+				LikeCount:    v.VisitCount,
+				CommentCount: v.CommentCount,
+			}
+		}
+	}
+
+	return result, total, nil
+}
 
 // func (db *videoDB) GetVideosGroupByVisitCount(pageNum, pageSize int64) ([]*Video, error) {
 // 	var videos []*Video

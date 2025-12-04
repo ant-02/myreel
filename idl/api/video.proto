@@ -18,6 +18,12 @@ message Video {
     optional int64 commentCount = 9[(api.body)="commentCount"];
 }
 
+message Pagination {
+    int64 nextCursor = 1;
+    int64 prevCursor = 2;
+    int64 total = 3;
+}
+
 message VideoStreamRequest {
     string latestTime = 1[(api.query)="latestTime"];
 }
@@ -57,14 +63,13 @@ message SaveVideoRequest {
 message SaveVideoResponse {}
 
 message PublishListRequest {
-    string uid = 1[(api.body)="uid"];
-    int64 pageNum = 2[(api.body)="pageNum"];
-    int64 pageSize = 3[(api.body)="pageSize"];
+    int64 cursor = 1[(api.body)="cursor"];
+    int64 limit = 2[(api.body)="limit"];
 }
 
 message PublishListResponse {
     repeated Video items = 1;
-    optional int64 total = 2;
+    Pagination pagination = 2;
 }
 
 message PopularRequest {
