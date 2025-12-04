@@ -1,17 +1,42 @@
 package main
 
 import (
-	"log"
-	"myreel/app/video/controller/rpc"
-	video "myreel/kitex_gen/video/videoservice"
+	"myreel/app/video"
+	"myreel/config"
+	"myreel/kitex_gen/video/videoservice"
+	"myreel/pkg/constants"
+	"myreel/pkg/logger"
+	"myreel/pkg/util"
+	"net"
+
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/cloudwego/kitex/server"
 )
 
+func init() {
+	config.Init(constants.VideoServiceName)
+}
+
 func main() {
-	svr := video.NewServer(new(rpc.VideoServiceImpl))
-
-	err := svr.Run()
-
+	listenAddr, err := util.GetAvailablePort()
 	if err != nil {
-		log.Println(err.Error())
+		logger.Fatalf("User: get available port failed, err: %v", err)
+	}
+
+	addr, err := net.ResolveTCPAddr("tcp", listenAddr)
+	if err != nil {
+		logger.Fatalf("User: resolve tcp addr failed, err: %v", err)
+	}
+
+	svr := videoservice.NewServer(
+		video.InjectVideoHandler(),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
+			ServiceName: config.Service.Name,
+		}),
+		server.WithServiceAddr(addr),
+	)
+
+	if err = svr.Run(); err != nil {
+		logger.Fatalf("User: run server failed, err: %v", err)
 	}
 }

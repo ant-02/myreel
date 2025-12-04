@@ -173,7 +173,7 @@ func Refresh(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/user/avatar/token [PUT]
 func GetUploadToken(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.GetUploadTokenRequest
+	var req api.GetUploadTokenRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		pack.RespError(c, errno.ParamVerifyError.WithError(err))

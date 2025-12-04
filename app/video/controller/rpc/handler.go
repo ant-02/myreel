@@ -3,6 +3,7 @@ package rpc
 import (
 	"context"
 	build "myreel/app/video/controller/rpc/pack"
+	"myreel/app/video/domain/model"
 	"myreel/app/video/usecase"
 	video "myreel/kitex_gen/video"
 	base "myreel/pkg/base/context"
@@ -11,6 +12,10 @@ import (
 // VideoServiceImpl implements the last service interface defined in the IDL.
 type VideoServiceImpl struct {
 	useCase usecase.VideoUseCase
+}
+
+func NewVideoServiceImpl(uc usecase.VideoUseCase) *VideoServiceImpl {
+	return &VideoServiceImpl{useCase: uc}
 }
 
 // VideoStream implements the VideoServiceImpl interface.
@@ -40,6 +45,41 @@ func (s *VideoServiceImpl) GetVideoUploadToken(ctx context.Context, req *video.G
 
 	resp.Base = base.BuildSuccessResp()
 	resp.Data = build.BuildUpyunToken(token)
+	return
+}
+
+// GetVideoCoverUploadToken implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) GetVideoCoverUploadToken(ctx context.Context, req *video.GetVideoCoverUploadTokenRequest) (resp *video.GetVideoCoverUploadTokenResponse, err error) {
+	resp = new(video.GetVideoCoverUploadTokenResponse)
+
+	token, err := s.useCase.GetVideoCoverUplaodToken(ctx, req.Suffix, req.UserId)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildUpyunToken(token)
+	return
+}
+
+// SaveVideo implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) SaveVideo(ctx context.Context, req *video.SaveVideoRequest) (resp *video.SaveVideoResponse, err error) {
+	resp = new(video.SaveVideoResponse)
+
+	err = s.useCase.SaveVideo(ctx, &model.Video{
+		Uid:         req.UserId,
+		Title:       req.Title,
+		Description: req.Description,
+		CoverUrl:    req.CoverUrl,
+		VideoUrl:    req.VideoUrl,
+	})
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
 	return
 }
 

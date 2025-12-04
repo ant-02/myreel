@@ -16,7 +16,7 @@ type UpyunToken struct {
 	Bucket        string
 }
 
-func GeneratePolicyAndSignature(uid int64, saveKey string, path string, extParam any) (*UpyunToken, error) {
+func GeneratePolicyAndSignature(uid int64, saveKey string, notifyPath string, extParam any) (*UpyunToken, error) {
 	expire := time.Now().Add(config.Upyun.Expiration * time.Minute).Unix()
 
 	// 上传策略
@@ -25,8 +25,14 @@ func GeneratePolicyAndSignature(uid int64, saveKey string, path string, extParam
 		"save-key":             saveKey,
 		"expiration":           expire,
 		"content-length-range": fmt.Sprintf("0,%d", config.Upyun.MaxSize),
-		"notify-url":           fmt.Sprintf("%s%s", config.Upyun.NotifyUrl, path),
-		"ext-param":            extParam,
+	}
+
+	if notifyPath != "" {
+		p["notify-url"] = notifyPath
+	}
+
+	if extParam != nil {
+		p["ext-param"] = extParam
 	}
 
 	jsonBytes, _ := json.Marshal(p)

@@ -14,7 +14,7 @@ import (
 )
 
 func InitUserClient() {
-	c, err := userservice.NewClient(constants.UserServiceName, client.WithHostPorts("0.0.0.0:20002"))
+	c, err := userservice.NewClient(constants.UserServiceName, client.WithHostPorts("127.0.0.1:20002"))
 	if err != nil {
 		logger.Fatalf("api.rpc.user InitUserRPC failed, err is %v", err)
 	}
@@ -113,7 +113,6 @@ func GetUploadTokenRPC(ctx context.Context, req *user.GetUploadTokenRequest) (*a
 		Policy:        resp.Data.Policy,
 		Authorization: resp.Data.Authorization,
 		Bucket:        resp.Data.Bucket,
-		Uid:           req.UserId,
 	}, nil
 }
 

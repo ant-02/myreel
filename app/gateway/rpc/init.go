@@ -12,4 +12,5 @@ var (
 
 func Init() {
 	InitUserClient()
+	InitVideoClient()
 }

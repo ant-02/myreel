@@ -13,6 +13,8 @@ import (
 type Client interface {
 	VideoStream(ctx context.Context, Req *video.VideoStreamRequest, callOptions ...callopt.Option) (r *video.VideoStreamResponse, err error)
 	GetVideoUploadToken(ctx context.Context, Req *video.GetVideoUploadTokenRequest, callOptions ...callopt.Option) (r *video.GetVideoUploadTokenResponse, err error)
+	GetVideoCoverUploadToken(ctx context.Context, Req *video.GetVideoCoverUploadTokenRequest, callOptions ...callopt.Option) (r *video.GetVideoCoverUploadTokenResponse, err error)
+	SaveVideo(ctx context.Context, Req *video.SaveVideoRequest, callOptions ...callopt.Option) (r *video.SaveVideoResponse, err error)
 	PublishList(ctx context.Context, Req *video.PublishListRequest, callOptions ...callopt.Option) (r *video.PublishListResponse, err error)
 	Popular(ctx context.Context, Req *video.PopularRequest, callOptions ...callopt.Option) (r *video.PopularResponse, err error)
 	Search(ctx context.Context, Req *video.SearchRequest, callOptions ...callopt.Option) (r *video.SearchResponse, err error)
@@ -55,6 +57,16 @@ func (p *kVideoServiceClient) VideoStream(ctx context.Context, Req *video.VideoS
 func (p *kVideoServiceClient) GetVideoUploadToken(ctx context.Context, Req *video.GetVideoUploadTokenRequest, callOptions ...callopt.Option) (r *video.GetVideoUploadTokenResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetVideoUploadToken(ctx, Req)
+}
+
+func (p *kVideoServiceClient) GetVideoCoverUploadToken(ctx context.Context, Req *video.GetVideoCoverUploadTokenRequest, callOptions ...callopt.Option) (r *video.GetVideoCoverUploadTokenResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetVideoCoverUploadToken(ctx, Req)
+}
+
+func (p *kVideoServiceClient) SaveVideo(ctx context.Context, Req *video.SaveVideoRequest, callOptions ...callopt.Option) (r *video.SaveVideoResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.SaveVideo(ctx, Req)
 }
 
 func (p *kVideoServiceClient) PublishList(ctx context.Context, Req *video.PublishListRequest, callOptions ...callopt.Option) (r *video.PublishListResponse, err error) {

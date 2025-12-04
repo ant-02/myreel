@@ -35,8 +35,26 @@ message GetVideoUploadTokenResponse {
     string policy = 1;     
     string authorization = 2;  
     string bucket = 3;
-    int64 uid = 4;
 }
+
+message GetVideoCoverUploadTokenRequest {
+    string suffix = 1[(api.body)="suffix"];
+}
+
+message GetVideoCoverUploadTokenResponse {
+    string policy = 1;     
+    string authorization = 2;  
+    string bucket = 3;
+}
+
+message SaveVideoRequest {
+    string title = 1[(api.body)="title"];
+    string description = 2[(api.body)="description"];
+    string coverUrl = 3[(api.body)="coverUrl"];
+    string videoUrl = 4[(api.body)="videoUrl"];
+}
+
+message SaveVideoResponse {}
 
 message PublishListRequest {
     string uid = 1[(api.body)="uid"];
@@ -79,6 +97,12 @@ service VideoService {
     }
     rpc GetVideoUploadToken(GetVideoUploadTokenRequest) returns (GetVideoUploadTokenResponse) {
         option (api.post)="/api/v1/video/upload/token";
+    }
+    rpc GetVideoCoverUploadToken(GetVideoCoverUploadTokenRequest) returns (GetVideoCoverUploadTokenResponse) {
+        option (api.post)="/api/v1/video/cover/upload/token";
+    }
+    rpc SaveVideo(SaveVideoRequest) returns (SaveVideoResponse) {
+        option (api.post)="api/v1/video/publish";
     }
     rpc PublishList(PublishListRequest) returns (PublishListResponse) {
         option (api.get)="/api/v1/video/list";

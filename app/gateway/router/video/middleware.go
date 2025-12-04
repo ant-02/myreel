@@ -61,3 +61,27 @@ func _getvideouploadtokenMw() []app.HandlerFunc {
 		mv.Auth(),
 	}
 }
+
+func _coverMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getvideocoveruploadtokenMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
+}
+
+func _upload0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _savevideoMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
+}

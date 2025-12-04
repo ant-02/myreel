@@ -14,7 +14,7 @@ import (
 )
 
 func InitVideoClient() {
-	c, err := videoservice.NewClient(constants.VideoServiceName, client.WithHostPorts("0.0.0.0:20003"))
+	c, err := videoservice.NewClient(constants.VideoServiceName, client.WithHostPorts("127.0.0.1:20003"))
 	if err != nil {
 		logger.Fatalf("api.rpc.video InitVideoRPC failed, err is %v", err)
 	}
@@ -70,6 +70,35 @@ func GetVideoUploadTokenRPC(ctx context.Context, req *video.GetVideoUploadTokenR
 		Policy:        resp.Data.Policy,
 		Authorization: resp.Data.Authorization,
 		Bucket:        resp.Data.Bucket,
-		Uid:           req.UserId,
 	}, nil
+}
+
+func GetVideoCoverUploadTokenRPC(ctx context.Context, req *video.GetVideoCoverUploadTokenRequest) (*api.GetVideoCoverUploadTokenResponse, error) {
+	resp, err := videoClient.GetVideoCoverUploadToken(ctx, req)
+	if err != nil {
+		logger.Errorf("GetVideoCoverUploadTokenRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return &api.GetVideoCoverUploadTokenResponse{
+		Policy:        resp.Data.Policy,
+		Authorization: resp.Data.Authorization,
+		Bucket:        resp.Data.Bucket,
+	}, nil
+}
+
+func SaveVideoRPC(ctx context.Context, req *video.SaveVideoRequest) error {
+	resp, err := videoClient.SaveVideo(ctx, req)
+	if err != nil {
+		logger.Errorf("SaveVideoRPC: RPC called failed: %v", err.Error())
+		return errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return nil
 }

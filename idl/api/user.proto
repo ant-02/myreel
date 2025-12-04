@@ -73,7 +73,6 @@ message GetUploadTokenResponse {
     string policy = 1;     
     string authorization = 2;  
     string bucket = 3;
-    int64 uid = 4;
 }
 
 message MFA {

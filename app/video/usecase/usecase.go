@@ -17,6 +17,8 @@ type useCase struct {
 type VideoUseCase interface {
 	GetVideosByLatestTime(ctx context.Context, latestTime string) ([]*model.Video, error)
 	GetVideoUplaodToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
+	GetVideoCoverUplaodToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
+	SaveVideo(ctx context.Context, video *model.Video) error
 }
 
 func NewVideoUseCase(db repository.VideoDB, svc service.VideoService, cache repository.VideoCache) *useCase {

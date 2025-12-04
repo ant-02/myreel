@@ -27,10 +27,35 @@ func (vs *videoService) GetVideosByLatestTime(ctx context.Context, latestTime st
 
 func (vs *videoService) GetVideoUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error) {
 	saveKey := fmt.Sprintf("%s/%s/%d%s", constants.UpyunVideoPath, time.Now().Format("2006/01/02"), uid, suffix)
-	up, err := upyun.GeneratePolicyAndSignature(uid, saveKey, constants.UpyunUserAvatarNotifyPath, strconv.FormatInt(uid, 10))
+	up, err := upyun.GeneratePolicyAndSignature(uid, saveKey, "", nil)
 	if err != nil {
 		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get upyun token").WithError(err)
 	}
 
 	return up, nil
+}
+
+func (vs *videoService) GetVideoCoverUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error) {
+	saveKey := fmt.Sprintf("%s/%s/%d%s", constants.UpyunVideoCoverPath, time.Now().Format("2006/01/02"), uid, suffix)
+	up, err := upyun.GeneratePolicyAndSignature(uid, saveKey, "", nil)
+	if err != nil {
+		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get upyun token").WithError(err)
+	}
+
+	return up, nil
+}
+
+func (us *videoService) GenerateVideoId() (int64, error) {
+	id, err := us.sf.Generate()
+	if err != nil {
+		return 0, err
+	}
+	return id, err
+}
+
+func (vs *videoService) SaveVideo(ctx context.Context, video *model.Video) error {
+	if err := vs.db.CreateVideo(ctx, video); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to save video").WithError(err)
+	}
+	return nil
 }

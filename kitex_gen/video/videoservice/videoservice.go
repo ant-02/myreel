@@ -29,6 +29,20 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"GetVideoCoverUploadToken": kitex.NewMethodInfo(
+		getVideoCoverUploadTokenHandler,
+		newGetVideoCoverUploadTokenArgs,
+		newGetVideoCoverUploadTokenResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"SaveVideo": kitex.NewMethodInfo(
+		saveVideoHandler,
+		newSaveVideoArgs,
+		newSaveVideoResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 	"PublishList": kitex.NewMethodInfo(
 		publishListHandler,
 		newPublishListArgs,
@@ -335,6 +349,228 @@ func (p *GetVideoUploadTokenResult) IsSetSuccess() bool {
 }
 
 func (p *GetVideoUploadTokenResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getVideoCoverUploadTokenHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(video.GetVideoCoverUploadTokenRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(video.VideoService).GetVideoCoverUploadToken(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetVideoCoverUploadTokenArgs:
+		success, err := handler.(video.VideoService).GetVideoCoverUploadToken(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetVideoCoverUploadTokenResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newGetVideoCoverUploadTokenArgs() interface{} {
+	return &GetVideoCoverUploadTokenArgs{}
+}
+
+func newGetVideoCoverUploadTokenResult() interface{} {
+	return &GetVideoCoverUploadTokenResult{}
+}
+
+type GetVideoCoverUploadTokenArgs struct {
+	Req *video.GetVideoCoverUploadTokenRequest
+}
+
+func (p *GetVideoCoverUploadTokenArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetVideoCoverUploadTokenArgs) Unmarshal(in []byte) error {
+	msg := new(video.GetVideoCoverUploadTokenRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetVideoCoverUploadTokenArgs_Req_DEFAULT *video.GetVideoCoverUploadTokenRequest
+
+func (p *GetVideoCoverUploadTokenArgs) GetReq() *video.GetVideoCoverUploadTokenRequest {
+	if !p.IsSetReq() {
+		return GetVideoCoverUploadTokenArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetVideoCoverUploadTokenArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetVideoCoverUploadTokenArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetVideoCoverUploadTokenResult struct {
+	Success *video.GetVideoCoverUploadTokenResponse
+}
+
+var GetVideoCoverUploadTokenResult_Success_DEFAULT *video.GetVideoCoverUploadTokenResponse
+
+func (p *GetVideoCoverUploadTokenResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetVideoCoverUploadTokenResult) Unmarshal(in []byte) error {
+	msg := new(video.GetVideoCoverUploadTokenResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetVideoCoverUploadTokenResult) GetSuccess() *video.GetVideoCoverUploadTokenResponse {
+	if !p.IsSetSuccess() {
+		return GetVideoCoverUploadTokenResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetVideoCoverUploadTokenResult) SetSuccess(x interface{}) {
+	p.Success = x.(*video.GetVideoCoverUploadTokenResponse)
+}
+
+func (p *GetVideoCoverUploadTokenResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetVideoCoverUploadTokenResult) GetResult() interface{} {
+	return p.Success
+}
+
+func saveVideoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(video.SaveVideoRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(video.VideoService).SaveVideo(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *SaveVideoArgs:
+		success, err := handler.(video.VideoService).SaveVideo(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*SaveVideoResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newSaveVideoArgs() interface{} {
+	return &SaveVideoArgs{}
+}
+
+func newSaveVideoResult() interface{} {
+	return &SaveVideoResult{}
+}
+
+type SaveVideoArgs struct {
+	Req *video.SaveVideoRequest
+}
+
+func (p *SaveVideoArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *SaveVideoArgs) Unmarshal(in []byte) error {
+	msg := new(video.SaveVideoRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var SaveVideoArgs_Req_DEFAULT *video.SaveVideoRequest
+
+func (p *SaveVideoArgs) GetReq() *video.SaveVideoRequest {
+	if !p.IsSetReq() {
+		return SaveVideoArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SaveVideoArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *SaveVideoArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type SaveVideoResult struct {
+	Success *video.SaveVideoResponse
+}
+
+var SaveVideoResult_Success_DEFAULT *video.SaveVideoResponse
+
+func (p *SaveVideoResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *SaveVideoResult) Unmarshal(in []byte) error {
+	msg := new(video.SaveVideoResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SaveVideoResult) GetSuccess() *video.SaveVideoResponse {
+	if !p.IsSetSuccess() {
+		return SaveVideoResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SaveVideoResult) SetSuccess(x interface{}) {
+	p.Success = x.(*video.SaveVideoResponse)
+}
+
+func (p *SaveVideoResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SaveVideoResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -696,6 +932,26 @@ func (p *kClient) GetVideoUploadToken(ctx context.Context, Req *video.GetVideoUp
 	_args.Req = Req
 	var _result GetVideoUploadTokenResult
 	if err = p.c.Call(ctx, "GetVideoUploadToken", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetVideoCoverUploadToken(ctx context.Context, Req *video.GetVideoCoverUploadTokenRequest) (r *video.GetVideoCoverUploadTokenResponse, err error) {
+	var _args GetVideoCoverUploadTokenArgs
+	_args.Req = Req
+	var _result GetVideoCoverUploadTokenResult
+	if err = p.c.Call(ctx, "GetVideoCoverUploadToken", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) SaveVideo(ctx context.Context, Req *video.SaveVideoRequest) (r *video.SaveVideoResponse, err error) {
+	var _args SaveVideoArgs
+	_args.Req = Req
+	var _result SaveVideoResult
+	if err = p.c.Call(ctx, "SaveVideo", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

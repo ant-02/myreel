@@ -90,7 +90,7 @@ func Search(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/video/upload/token [POST]
 func GetVideoUploadToken(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req video.GetVideoUploadTokenRequest
+	var req api.GetVideoUploadTokenRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		pack.RespError(c, errno.ParamVerifyError.WithError(err))
@@ -117,4 +117,73 @@ func GetVideoUploadToken(ctx context.Context, c *app.RequestContext) {
 	}
 
 	pack.RespData(c, data)
+}
+
+// GetVideoCoverUploadToken .
+// @router /api/v1/video/cover/upload/token [POST]
+func GetVideoCoverUploadToken(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.GetVideoCoverUploadTokenRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
+		return
+	}
+
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	data, err := rpc.GetVideoCoverUploadTokenRPC(ctx, &video.GetVideoCoverUploadTokenRequest{
+		Suffix: req.Suffix,
+		UserId: uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespData(c, data)
+}
+
+// SaveVideo .
+// @router api/v1/video/publish [POST]
+func SaveVideo(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req video.SaveVideoRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
+		return
+	}
+
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	err = rpc.SaveVideoRPC(ctx, &video.SaveVideoRequest{
+		Title:       req.Title,
+		Description: req.Description,
+		CoverUrl:    req.CoverUrl,
+		VideoUrl:    req.VideoUrl,
+		UserId:      uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespSuccess(c)
 }

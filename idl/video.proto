@@ -42,6 +42,28 @@ message GetVideoUploadTokenResponse {
     model.UpyunToken data = 2;
 }
 
+message GetVideoCoverUploadTokenRequest {
+    string suffix = 1;
+    int64 userId = 2;
+}
+
+message GetVideoCoverUploadTokenResponse {
+    model.BaseResp base = 1;
+    model.UpyunToken data = 2;
+}
+
+message SaveVideoRequest {
+    string title = 1;
+    string description = 2;
+    string coverUrl = 3;
+    string videoUrl = 4;
+    int64 userId = 5;
+}
+
+message SaveVideoResponse {
+    model.BaseResp base = 1;
+}
+
 message PublishListRequest {
     string uid = 1;
     int64 pageNum = 2;
@@ -80,6 +102,8 @@ message SearchResponse {
 service VideoService {
     rpc VideoStream(VideoStreamRequest) returns (VideoStreamResponse);
     rpc GetVideoUploadToken(GetVideoUploadTokenRequest) returns (GetVideoUploadTokenResponse);
+    rpc GetVideoCoverUploadToken(GetVideoCoverUploadTokenRequest) returns (GetVideoCoverUploadTokenResponse);
+    rpc SaveVideo(SaveVideoRequest) returns (SaveVideoResponse);
     rpc PublishList(PublishListRequest) returns (PublishListResponse);
     rpc Popular(PopularRequest) returns (PopularResponse);
     rpc Search(SearchRequest) returns (SearchResponse);

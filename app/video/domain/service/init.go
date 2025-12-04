@@ -17,9 +17,12 @@ type videoService struct {
 type VideoService interface {
 	GetVideosByLatestTime(ctx context.Context, latestTime string) ([]*model.Video, error)
 	GetVideoUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
+	GetVideoCoverUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
+	GenerateVideoId() (int64, error)
+	SaveVideo(ctx context.Context, video *model.Video) error
 }
 
-func NewUserService(db repository.VideoDB, sf *util.Snowflake, cache repository.VideoCache) VideoService {
+func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository.VideoCache) VideoService {
 	if db == nil {
 		panic("videoService`s db should not be nil")
 	}

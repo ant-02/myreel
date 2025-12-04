@@ -211,6 +211,126 @@ func (x *GetVideoUploadTokenResponse) GetData() *model.UpyunToken {
 	return nil
 }
 
+type GetVideoCoverUploadTokenRequest struct {
+	Suffix string `protobuf:"bytes,1,opt,name=suffix" json:"suffix,omitempty"`
+	UserId int64  `protobuf:"varint,2,opt,name=userId" json:"userId,omitempty"`
+}
+
+func (x *GetVideoCoverUploadTokenRequest) Reset() { *x = GetVideoCoverUploadTokenRequest{} }
+
+func (x *GetVideoCoverUploadTokenRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *GetVideoCoverUploadTokenRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GetVideoCoverUploadTokenRequest) GetSuffix() string {
+	if x != nil {
+		return x.Suffix
+	}
+	return ""
+}
+
+func (x *GetVideoCoverUploadTokenRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type GetVideoCoverUploadTokenResponse struct {
+	Base *model.BaseResp   `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+	Data *model.UpyunToken `protobuf:"bytes,2,opt,name=data" json:"data,omitempty"`
+}
+
+func (x *GetVideoCoverUploadTokenResponse) Reset() { *x = GetVideoCoverUploadTokenResponse{} }
+
+func (x *GetVideoCoverUploadTokenResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *GetVideoCoverUploadTokenResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GetVideoCoverUploadTokenResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetVideoCoverUploadTokenResponse) GetData() *model.UpyunToken {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type SaveVideoRequest struct {
+	Title       string `protobuf:"bytes,1,opt,name=title" json:"title,omitempty"`
+	Description string `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
+	CoverUrl    string `protobuf:"bytes,3,opt,name=coverUrl" json:"coverUrl,omitempty"`
+	VideoUrl    string `protobuf:"bytes,4,opt,name=videoUrl" json:"videoUrl,omitempty"`
+	UserId      int64  `protobuf:"varint,5,opt,name=userId" json:"userId,omitempty"`
+}
+
+func (x *SaveVideoRequest) Reset() { *x = SaveVideoRequest{} }
+
+func (x *SaveVideoRequest) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *SaveVideoRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *SaveVideoRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *SaveVideoRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *SaveVideoRequest) GetCoverUrl() string {
+	if x != nil {
+		return x.CoverUrl
+	}
+	return ""
+}
+
+func (x *SaveVideoRequest) GetVideoUrl() string {
+	if x != nil {
+		return x.VideoUrl
+	}
+	return ""
+}
+
+func (x *SaveVideoRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type SaveVideoResponse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+}
+
+func (x *SaveVideoResponse) Reset() { *x = SaveVideoResponse{} }
+
+func (x *SaveVideoResponse) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *SaveVideoResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *SaveVideoResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
 type PublishListRequest struct {
 	Uid      string `protobuf:"bytes,1,opt,name=uid" json:"uid,omitempty"`
 	PageNum  int64  `protobuf:"varint,2,opt,name=pageNum" json:"pageNum,omitempty"`
@@ -404,6 +524,8 @@ func (x *SearchResponse) GetData() *VideoList {
 type VideoService interface {
 	VideoStream(ctx context.Context, req *VideoStreamRequest) (res *VideoStreamResponse, err error)
 	GetVideoUploadToken(ctx context.Context, req *GetVideoUploadTokenRequest) (res *GetVideoUploadTokenResponse, err error)
+	GetVideoCoverUploadToken(ctx context.Context, req *GetVideoCoverUploadTokenRequest) (res *GetVideoCoverUploadTokenResponse, err error)
+	SaveVideo(ctx context.Context, req *SaveVideoRequest) (res *SaveVideoResponse, err error)
 	PublishList(ctx context.Context, req *PublishListRequest) (res *PublishListResponse, err error)
 	Popular(ctx context.Context, req *PopularRequest) (res *PopularResponse, err error)
 	Search(ctx context.Context, req *SearchRequest) (res *SearchResponse, err error)

@@ -18,6 +18,13 @@ func NewVideoDB(client *gorm.DB) repository.VideoDB {
 	return &videoDB{client: client}
 }
 
+func (db *videoDB) Magrate() error {
+	if err := db.client.AutoMigrate(&Video{}); err != nil {
+		return errno.NewErrNo(errno.InternalDatabaseErrorCode, "mysql: failed to auto magrate video model")
+	}
+	return nil
+}
+
 func (db *videoDB) GetVideosByLatestTime(ctx context.Context, latestTime int64) ([]*model.Video, error) {
 	var videos []*Video
 
@@ -52,15 +59,21 @@ func (db *videoDB) GetVideosByLatestTime(ctx context.Context, latestTime int64) 
 	return result, nil
 }
 
-// func (db *videoDB) CreateVideo(video *Video) error {
-// 	err := vr.db.Create(video).Error
-// 	if err != nil {
-// 		return err
-// 	}
-// 	instance := database.GetRedisInstance()
-// 	ctx := context.Background()
-// 	return instance.Del(ctx, []string{key})
-// }
+func (db *videoDB) CreateVideo(ctx context.Context, video *model.Video) error {
+	v := &Video{
+		Id:          video.Id,
+		Uid:         video.Uid,
+		Title:       video.Title,
+		Description: video.Description,
+		VideoUrl:    video.VideoUrl,
+		CoverUrl:    video.CoverUrl,
+	}
+	err := db.client.WithContext(ctx).Create(v).Error
+	if err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to create video : %v", err)
+	}
+	return nil
+}
 
 // func (db *videoDB) GetVideosByUid(uid string, pageNum, pageSize int64) ([]*Video, int64, error) {
 // 	var videos []*Video
