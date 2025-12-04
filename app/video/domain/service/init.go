@@ -12,6 +12,7 @@ type videoService struct {
 	db    repository.VideoDB
 	cache repository.VideoCache
 	sf    *util.Snowflake
+	vRpc  repository.RpcPort
 }
 
 type VideoService interface {
@@ -22,9 +23,10 @@ type VideoService interface {
 	SaveVideo(ctx context.Context, video *model.Video) error
 	GetVideosByUserId(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 	GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
+	GetVideosByKeywords(ctx context.Context, keywords string, fromDate, toDate, cursor, uid, limit int64) ([]*model.Video, *model.Pagination, error)
 }
 
-func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository.VideoCache) VideoService {
+func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository.VideoCache, vRpc repository.RpcPort) VideoService {
 	if db == nil {
 		panic("videoService`s db should not be nil")
 	}
@@ -33,6 +35,7 @@ func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository
 		db:    db,
 		sf:    sf,
 		cache: cache,
+		vRpc: vRpc,
 	}
 	return svc
 }

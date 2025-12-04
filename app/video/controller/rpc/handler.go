@@ -115,6 +115,15 @@ func (s *VideoServiceImpl) Popular(ctx context.Context, req *video.PopularReques
 
 // Search implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) Search(ctx context.Context, req *video.SearchRequest) (resp *video.SearchResponse, err error) {
-	// TODO: Your code here...
+	resp = new(video.SearchResponse)
+
+	videos, pagination, err := s.useCase.GetVideosByKeywords(ctx, req.Keywords, req.Username, req.FromDate, req.ToDate, req.Cursor, req.Limit)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildVideoList(build.BuildVideos(videos), build.BuildPagination(pagination))
 	return
 }

@@ -116,6 +116,15 @@ message RefreshResponse {
     string token = 2;
 }
 
+message GetUserIdByUsernameRequest {
+    string username = 1;
+}
+
+message GetUserIdByUsernameResponse {
+    model.BaseResp base = 1;
+    int64 userId = 2;
+}
+
 service UserService {
     rpc Login(LoginRequest) returns (LoginResponse);
     rpc Register(RegisterRequest) returns (RegisterResponse);
@@ -126,4 +135,5 @@ service UserService {
     rpc SearchImg(SearchImgRequest) returns (SearchImgResponse);
     rpc Refresh(RefreshRequest) returns (RefreshResponse);
     rpc SetUserAvatarUrl(SetUserAvatarUrlRequest) returns (SetUserAvatarUrlResponse);
+    rpc GetUseridByUsername(GetUserIdByUsernameRequest) returns (GetUserIdByUsernameResponse);
 }

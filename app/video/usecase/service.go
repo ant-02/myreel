@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"myreel/app/video/domain/model"
 	"myreel/config"
+	"myreel/pkg/errno"
 	"myreel/pkg/upyun"
 )
 
@@ -43,4 +44,16 @@ func (us *useCase) GetVideosByUserId(ctx context.Context, uid, cursor, limit int
 
 func (us *useCase) GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
 	return us.svc.GetVideosGroupByVisitCount(ctx, cursor, limit)
+}
+
+func (us *useCase) GetVideosByKeywords(ctx context.Context, keywords, username string, fromDate, toDate, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
+	var id int64 = 0
+	var err error
+	if username != "" {
+		id, err = us.vRpc.GetUserIdByUsername(ctx, username)
+		if err != nil {
+			return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get user id by username").WithError(err)
+		}
+	}
+	return us.svc.GetVideosByKeywords(ctx, keywords, fromDate, toDate, cursor, id, limit)
 }

@@ -575,6 +575,52 @@ func (x *RefreshResponse) GetToken() string {
 	return ""
 }
 
+type GetUserIdByUsernameRequest struct {
+	Username string `protobuf:"bytes,1,opt,name=username" json:"username,omitempty"`
+}
+
+func (x *GetUserIdByUsernameRequest) Reset() { *x = GetUserIdByUsernameRequest{} }
+
+func (x *GetUserIdByUsernameRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *GetUserIdByUsernameRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GetUserIdByUsernameRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+type GetUserIdByUsernameResponse struct {
+	Base   *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+	UserId int64           `protobuf:"varint,2,opt,name=userId" json:"userId,omitempty"`
+}
+
+func (x *GetUserIdByUsernameResponse) Reset() { *x = GetUserIdByUsernameResponse{} }
+
+func (x *GetUserIdByUsernameResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *GetUserIdByUsernameResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GetUserIdByUsernameResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetUserIdByUsernameResponse) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 type UserService interface {
 	Login(ctx context.Context, req *LoginRequest) (res *LoginResponse, err error)
 	Register(ctx context.Context, req *RegisterRequest) (res *RegisterResponse, err error)
@@ -585,4 +631,5 @@ type UserService interface {
 	SearchImg(ctx context.Context, req *SearchImgRequest) (res *SearchImgResponse, err error)
 	Refresh(ctx context.Context, req *RefreshRequest) (res *RefreshResponse, err error)
 	SetUserAvatarUrl(ctx context.Context, req *SetUserAvatarUrlRequest) (res *SetUserAvatarUrlResponse, err error)
+	GetUseridByUsername(ctx context.Context, req *GetUserIdByUsernameRequest) (res *GetUserIdByUsernameResponse, err error)
 }

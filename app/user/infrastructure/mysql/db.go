@@ -60,6 +60,9 @@ func (db *userDB) GetUserByUsername(ctx context.Context, username string) (*mode
 func (db *userDB) GetUserById(ctx context.Context, id int64) (*model.User, error) {
 	var user User
 	if err := db.client.WithContext(ctx).First(&user, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errno.UserNotFound
+		}
 		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get user by id: %v", err)
 	}
 	return &model.User{
@@ -75,4 +78,15 @@ func (db *userDB) SetAvatar(ctx context.Context, id int64, url string) error {
 		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to set avatar: %v", err)
 	}
 	return nil
+}
+
+func (db *userDB) GetUserIdByUserName(ctx context.Context, username string) (int64, error) {
+	var id int64
+	if err := db.client.WithContext(ctx).Where("username = ?", username).Select("id").First(&id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return 0, errno.UserNotFound
+		}
+		return 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get userId by username: %v", err)
+	}
+	return id, nil
 }

@@ -13,7 +13,6 @@ import (
 	"myreel/pkg/errno"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // VideoStream .
@@ -98,16 +97,27 @@ func Popular(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/video/search [POST]
 func Search(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req video.SearchRequest
+	var req api.SearchRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(video.SearchResponse)
+	data, err := rpc.SearchRPC(ctx, &video.SearchRequest{
+		Keywords: req.Keywords,
+		Cursor:   req.Cursor,
+		Limit:    req.Limit,
+		FromDate: req.FromDate,
+		ToDate:   req.ToDate,
+		Username: req.Username,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	pack.RespData(c, data)
 }
 
 // GetVideoUploadToken .

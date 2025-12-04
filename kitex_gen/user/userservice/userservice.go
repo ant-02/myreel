@@ -78,6 +78,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"GetUseridByUsername": kitex.NewMethodInfo(
+		getUseridByUsernameHandler,
+		newGetUseridByUsernameArgs,
+		newGetUseridByUsernameResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -1143,6 +1150,117 @@ func (p *SetUserAvatarUrlResult) GetResult() interface{} {
 	return p.Success
 }
 
+func getUseridByUsernameHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(user.GetUserIdByUsernameRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(user.UserService).GetUseridByUsername(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetUseridByUsernameArgs:
+		success, err := handler.(user.UserService).GetUseridByUsername(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetUseridByUsernameResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newGetUseridByUsernameArgs() interface{} {
+	return &GetUseridByUsernameArgs{}
+}
+
+func newGetUseridByUsernameResult() interface{} {
+	return &GetUseridByUsernameResult{}
+}
+
+type GetUseridByUsernameArgs struct {
+	Req *user.GetUserIdByUsernameRequest
+}
+
+func (p *GetUseridByUsernameArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetUseridByUsernameArgs) Unmarshal(in []byte) error {
+	msg := new(user.GetUserIdByUsernameRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUseridByUsernameArgs_Req_DEFAULT *user.GetUserIdByUsernameRequest
+
+func (p *GetUseridByUsernameArgs) GetReq() *user.GetUserIdByUsernameRequest {
+	if !p.IsSetReq() {
+		return GetUseridByUsernameArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUseridByUsernameArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetUseridByUsernameArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetUseridByUsernameResult struct {
+	Success *user.GetUserIdByUsernameResponse
+}
+
+var GetUseridByUsernameResult_Success_DEFAULT *user.GetUserIdByUsernameResponse
+
+func (p *GetUseridByUsernameResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetUseridByUsernameResult) Unmarshal(in []byte) error {
+	msg := new(user.GetUserIdByUsernameResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUseridByUsernameResult) GetSuccess() *user.GetUserIdByUsernameResponse {
+	if !p.IsSetSuccess() {
+		return GetUseridByUsernameResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUseridByUsernameResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.GetUserIdByUsernameResponse)
+}
+
+func (p *GetUseridByUsernameResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUseridByUsernameResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -1238,6 +1356,16 @@ func (p *kClient) SetUserAvatarUrl(ctx context.Context, Req *user.SetUserAvatarU
 	_args.Req = Req
 	var _result SetUserAvatarUrlResult
 	if err = p.c.Call(ctx, "SetUserAvatarUrl", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetUseridByUsername(ctx context.Context, Req *user.GetUserIdByUsernameRequest) (r *user.GetUserIdByUsernameResponse, err error) {
+	var _args GetUseridByUsernameArgs
+	_args.Req = Req
+	var _result GetUseridByUsernameResult
+	if err = p.c.Call(ctx, "GetUseridByUsername", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

@@ -16,6 +16,8 @@ message Video {
     optional int64 visitCount = 7[(api.body)="visitCount"];
     optional int64 likeCount = 8[(api.body)="likeCount"];
     optional int64 commentCount = 9[(api.body)="commentCount"];
+    int64 createdAt = 10[(api.body)="createAt"];
+    int64 updateAt = 11[(api.body)="updatedAt"];
 }
 
 message Pagination {
@@ -84,16 +86,16 @@ message PopularResponse {
 
 message SearchRequest {
     string keywords = 1[(api.body)="keywords"];
-    int64 pageNum = 2[(api.body)="pageNum"];
-    int64 pageSize = 3[(api.body)="pageSize"];
-    string fromDate = 4[(api.body)="fromDate"];
-    string toDate = 5[(api.body)="toDate"];
+    int64 cursor = 2[(api.body)="cursor"];
+    int64 limit = 3[(api.body)="limit"];
+    int64 fromDate = 4[(api.body)="fromDate"];
+    int64 toDate = 5[(api.body)="toDate"];
     string username = 6[(api.body)="username"];
 }
 
 message SearchResponse {
     repeated Video items = 1;
-    optional int64 total = 2;
+    Pagination pagination = 2;
 }
 
 service VideoService {

@@ -123,9 +123,17 @@ func (us *userService) Refresh(ctx context.Context, token string, uid int64) (st
 	return accessToken, nil
 }
 
-func (uc *userService) SetAvatar(ctx context.Context, uid int64, url string) error {
-	if err := uc.db.SetAvatar(ctx, uid, fmt.Sprintf("%s%s", config.Upyun.Domain, url)); err != nil {
+func (us *userService) SetAvatar(ctx context.Context, uid int64, url string) error {
+	if err := us.db.SetAvatar(ctx, uid, fmt.Sprintf("%s%s", config.Upyun.Domain, url)); err != nil {
 		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to set user avatar").WithError(err)
 	}
 	return nil
+}
+
+func (us *userService) GetUserIdByUsername(ctx context.Context, username string) (int64, error) {
+	id, err := us.db.GetUserIdByUserName(ctx, username)
+	if err != nil {
+		return 0, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get user id by username").WithError(err)
+	}
+	return id, nil
 }

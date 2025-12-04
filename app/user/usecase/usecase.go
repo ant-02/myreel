@@ -21,6 +21,7 @@ type UserUseCase interface {
 	Refresh(ctx context.Context, token string, uid int64) (string, error)
 	GetLoadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
 	SetAvatar(ctx context.Context, uid int64, url string) error
+	GetUserIdByUsername(ctx context.Context, username string) (int64, error)
 }
 
 func NewUserUseCase(db repository.UserDB, svc service.UserService, cache repository.UserCache) *useCase {

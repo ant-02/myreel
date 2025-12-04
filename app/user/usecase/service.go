@@ -69,3 +69,7 @@ func (uc *useCase) GetLoadToken(ctx context.Context, suffix string, uid int64) (
 func (uc *useCase) SetAvatar(ctx context.Context, uid int64, url string) error {
 	return uc.svc.SetAvatar(ctx, uid, url)
 }
+
+func (uc *useCase) GetUserIdByUsername(ctx context.Context, username string) (int64, error) {
+	return uc.db.GetUserIdByUserName(ctx, username)
+}

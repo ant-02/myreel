@@ -16,6 +16,8 @@ message Video {
     optional int64 visitCount = 7;
     optional int64 likeCount = 8;
     optional int64 commentCount = 9;
+    int64 createdAt = 10;
+    int64 updatedAt = 11;
 }
 
 message Pagination {
@@ -93,10 +95,10 @@ message PopularResponse {
 
 message SearchRequest {
     string keywords = 1;
-    int64 pageNum = 2;
-    int64 pageSize = 3;
-    string fromDate = 4;
-    string toDate = 5;
+    int64 cursor = 2;
+    int64 limit = 3;
+    int64 fromDate = 4;
+    int64 toDate = 5;
     string username = 6;
 }
 

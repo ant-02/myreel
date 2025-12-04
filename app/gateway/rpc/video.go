@@ -4,21 +4,18 @@ import (
 	"context"
 	api "myreel/app/gateway/model/api/video"
 	"myreel/kitex_gen/video"
-	"myreel/kitex_gen/video/videoservice"
-	"myreel/pkg/constants"
+	"myreel/pkg/base/client"
 	"myreel/pkg/errno"
 	"myreel/pkg/logger"
 	"myreel/pkg/util"
-
-	"github.com/cloudwego/kitex/client"
 )
 
 func InitVideoClient() {
-	c, err := videoservice.NewClient(constants.VideoServiceName, client.WithHostPorts("127.0.0.1:20003"))
+	c, err := client.InitVideoRPC()
 	if err != nil {
 		logger.Fatalf("api.rpc.video InitVideoRPC failed, err is %v", err)
 	}
-	videoClient = c
+	videoClient = *c
 }
 
 func VideoSteamRPC(ctx context.Context, req *video.VideoStreamRequest) (*api.VideoStreamResponse, error) {
@@ -170,6 +167,44 @@ func PopularRPC(ctx context.Context, req *video.PopularRequest) (*api.PopularRes
 	}
 
 	return &api.PopularResponse{
+		Items: videos,
+		Pagination: &api.Pagination{
+			NextCursor: resp.Data.Pagination.NextCursor,
+			PrevCursor: resp.Data.Pagination.PrevCursor,
+			Total:      resp.Data.Pagination.Total,
+		},
+	}, nil
+}
+
+func SearchRPC(ctx context.Context, req *video.SearchRequest) (*api.SearchResponse, error) {
+	resp, err := videoClient.Search(ctx, req)
+	if err != nil {
+		logger.Errorf("SearchRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	l := len(resp.Data.Items)
+	videos := make([]*api.Video, l)
+	if l > 0 {
+		for i, v := range resp.Data.Items {
+			videos[i] = &api.Video{
+				Id:           v.Id,
+				Uid:          v.Uid,
+				Title:        v.Title,
+				Description:  v.Description,
+				VideoUrl:     v.VideoUrl,
+				CoverUrl:     v.CoverUrl,
+				VisitCount:   v.VisitCount,
+				LikeCount:    v.LikeCount,
+				CommentCount: v.CommentCount,
+			}
+		}
+	}
+
+	return &api.SearchResponse{
 		Items: videos,
 		Pagination: &api.Pagination{
 			NextCursor: resp.Data.Pagination.NextCursor,

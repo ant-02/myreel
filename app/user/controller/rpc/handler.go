@@ -119,3 +119,18 @@ func (s *UserHandler) SetUserAvatarUrl(ctx context.Context, req *user.SetUserAva
 	resp.Base = base.BuildSuccessResp()
 	return
 }
+
+// GetUseridByUsername implements the UserServiceImpl interface.
+func (s *UserHandler) GetUseridByUsername(ctx context.Context, req *user.GetUserIdByUsernameRequest) (resp *user.GetUserIdByUsernameResponse, err error) {
+	resp = new(user.GetUserIdByUsernameResponse)
+
+	uid, err := s.useCase.GetUserIdByUsername(ctx, req.Username)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.UserId = uid
+	return
+}

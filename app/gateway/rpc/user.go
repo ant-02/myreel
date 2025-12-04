@@ -4,21 +4,18 @@ import (
 	"context"
 	api "myreel/app/gateway/model/api/user"
 	"myreel/kitex_gen/user"
-	"myreel/kitex_gen/user/userservice"
-	"myreel/pkg/constants"
+	"myreel/pkg/base/client"
 	"myreel/pkg/errno"
 	"myreel/pkg/logger"
 	"myreel/pkg/util"
-
-	"github.com/cloudwego/kitex/client"
 )
 
 func InitUserClient() {
-	c, err := userservice.NewClient(constants.UserServiceName, client.WithHostPorts("127.0.0.1:20002"))
+	c, err := client.InitUserRPC()
 	if err != nil {
 		logger.Fatalf("api.rpc.user InitUserRPC failed, err is %v", err)
 	}
-	userClient = c
+	userClient = *c
 }
 
 func RegisterRPC(ctx context.Context, req *user.RegisterRequest) error {

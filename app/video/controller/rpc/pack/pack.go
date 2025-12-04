@@ -23,6 +23,8 @@ func BuildVideo(v *domainModel.Video) *video.Video {
 		VisitCount:   &vc,
 		LikeCount:    &lc,
 		CommentCount: &cc,
+		CreatedAt:    v.CreatedAt,
+		UpdatedAt:    v.UpdatedAt,
 	}
 }
 

@@ -10,6 +10,8 @@ type Video struct {
 	VisitCount   int64
 	LikeCount    int64
 	CommentCount int64
+	CreatedAt    int64
+	UpdatedAt    int64
 }
 
 type Pagination struct {

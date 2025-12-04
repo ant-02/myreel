@@ -19,6 +19,8 @@ type Video struct {
 	VisitCount   *int64 `protobuf:"varint,7,opt,name=visitCount" json:"visitCount,omitempty"`
 	LikeCount    *int64 `protobuf:"varint,8,opt,name=likeCount" json:"likeCount,omitempty"`
 	CommentCount *int64 `protobuf:"varint,9,opt,name=commentCount" json:"commentCount,omitempty"`
+	CreatedAt    int64  `protobuf:"varint,10,opt,name=createdAt" json:"createdAt,omitempty"`
+	UpdatedAt    int64  `protobuf:"varint,11,opt,name=updatedAt" json:"updatedAt,omitempty"`
 }
 
 func (x *Video) Reset() { *x = Video{} }
@@ -86,6 +88,20 @@ func (x *Video) GetLikeCount() int64 {
 func (x *Video) GetCommentCount() int64 {
 	if x != nil && x.CommentCount != nil {
 		return *x.CommentCount
+	}
+	return 0
+}
+
+func (x *Video) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+func (x *Video) GetUpdatedAt() int64 {
+	if x != nil {
+		return x.UpdatedAt
 	}
 	return 0
 }
@@ -474,10 +490,10 @@ func (x *PopularResponse) GetData() *VideoList {
 
 type SearchRequest struct {
 	Keywords string `protobuf:"bytes,1,opt,name=keywords" json:"keywords,omitempty"`
-	PageNum  int64  `protobuf:"varint,2,opt,name=pageNum" json:"pageNum,omitempty"`
-	PageSize int64  `protobuf:"varint,3,opt,name=pageSize" json:"pageSize,omitempty"`
-	FromDate string `protobuf:"bytes,4,opt,name=fromDate" json:"fromDate,omitempty"`
-	ToDate   string `protobuf:"bytes,5,opt,name=toDate" json:"toDate,omitempty"`
+	Cursor   int64  `protobuf:"varint,2,opt,name=cursor" json:"cursor,omitempty"`
+	Limit    int64  `protobuf:"varint,3,opt,name=limit" json:"limit,omitempty"`
+	FromDate int64  `protobuf:"varint,4,opt,name=fromDate" json:"fromDate,omitempty"`
+	ToDate   int64  `protobuf:"varint,5,opt,name=toDate" json:"toDate,omitempty"`
 	Username string `protobuf:"bytes,6,opt,name=username" json:"username,omitempty"`
 }
 
@@ -494,32 +510,32 @@ func (x *SearchRequest) GetKeywords() string {
 	return ""
 }
 
-func (x *SearchRequest) GetPageNum() int64 {
+func (x *SearchRequest) GetCursor() int64 {
 	if x != nil {
-		return x.PageNum
+		return x.Cursor
 	}
 	return 0
 }
 
-func (x *SearchRequest) GetPageSize() int64 {
+func (x *SearchRequest) GetLimit() int64 {
 	if x != nil {
-		return x.PageSize
+		return x.Limit
 	}
 	return 0
 }
 
-func (x *SearchRequest) GetFromDate() string {
+func (x *SearchRequest) GetFromDate() int64 {
 	if x != nil {
 		return x.FromDate
 	}
-	return ""
+	return 0
 }
 
-func (x *SearchRequest) GetToDate() string {
+func (x *SearchRequest) GetToDate() int64 {
 	if x != nil {
 		return x.ToDate
 	}
-	return ""
+	return 0
 }
 
 func (x *SearchRequest) GetUsername() string {

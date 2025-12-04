@@ -1,0 +1,34 @@
+package rpc
+
+import (
+	"context"
+	"myreel/app/video/domain/repository"
+	"myreel/kitex_gen/user"
+	"myreel/kitex_gen/user/userservice"
+	"myreel/pkg/errno"
+)
+
+type VideoRpcImpl struct {
+	user userservice.Client
+}
+
+func NewVideoRpcImpl(u userservice.Client) repository.RpcPort {
+	return &VideoRpcImpl{
+		user: u,
+	}
+}
+
+func (rpc *VideoRpcImpl) GetUserIdByUsername(ctx context.Context, username string) (int64, error) {
+	resp, err := rpc.user.GetUseridByUsername(ctx, &user.GetUserIdByUsernameRequest{
+		Username: username,
+	})
+	if err != nil {
+		return 0, errno.Errorf(errno.InternalRPCErrorCode, "rpc: failed to get user id by username: %v", err)
+	}
+
+	if resp.Base.Code != errno.SuccessCode {
+		return 0, errno.NewErrNo(errno.InternalRPCErrorCode, "rpc: failed to get user id by username")
+	}
+
+	return resp.UserId, nil
+}

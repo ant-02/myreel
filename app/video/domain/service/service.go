@@ -17,7 +17,8 @@ func (vs *videoService) GetVideosByLatestTime(ctx context.Context, latestTime st
 		return nil, errno.Errorf(errno.InternalServiceErrorCode, "failed to parse time: %v", err)
 	}
 
-	videos, err := vs.db.GetVideosByLatestTime(ctx, t)
+	lt := time.Unix(t, 0)
+	videos, err := vs.db.GetVideosByLatestTime(ctx, lt)
 	if err != nil {
 		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get videos by latest time").WithError(err)
 	}
@@ -94,6 +95,38 @@ func (vs *videoService) GetVideosGroupByVisitCount(ctx context.Context, cursor, 
 		pagination.NextCursor = cursor
 	} else {
 		pagination.NextCursor = videos[l-1].VisitCount
+	}
+
+	return videos, pagination, nil
+}
+
+func (vs *videoService) GetVideosByKeywords(ctx context.Context, keywords string, fromDate, toDate, cursor, uid, limit int64) ([]*model.Video, *model.Pagination, error) {
+	var ft, tt, ct time.Time
+	ft = time.Unix(fromDate, 0)
+	if toDate == 0 {
+		tt = time.Now()
+	} else {
+		tt = time.Unix(toDate, 0)
+	}
+	if cursor == 0 {
+		ct = tt
+	} else {
+		ct = time.Unix(cursor, 0)
+	}
+	
+	videos, total, err := vs.db.GetVideosByKeywords(ctx, keywords, ft, tt, ct, uid, limit)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video by keywords").WithError(err)
+	}
+	pagination := &model.Pagination{
+		PrevCursor: cursor,
+		Total:      total,
+	}
+	l := len(videos)
+	if l == 0 {
+		pagination.NextCursor = cursor
+	} else {
+		pagination.NextCursor = videos[l-1].CreatedAt
 	}
 
 	return videos, pagination, nil

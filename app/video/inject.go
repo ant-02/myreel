@@ -5,6 +5,7 @@ import (
 	"myreel/app/video/domain/service"
 	"myreel/app/video/infrastructure/cache"
 	"myreel/app/video/infrastructure/mysql"
+	videoRpcPkg "myreel/app/video/infrastructure/rpc"
 	"myreel/app/video/usecase"
 	"myreel/config"
 	"myreel/kitex_gen/video"
@@ -32,9 +33,18 @@ func InjectVideoHandler() video.VideoService {
 	if err := db.Magrate(); err != nil {
 		panic(err)
 	}
+
+	userClient, err := client.InitUserRPC()
+	if err != nil {
+		panic(err)
+	}
+
+	vRPC := videoRpcPkg.NewVideoRpcImpl(*userClient)
+
 	redisCache := cache.NewVideoCache(re)
-	svc := service.NewVideoService(db, sf, redisCache)
-	uc := usecase.NewVideoUseCase(db, svc, redisCache)
+
+	svc := service.NewVideoService(db, sf, redisCache, vRPC)
+	uc := usecase.NewVideoUseCase(db, svc, redisCache, vRPC)
 
 	return rpc.NewVideoServiceImpl(uc)
 }
