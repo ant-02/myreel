@@ -140,3 +140,41 @@ func PublishListRPC(ctx context.Context, req *video.PublishListRequest) (*api.Pu
 		},
 	}, nil
 }
+
+func PopularRPC(ctx context.Context, req *video.PopularRequest) (*api.PopularResponse, error) {
+	resp, err := videoClient.Popular(ctx, req)
+	if err != nil {
+		logger.Errorf("PublishListRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	l := len(resp.Data.Items)
+	videos := make([]*api.Video, l)
+	if l > 0 {
+		for i, v := range resp.Data.Items {
+			videos[i] = &api.Video{
+				Id:           v.Id,
+				Uid:          v.Uid,
+				Title:        v.Title,
+				Description:  v.Description,
+				VideoUrl:     v.VideoUrl,
+				CoverUrl:     v.CoverUrl,
+				VisitCount:   v.VisitCount,
+				LikeCount:    v.LikeCount,
+				CommentCount: v.CommentCount,
+			}
+		}
+	}
+
+	return &api.PopularResponse{
+		Items: videos,
+		Pagination: &api.Pagination{
+			NextCursor: resp.Data.Pagination.NextCursor,
+			PrevCursor: resp.Data.Pagination.PrevCursor,
+			Total:      resp.Data.Pagination.Total,
+		},
+	}, nil
+}

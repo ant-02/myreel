@@ -100,7 +100,16 @@ func (s *VideoServiceImpl) PublishList(ctx context.Context, req *video.PublishLi
 
 // Popular implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) Popular(ctx context.Context, req *video.PopularRequest) (resp *video.PopularResponse, err error) {
-	// TODO: Your code here...
+	resp = new(video.PopularResponse)
+
+	videos, pagination, err := s.useCase.GetVideosGroupByVisitCount(ctx, req.Cursor, req.Limit)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildVideoList(build.BuildVideos(videos), build.BuildPagination(pagination))
 	return
 }
 

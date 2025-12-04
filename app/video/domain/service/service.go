@@ -79,3 +79,22 @@ func (vs *videoService) GetVideosByUserId(ctx context.Context, uid, cursor, limi
 
 	return videos, pagination, nil
 }
+
+func (vs *videoService) GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
+	videos, total, err := vs.db.GetVideosGroupByVisitCount(ctx, cursor, limit)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video group by visit count").WithError(err)
+	}
+	pagination := &model.Pagination{
+		PrevCursor: cursor,
+		Total:      total,
+	}
+	l := len(videos)
+	if l == 0 {
+		pagination.NextCursor = cursor
+	} else {
+		pagination.NextCursor = videos[l-1].VisitCount
+	}
+
+	return videos, pagination, nil
+}

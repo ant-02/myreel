@@ -40,3 +40,7 @@ func (us *useCase) SaveVideo(ctx context.Context, video *model.Video) error {
 func (us *useCase) GetVideosByUserId(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
 	return us.svc.GetVideosByUserId(ctx, uid, cursor, limit)
 }
+
+func (us *useCase) GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
+	return us.svc.GetVideosGroupByVisitCount(ctx, cursor, limit)
+}

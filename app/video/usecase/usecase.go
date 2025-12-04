@@ -20,6 +20,7 @@ type VideoUseCase interface {
 	GetVideoCoverUplaodToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
 	SaveVideo(ctx context.Context, video *model.Video) error
 	GetVideosByUserId(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
+	GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 }
 
 func NewVideoUseCase(db repository.VideoDB, svc service.VideoService, cache repository.VideoCache) *useCase {

@@ -21,6 +21,7 @@ type VideoService interface {
 	GenerateVideoId() (int64, error)
 	SaveVideo(ctx context.Context, video *model.Video) error
 	GetVideosByUserId(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
+	GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 }
 
 func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository.VideoCache) VideoService {

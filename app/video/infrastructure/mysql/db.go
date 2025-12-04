@@ -89,9 +89,12 @@ func (db *videoDB) GetVideosByUid(ctx context.Context, uid, cursor, limit int64)
 		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video count by user id: %v", err)
 	}
 
-	err = tx.Where("id > ?", cursor).
-		Limit(int(limit)).
-		Order("id").
+	if cursor != 0 {
+		tx.Where("id < ?", cursor)
+	}
+
+	err = tx.Limit(int(limit)).
+		Order("id DESC").
 		Find(&videos).Error
 	if err != nil {
 		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get videos by user id: %v", err)
@@ -118,50 +121,49 @@ func (db *videoDB) GetVideosByUid(ctx context.Context, uid, cursor, limit int64)
 	return result, total, nil
 }
 
-// func (db *videoDB) GetVideosGroupByVisitCount(pageNum, pageSize int64) ([]*Video, error) {
-// 	var videos []*Video
-// 	first, end := (pageNum-1)*pageSize, pageNum*pageSize
-// 	instance := database.GetRedisInstance()
-// 	ctx := context.Background()
-// 	videoStrings, err := instance.LRange(ctx, key, first, end)
-// 	if err != nil || videoStrings == nil {
-// 		return nil, err
-// 	}
-// 	if len(videoStrings) > 0 {
-// 		for _, s := range videoStrings {
-// 			var v Video
-// 			if err := json.Unmarshal([]byte(s), &v); err != nil {
-// 				return nil, err
-// 			}
-// 			videos = append(videos, &v)
-// 		}
-// 		return videos, nil
-// 	}
+func (db *videoDB) GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, int64, error) {
+	var videos []*Video
+	var total int64
 
-// 	err = db.client.Where("deleted_at IS NULL").
-// 		Order("visit_count desc").
-// 		Offset(int(first)).
-// 		Limit(int(pageSize)).
-// 		Find(&videos).Error
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	tx := db.client.WithContext(ctx).
+		Model(&Video{}).
+		Where("deleted_at IS NULL")
 
-// 	for _, v := range videos {
-// 		j, err := json.Marshal(v)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		instance := database.GetRedisInstance()
-// 		ctx := context.Background()
-// 		err = instance.RPush(ctx, key, j)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 	}
+	err := tx.Count(&total).Error
+	if err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video count by visit count: %v", err)
+	}
 
-// 	return videos, nil
-// }
+	if cursor != 0 {
+		tx = tx.Where("visit_count < ?", cursor)
+	}
+	err = tx.Limit(int(limit)).
+		Order("visit_count DESC").
+		Find(&videos).Error
+	if err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video group by visit count: %v", err)
+	}
+
+	l := len(videos)
+	result := make([]*model.Video, l)
+	if l > 0 {
+		for i, v := range videos {
+			result[i] = &model.Video{
+				Id:           v.Id,
+				Uid:          v.Uid,
+				Title:        v.Title,
+				Description:  v.Description,
+				VideoUrl:     v.VideoUrl,
+				CoverUrl:     v.CoverUrl,
+				VisitCount:   v.VisitCount,
+				LikeCount:    v.VisitCount,
+				CommentCount: v.CommentCount,
+			}
+		}
+	}
+
+	return result, total, nil
+}
 
 // func (db *videoDB) GetVideosByKeywords(keywords, fromDate, toDate, uid string, pageNum, pageSize int64) ([]*Video, int64, error) {
 // 	var videos []*Video

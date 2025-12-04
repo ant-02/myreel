@@ -73,13 +73,13 @@ message PublishListResponse {
 }
 
 message PopularRequest {
-    int64 pageNum = 1[(api.query)="pageNum"];
-    int64 pageSize = 2[(api.query)="pageSize"];
+    int64 cursor = 1[(api.body)="cursor"];
+    int64 limit = 2[(api.body)="limit"];
 }
 
 message PopularResponse {
     repeated Video items = 1;
-    optional int64 total = 2;
+    Pagination pagination = 2;
 }
 
 message SearchRequest {

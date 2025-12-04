@@ -423,8 +423,8 @@ func (x *PublishListResponse) GetData() *VideoList {
 }
 
 type PopularRequest struct {
-	PageNum  int64 `protobuf:"varint,1,opt,name=pageNum" json:"pageNum,omitempty"`
-	PageSize int64 `protobuf:"varint,2,opt,name=pageSize" json:"pageSize,omitempty"`
+	Cursor int64 `protobuf:"varint,1,opt,name=cursor" json:"cursor,omitempty"`
+	Limit  int64 `protobuf:"varint,2,opt,name=limit" json:"limit,omitempty"`
 }
 
 func (x *PopularRequest) Reset() { *x = PopularRequest{} }
@@ -433,16 +433,16 @@ func (x *PopularRequest) Marshal(in []byte) ([]byte, error) { return prutal.Mars
 
 func (x *PopularRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
-func (x *PopularRequest) GetPageNum() int64 {
+func (x *PopularRequest) GetCursor() int64 {
 	if x != nil {
-		return x.PageNum
+		return x.Cursor
 	}
 	return 0
 }
 
-func (x *PopularRequest) GetPageSize() int64 {
+func (x *PopularRequest) GetLimit() int64 {
 	if x != nil {
-		return x.PageSize
+		return x.Limit
 	}
 	return 0
 }
