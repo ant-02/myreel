@@ -22,7 +22,7 @@ type VideoUseCase interface {
 	SaveVideo(ctx context.Context, video *model.Video) error
 	GetVideosByUserId(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 	GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
-	GetVideosByKeywords(ctx context.Context, keywords, username string, fromDate, toDate, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
+	GetVideosByKeywords(ctx context.Context, keywords, userrname string, fromDate, toDate, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 }
 
 func NewVideoUseCase(db repository.VideoDB, svc service.VideoService, cache repository.VideoCache, vRpc repository.RpcPort) VideoUseCase {

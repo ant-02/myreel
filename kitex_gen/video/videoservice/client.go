@@ -18,6 +18,7 @@ type Client interface {
 	PublishList(ctx context.Context, Req *video.PublishListRequest, callOptions ...callopt.Option) (r *video.PublishListResponse, err error)
 	Popular(ctx context.Context, Req *video.PopularRequest, callOptions ...callopt.Option) (r *video.PopularResponse, err error)
 	Search(ctx context.Context, Req *video.SearchRequest, callOptions ...callopt.Option) (r *video.SearchResponse, err error)
+	VideoLikeAction(ctx context.Context, Req *video.VideoLikeActionRequest, callOptions ...callopt.Option) (r *video.VideoLikeActionResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -82,4 +83,9 @@ func (p *kVideoServiceClient) Popular(ctx context.Context, Req *video.PopularReq
 func (p *kVideoServiceClient) Search(ctx context.Context, Req *video.SearchRequest, callOptions ...callopt.Option) (r *video.SearchResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.Search(ctx, Req)
+}
+
+func (p *kVideoServiceClient) VideoLikeAction(ctx context.Context, Req *video.VideoLikeActionRequest, callOptions ...callopt.Option) (r *video.VideoLikeActionResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.VideoLikeAction(ctx, Req)
 }

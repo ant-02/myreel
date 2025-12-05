@@ -8,17 +8,17 @@ import (
 	"myreel/pkg/errno"
 )
 
-type VideoRpcImpl struct {
+type videoRpcImpl struct {
 	user userservice.Client
 }
 
 func NewVideoRpcImpl(u userservice.Client) repository.RpcPort {
-	return &VideoRpcImpl{
+	return &videoRpcImpl{
 		user: u,
 	}
 }
 
-func (rpc *VideoRpcImpl) GetUserIdByUsername(ctx context.Context, username string) (int64, error) {
+func (rpc *videoRpcImpl) GetUserIdByUsername(ctx context.Context, username string) (int64, error) {
 	resp, err := rpc.user.GetUseridByUsername(ctx, &user.GetUserIdByUsernameRequest{
 		Username: username,
 	})

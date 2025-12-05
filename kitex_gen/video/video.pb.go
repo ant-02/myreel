@@ -570,6 +570,60 @@ func (x *SearchResponse) GetData() *VideoList {
 	return nil
 }
 
+type VideoLikeActionRequest struct {
+	VideoId    int64 `protobuf:"varint,1,opt,name=videoId" json:"videoId,omitempty"`
+	UserId     int64 `protobuf:"varint,2,opt,name=userId" json:"userId,omitempty"`
+	ActionType int64 `protobuf:"varint,3,opt,name=actionType" json:"actionType,omitempty"`
+}
+
+func (x *VideoLikeActionRequest) Reset() { *x = VideoLikeActionRequest{} }
+
+func (x *VideoLikeActionRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *VideoLikeActionRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *VideoLikeActionRequest) GetVideoId() int64 {
+	if x != nil {
+		return x.VideoId
+	}
+	return 0
+}
+
+func (x *VideoLikeActionRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *VideoLikeActionRequest) GetActionType() int64 {
+	if x != nil {
+		return x.ActionType
+	}
+	return 0
+}
+
+type VideoLikeActionResponse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+}
+
+func (x *VideoLikeActionResponse) Reset() { *x = VideoLikeActionResponse{} }
+
+func (x *VideoLikeActionResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *VideoLikeActionResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *VideoLikeActionResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
 type VideoService interface {
 	VideoStream(ctx context.Context, req *VideoStreamRequest) (res *VideoStreamResponse, err error)
 	GetVideoUploadToken(ctx context.Context, req *GetVideoUploadTokenRequest) (res *GetVideoUploadTokenResponse, err error)
@@ -578,4 +632,5 @@ type VideoService interface {
 	PublishList(ctx context.Context, req *PublishListRequest) (res *PublishListResponse, err error)
 	Popular(ctx context.Context, req *PopularRequest) (res *PopularResponse, err error)
 	Search(ctx context.Context, req *SearchRequest) (res *SearchResponse, err error)
+	VideoLikeAction(ctx context.Context, req *VideoLikeActionRequest) (res *VideoLikeActionResponse, err error)
 }

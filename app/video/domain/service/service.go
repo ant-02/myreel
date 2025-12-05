@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"math"
 	"myreel/app/video/domain/model"
 	"myreel/pkg/constants"
 	"myreel/pkg/errno"
@@ -81,23 +83,38 @@ func (vs *videoService) GetVideosByUserId(ctx context.Context, uid, cursor, limi
 	return videos, pagination, nil
 }
 
-func (vs *videoService) GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
-	videos, total, err := vs.db.GetVideosGroupByVisitCount(ctx, cursor, limit)
-	if err != nil {
-		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video group by visit count").WithError(err)
-	}
-	pagination := &model.Pagination{
-		PrevCursor: cursor,
-		Total:      total,
-	}
-	l := len(videos)
-	if l == 0 {
-		pagination.NextCursor = cursor
-	} else {
-		pagination.NextCursor = videos[l-1].VisitCount
+func (vs *videoService) GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Video, error) {
+	if ids == nil {
+		return nil, nil
 	}
 
-	return videos, pagination, nil
+	l := len(ids)
+	videos := make([]*model.Video, l)
+	for i, id := range ids {
+		key := fmt.Sprintf("%s/%d", constants.RedisVideoKey, id)
+		if exist := vs.cache.IsExist(ctx, key); exist {
+			video, err := vs.cache.GetVideo(ctx, key)
+			if err != nil {
+				return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video").WithError(err)
+			}
+			videos[i] = video
+		} else {
+			video, err := vs.db.GetVideoById(ctx, id)
+			if err != nil {
+				return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video").WithError(err)
+			}
+			vj, err := json.Marshal(video)
+			if err != nil {
+				return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to marshal video").WithError(err)
+			}
+			err = vs.cache.AddVideoWithTLL(ctx, key, vj, constants.RedisVideoExpireTime)
+			if err != nil {
+				return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add video to redis").WithError(err)
+			}
+			videos[i] = video
+		}
+	}
+	return videos, nil
 }
 
 func (vs *videoService) GetVideosByKeywords(ctx context.Context, keywords string, fromDate, toDate, cursor, uid, limit int64) ([]*model.Video, *model.Pagination, error) {
@@ -113,7 +130,7 @@ func (vs *videoService) GetVideosByKeywords(ctx context.Context, keywords string
 	} else {
 		ct = time.Unix(cursor, 0)
 	}
-	
+
 	videos, total, err := vs.db.GetVideosByKeywords(ctx, keywords, ft, tt, ct, uid, limit)
 	if err != nil {
 		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video by keywords").WithError(err)
@@ -130,4 +147,28 @@ func (vs *videoService) GetVideosByKeywords(ctx context.Context, keywords string
 	}
 
 	return videos, pagination, nil
+}
+
+func (vs *videoService) CalculateHotScore(video *model.Video) int64 {	
+	if video == nil {
+		return 0
+	}
+
+	baseScore := video.LikeCount*constants.VideoLikeGravity + video.CommentCount*constants.VideoCommentGarvity + video.VisitCount*constants.VideoVisitGarvity
+	if baseScore <= 0 {
+		return 0
+	}
+
+	now := time.Now().Unix()
+	ageSeconds := now - video.CreatedAt
+	if ageSeconds < 0 {
+		ageSeconds = 0
+	}
+
+	ageHours := float64(ageSeconds) / 3600.0
+
+	denominator := math.Pow(ageHours+2, constants.VideoCreatedAtGarvity)
+	floatScore := float64(baseScore) / denominator
+	scaled := floatScore * 1000.0
+	return int64(math.Round(scaled))
 }

@@ -22,8 +22,9 @@ type VideoService interface {
 	GenerateVideoId() (int64, error)
 	SaveVideo(ctx context.Context, video *model.Video) error
 	GetVideosByUserId(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
-	GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 	GetVideosByKeywords(ctx context.Context, keywords string, fromDate, toDate, cursor, uid, limit int64) ([]*model.Video, *model.Pagination, error)
+	GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Video, error)
+	CalculateHotScore(video *model.Video) int64
 }
 
 func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository.VideoCache, vRpc repository.RpcPort) VideoService {
@@ -35,7 +36,7 @@ func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository
 		db:    db,
 		sf:    sf,
 		cache: cache,
-		vRpc: vRpc,
+		vRpc:  vRpc,
 	}
 	return svc
 }

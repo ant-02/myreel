@@ -6,6 +6,8 @@ var (
 	UserNotFound = NewErrNo(ErrRecordNotFound, "user not found")
 	UserIsBaned  = NewErrNo(UserBaned, "user is baned")
 
+	LikeNotFound = NewErrNo(ErrRecordNotFound, "like not found")
+
 	ParamVerifyError  = NewErrNo(ParamVerifyErrorCode, "parameter validation failed")
 	ParamMissingError = NewErrNo(ParamMissingErrorCode, "missing parameter")
 

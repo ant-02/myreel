@@ -11,13 +11,20 @@ type VideoDB interface {
 	GetVideosByLatestTime(ctx context.Context, latestTime time.Time) ([]*model.Video, error)
 	CreateVideo(ctx context.Context, video *model.Video) error
 	GetVideosByUid(ctx context.Context, uid, cursor, limit int64) ([]*model.Video, int64, error)
-	GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, int64, error)
 	GetVideosByKeywords(ctx context.Context, keywords string, fromDate, toDate, cursor time.Time, uid, limit int64) ([]*model.Video, int64, error)
+	GetVideoById(ctx context.Context, id int64) (*model.Video, error)
+	// AddLikeCount(ctx context.Context, id string) error
+	// SubtractLikeCount(ctx context.Context, id string) error
 }
 
 type VideoCache interface {
+	IsExist(ctx context.Context, key string) bool
+	AddPopularVideoId(ctx context.Context, key string, score float64, member interface{}) error
+	GetPopularVideos(ctx context.Context, key string, cursor, limit int64) ([]int64, error)
+	CleanPopularVideos(ctx context.Context, key string, limit int64) error
+	GetVideo(ctx context.Context, key string) (*model.Video, error)
+	AddVideoWithTLL(ctx context.Context, key string, val interface{}, ttl time.Duration) error
 }
-
 type RpcPort interface {
 	GetUserIdByUsername(ctx context.Context, username string) (int64, error)
 }

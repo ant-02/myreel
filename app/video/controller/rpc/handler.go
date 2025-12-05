@@ -127,3 +127,9 @@ func (s *VideoServiceImpl) Search(ctx context.Context, req *video.SearchRequest)
 	resp.Data = build.BuildVideoList(build.BuildVideos(videos), build.BuildPagination(pagination))
 	return
 }
+
+// VideoLikeAction implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) VideoLikeAction(ctx context.Context, req *video.VideoLikeActionRequest) (resp *video.VideoLikeActionResponse, err error) {
+	// TODO: Your code here...
+	return
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package like;
+
+option go_package = "/like";
+
+import "video.proto";
+import "model.proto";
+
+message LikeActionRequest {
+    string videoId = 1;
+    string commentId = 2;
+    int64 actionType = 3;
+}
+
+message LikeActionResponse {
+    model.BaseResp base = 1;
+    string msg = 2;
+}
+
+message LikeListRequest {
+    string uid = 1;
+    int64 cursor = 2;
+    int64 limit = 3;
+}
+
+message LikeListResponse {
+    model.BaseResp base = 1;
+    video.VideoList data = 2;
+}
+
+service LikeService {
+    rpc LikeAction(LikeActionRequest) returns (LikeActionResponse);
+    rpc LikeList(LikeListRequest) returns (LikeListResponse);
+}

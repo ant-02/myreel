@@ -64,6 +64,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"VideoLikeAction": kitex.NewMethodInfo(
+		videoLikeActionHandler,
+		newVideoLikeActionArgs,
+		newVideoLikeActionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -907,6 +914,117 @@ func (p *SearchResult) GetResult() interface{} {
 	return p.Success
 }
 
+func videoLikeActionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(video.VideoLikeActionRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(video.VideoService).VideoLikeAction(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *VideoLikeActionArgs:
+		success, err := handler.(video.VideoService).VideoLikeAction(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*VideoLikeActionResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newVideoLikeActionArgs() interface{} {
+	return &VideoLikeActionArgs{}
+}
+
+func newVideoLikeActionResult() interface{} {
+	return &VideoLikeActionResult{}
+}
+
+type VideoLikeActionArgs struct {
+	Req *video.VideoLikeActionRequest
+}
+
+func (p *VideoLikeActionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *VideoLikeActionArgs) Unmarshal(in []byte) error {
+	msg := new(video.VideoLikeActionRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var VideoLikeActionArgs_Req_DEFAULT *video.VideoLikeActionRequest
+
+func (p *VideoLikeActionArgs) GetReq() *video.VideoLikeActionRequest {
+	if !p.IsSetReq() {
+		return VideoLikeActionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *VideoLikeActionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *VideoLikeActionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type VideoLikeActionResult struct {
+	Success *video.VideoLikeActionResponse
+}
+
+var VideoLikeActionResult_Success_DEFAULT *video.VideoLikeActionResponse
+
+func (p *VideoLikeActionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *VideoLikeActionResult) Unmarshal(in []byte) error {
+	msg := new(video.VideoLikeActionResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *VideoLikeActionResult) GetSuccess() *video.VideoLikeActionResponse {
+	if !p.IsSetSuccess() {
+		return VideoLikeActionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *VideoLikeActionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*video.VideoLikeActionResponse)
+}
+
+func (p *VideoLikeActionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *VideoLikeActionResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -982,6 +1100,16 @@ func (p *kClient) Search(ctx context.Context, Req *video.SearchRequest) (r *vide
 	_args.Req = Req
 	var _result SearchResult
 	if err = p.c.Call(ctx, "Search", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) VideoLikeAction(ctx context.Context, Req *video.VideoLikeActionRequest) (r *video.VideoLikeActionResponse, err error) {
+	var _args VideoLikeActionArgs
+	_args.Req = Req
+	var _result VideoLikeActionResult
+	if err = p.c.Call(ctx, "VideoLikeAction", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

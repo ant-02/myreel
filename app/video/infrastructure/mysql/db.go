@@ -125,52 +125,6 @@ func (db *videoDB) GetVideosByUid(ctx context.Context, uid, cursor, limit int64)
 	return result, total, nil
 }
 
-func (db *videoDB) GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, int64, error) {
-	var videos []*Video
-	var total int64
-
-	tx := db.client.WithContext(ctx).
-		Model(&Video{}).
-		Where("deleted_at IS NULL")
-
-	err := tx.Count(&total).Error
-	if err != nil {
-		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video count by visit count: %v", err)
-	}
-
-	if cursor != 0 {
-		tx = tx.Where("visit_count < ?", cursor)
-	}
-	err = tx.Limit(int(limit)).
-		Order("visit_count DESC").
-		Find(&videos).Error
-	if err != nil {
-		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video group by visit count: %v", err)
-	}
-
-	l := len(videos)
-	result := make([]*model.Video, l)
-	if l > 0 {
-		for i, v := range videos {
-			result[i] = &model.Video{
-				Id:           v.Id,
-				Uid:          v.Uid,
-				Title:        v.Title,
-				Description:  v.Description,
-				VideoUrl:     v.VideoUrl,
-				CoverUrl:     v.CoverUrl,
-				VisitCount:   v.VisitCount,
-				LikeCount:    v.VisitCount,
-				CommentCount: v.CommentCount,
-				CreatedAt:    v.CreatedAt.Unix(),
-				UpdatedAt:    v.UpdatedAt.Unix(),
-			}
-		}
-	}
-
-	return result, total, nil
-}
-
 func (db *videoDB) GetVideosByKeywords(ctx context.Context, keywords string, fromDate, toDate, cursor time.Time, uid, limit int64) ([]*model.Video, int64, error) {
 	var videos []*Video
 	var total int64
@@ -178,6 +132,7 @@ func (db *videoDB) GetVideosByKeywords(ctx context.Context, keywords string, fro
 
 	tx := db.client.WithContext(ctx).
 		Model(&Video{}).
+		Where("deleted_at IS NULL").
 		Where("title LIKE ? or description LIKE ?", "%"+keywords+"%", "%"+keywords+"%").
 		Where("created_at between ? and ?", fromDate, toDate)
 
@@ -221,12 +176,34 @@ func (db *videoDB) GetVideosByKeywords(ctx context.Context, keywords string, fro
 	return result, total, nil
 }
 
-// func (db *videoDB) AddLikeCount(id string) error {
-// 	return db.client.Model(&Video{}).Where("id = ?", id).Update("like_count", gorm.Expr("like_count + ?", 1)).Error
+func (db *videoDB) GetVideoById(ctx context.Context, id int64) (*model.Video, error) {
+	var video model.Video
+	if err := db.client.WithContext(ctx).
+		Where("deleted_at IS NULL").
+		First(&video, id).Error; err != nil {
+		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video by id: %v", err)
+	}
+	return &video, nil
+}
+
+// func (db *videoDB) AddLikeCount(ctx context.Context, id string) error {
+// 	if err := db.client.WithContext(ctx).
+// 		Model(&Video{}).
+// 		Where("id = ?", id).
+// 		Update("like_count", gorm.Expr("like_count + ?", 1)).Error; err != nil {
+// 		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to add like_count: %v", err)
+// 	}
+// 	return nil
 // }
 
-// func (db *videoDB) SubtractLikeCount(id string) error {
-// 	return db.client.Model(&Video{}).Where("id = ?", id).Update("like_count", gorm.Expr("like_count - ?", 1)).Error
+// func (db *videoDB) SubtractLikeCount(ctx context.Context, id string) error {
+// 	if err := db.client.WithContext(ctx).
+// 		Model(&Video{}).
+// 		Where("id = ?", id).
+// 		Update("like_count", gorm.Expr("like_count - ?", 1)).Error; err != nil {
+// 		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to add like_count: %v", err)
+// 	}
+// 	return nil
 // }
 
 // func (db *videoDB) GetVideosByIds(ids []*string) ([]*Video, error) {

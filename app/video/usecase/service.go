@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"myreel/app/video/domain/model"
 	"myreel/config"
+	"myreel/pkg/constants"
 	"myreel/pkg/errno"
 	"myreel/pkg/upyun"
 )
@@ -43,7 +44,29 @@ func (us *useCase) GetVideosByUserId(ctx context.Context, uid, cursor, limit int
 }
 
 func (us *useCase) GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
-	return us.svc.GetVideosGroupByVisitCount(ctx, cursor, limit)
+	ids, err := us.cache.GetPopularVideos(ctx, constants.RedisVideoPopularKey, cursor, limit)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	videos, err := us.svc.GetVideosByIds(ctx, ids)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	l := len(videos)
+	var nextCursor int64
+	if l > 0 {
+		nextCursor = us.svc.CalculateHotScore(videos[l-1])
+	} else {
+		nextCursor = cursor
+	}
+
+	return videos, &model.Pagination{
+		NextCursor: nextCursor,
+		PrevCursor: cursor,
+		Total:      constants.RedisVideoPopCount,
+	}, nil
 }
 
 func (us *useCase) GetVideosByKeywords(ctx context.Context, keywords, username string, fromDate, toDate, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {

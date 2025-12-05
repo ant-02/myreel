@@ -13,3 +13,11 @@ const (
 	UserMinimumPasswordLength      = 5
 	UserDefaultEncryptPasswordCost = 10
 )
+
+// VideoService
+const (
+	VideoLikeGravity = 2
+	VideoCommentGarvity = 3
+	VideoVisitGarvity = 1
+	VideoCreatedAtGarvity = 1.8
+)

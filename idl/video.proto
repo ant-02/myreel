@@ -107,6 +107,16 @@ message SearchResponse {
     VideoList data = 2;
 }
 
+message VideoLikeActionRequest {
+    int64 videoId = 1;
+    int64 userId = 2;
+    int64 actionType = 3;
+}
+
+message VideoLikeActionResponse {
+    model.BaseResp base = 1;
+}
+
 service VideoService {
     rpc VideoStream(VideoStreamRequest) returns (VideoStreamResponse);
     rpc GetVideoUploadToken(GetVideoUploadTokenRequest) returns (GetVideoUploadTokenResponse);
@@ -115,4 +125,5 @@ service VideoService {
     rpc PublishList(PublishListRequest) returns (PublishListResponse);
     rpc Popular(PopularRequest) returns (PopularResponse);
     rpc Search(SearchRequest) returns (SearchResponse);
+    rpc VideoLikeAction(VideoLikeActionRequest) returns (VideoLikeActionResponse);
 }

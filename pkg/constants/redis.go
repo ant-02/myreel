@@ -8,21 +8,35 @@ const (
 
 // Redis Key and Expire Time
 const (
-	PingTime                = 2 * time.Second
-	RedisCartExpireTime     = 5 * 60 * time.Second
-	RedisCartStoreNum       = 30
-	RedisSpuImageExpireTime = 5 * 60 * time.Second
-
+	PingTime                 = 2 * time.Second
+	RedisCartExpireTime      = 5 * 60 * time.Second
+	RedisCartStoreNum        = 30
+	RedisSpuImageExpireTime  = 5 * 60 * time.Second
 	RedisSkuImagesExpireTime = 5 * 60 * time.Second
 	RedisLockStockExpireTime = 24 * 60 * 60 * time.Second
 	RedisStockExpireTime     = 24 * 60 * 60 * time.Second
 	RedisNXExpireTime        = 3 * time.Second
 	RedisMaxLockRetryTime    = 400 * time.Millisecond
 	RedisRetryStopTime       = 100 * time.Millisecond
-	RedisUserLoginKey        = "login:user:"
-	RedisUserBanedKey        = "ban:user:"
 	NeverExpire              = 0
+
 	RedisUserLoginExpireTime = 2 * 60 * 60 * time.Second
+
+	RedisVideoExpireTime = 10 * time.Minute
+)
+
+// Redis Count
+const (
+	RedisVideoPopCount = 200
+)
+
+// Redis Keys
+const (
+	RedisUserLoginKey = "login:user:"
+	RedisUserBanedKey = "ban:user:"
+
+	RedisVideoPopularKey = "pop:video"
+	RedisVideoKey        = "video:"
 )
 
 // Redis DB Name
