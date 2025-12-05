@@ -101,10 +101,35 @@ func (uc *useCase) LikeAction(ctx context.Context, videoId, commentId, uid, acti
 
 }
 
-func (uc *useCase) GetVideosByUserLike(ctx context.Context, userId, cursor, limit int64) (*model.Video, *model.Pagination, error) {
-	// ids, err := uc.cache.GetVideoIdFromUserLike(ctx, fmt.Sprintf("%s%d", constants.RedisUserLikeKey, userId), cursor, limit)
-	// if err != nil {
-	// 	return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video id list by user like").WithError(err)
-	// }
-	return nil, nil, nil
+func (uc *useCase) GetVideosByUserLike(ctx context.Context, userId, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
+	key := fmt.Sprintf("%s%d", constants.RedisUserLikeKey, userId)
+
+	ids, err := uc.cache.GetVideoIdFromUserLike(ctx, key, cursor, limit)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video id list by user like").WithError(err)
+	}
+
+	total, err := uc.cache.GetVideoLikeCount(ctx, key)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get user video count").WithError(err)
+	}
+
+	videos, err := uc.lRpc.GetVideosByIds(ctx, ids)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video list by id list").WithError(err)
+	}
+
+	var nextCursor int64
+	l := len(videos)
+	if l == 0 {
+		nextCursor = cursor
+	} else {
+		nextCursor = videos[l-1].CreatedAt
+	}
+
+	return videos, &model.Pagination{
+		NextCursor: nextCursor,
+		PrevCursor: cursor,
+		Total:      total,
+	}, nil
 }

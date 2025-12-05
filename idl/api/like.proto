@@ -8,17 +8,15 @@ import "api.proto";
 import "video.proto";
 
 message LikeActionRequest {
-    string videoId = 1[(api.body)="videoId"];
-    string commentId = 2[(api.body)="commentId"];
+    int64 videoId = 1[(api.body)="videoId"];
+    int64 commentId = 2[(api.body)="commentId"];
     int64 actionType = 3[(api.body)="actionType"];
 }
 
-message LikeActionResponse {
-    string msg = 2;
-}
+message LikeActionResponse {}
 
 message LikeListRequest {
-    string uid = 1[(api.query)="uid"];
+    int64 uid = 1[(api.query)="uid"];
     int64 cursor = 2[(api.query)="cursor"];
     int64 limit = 3[(api.query)="limit"];
 }

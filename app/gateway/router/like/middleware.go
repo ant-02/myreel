@@ -3,6 +3,8 @@
 package like
 
 import (
+	"myreel/app/gateway/mv"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -18,10 +20,14 @@ func _likeMw() []app.HandlerFunc {
 
 func _likeactionMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }
 
 func _likelistMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }

@@ -71,6 +71,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"GetVideosByIds": kitex.NewMethodInfo(
+		getVideosByIdsHandler,
+		newGetVideosByIdsArgs,
+		newGetVideosByIdsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -1025,6 +1032,117 @@ func (p *VideoLikeActionResult) GetResult() interface{} {
 	return p.Success
 }
 
+func getVideosByIdsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(video.GetVideosByIdsRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(video.VideoService).GetVideosByIds(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetVideosByIdsArgs:
+		success, err := handler.(video.VideoService).GetVideosByIds(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetVideosByIdsResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newGetVideosByIdsArgs() interface{} {
+	return &GetVideosByIdsArgs{}
+}
+
+func newGetVideosByIdsResult() interface{} {
+	return &GetVideosByIdsResult{}
+}
+
+type GetVideosByIdsArgs struct {
+	Req *video.GetVideosByIdsRequest
+}
+
+func (p *GetVideosByIdsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetVideosByIdsArgs) Unmarshal(in []byte) error {
+	msg := new(video.GetVideosByIdsRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetVideosByIdsArgs_Req_DEFAULT *video.GetVideosByIdsRequest
+
+func (p *GetVideosByIdsArgs) GetReq() *video.GetVideosByIdsRequest {
+	if !p.IsSetReq() {
+		return GetVideosByIdsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetVideosByIdsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetVideosByIdsArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetVideosByIdsResult struct {
+	Success *video.GetVideosByIdsResponse
+}
+
+var GetVideosByIdsResult_Success_DEFAULT *video.GetVideosByIdsResponse
+
+func (p *GetVideosByIdsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetVideosByIdsResult) Unmarshal(in []byte) error {
+	msg := new(video.GetVideosByIdsResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetVideosByIdsResult) GetSuccess() *video.GetVideosByIdsResponse {
+	if !p.IsSetSuccess() {
+		return GetVideosByIdsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetVideosByIdsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*video.GetVideosByIdsResponse)
+}
+
+func (p *GetVideosByIdsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetVideosByIdsResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -1110,6 +1228,16 @@ func (p *kClient) VideoLikeAction(ctx context.Context, Req *video.VideoLikeActio
 	_args.Req = Req
 	var _result VideoLikeActionResult
 	if err = p.c.Call(ctx, "VideoLikeAction", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetVideosByIds(ctx context.Context, Req *video.GetVideosByIdsRequest) (r *video.GetVideosByIdsResponse, err error) {
+	var _args GetVideosByIdsArgs
+	_args.Req = Req
+	var _result GetVideosByIdsResult
+	if err = p.c.Call(ctx, "GetVideosByIds", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

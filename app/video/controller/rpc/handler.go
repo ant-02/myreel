@@ -141,3 +141,18 @@ func (s *VideoServiceImpl) VideoLikeAction(ctx context.Context, req *video.Video
 	resp.Base = base.BuildSuccessResp()
 	return
 }
+
+// GetVideosByIds implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) GetVideosByIds(ctx context.Context, req *video.GetVideosByIdsRequest) (resp *video.GetVideosByIdsResponse, err error) {
+	resp = new(video.GetVideosByIdsResponse)
+
+	videos, err := s.useCase.GetVideosByIds(ctx, req.Id)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Items = build.BuildVideos(videos)
+	return
+}

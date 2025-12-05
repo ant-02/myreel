@@ -116,6 +116,15 @@ message VideoLikeActionResponse {
     model.BaseResp base = 1;
 }
 
+message GetVideosByIdsRequest {
+    repeated int64 id = 1;
+}
+
+message GetVideosByIdsResponse {
+    model.BaseResp base = 1;
+    repeated Video items = 2;
+}
+
 service VideoService {
     rpc VideoStream(VideoStreamRequest) returns (VideoStreamResponse);
     rpc GetVideoUploadToken(GetVideoUploadTokenRequest) returns (GetVideoUploadTokenResponse);
@@ -125,4 +134,5 @@ service VideoService {
     rpc Popular(PopularRequest) returns (PopularResponse);
     rpc Search(SearchRequest) returns (SearchResponse);
     rpc VideoLikeAction(VideoLikeActionRequest) returns (VideoLikeActionResponse);
+    rpc GetVideosByIds(GetVideosByIdsRequest) returns (GetVideosByIdsResponse);
 }

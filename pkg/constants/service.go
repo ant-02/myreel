@@ -5,6 +5,7 @@ const (
 	GatewayServiceName = "gateway"
 	UserServiceName    = "user"
 	VideoServiceName   = "video"
+	LikeServiceName    = "like"
 )
 
 // UserService
@@ -16,8 +17,8 @@ const (
 
 // VideoService
 const (
-	VideoLikeGravity = 2
-	VideoCommentGarvity = 3
-	VideoVisitGarvity = 1
+	VideoLikeGravity      = 2
+	VideoCommentGarvity   = 3
+	VideoVisitGarvity     = 1
 	VideoCreatedAtGarvity = 1.8
 )

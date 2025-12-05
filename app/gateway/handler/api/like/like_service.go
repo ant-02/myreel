@@ -5,25 +5,49 @@ package like
 import (
 	"context"
 
+	api "myreel/app/gateway/model/api/like"
+	"myreel/app/gateway/pack"
+	"myreel/app/gateway/rpc"
+	"myreel/kitex_gen/like"
+	"myreel/pkg/constants"
+	"myreel/pkg/errno"
+
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	like "myreel/app/gateway/model/api/like"
 )
 
 // LikeAction .
 // @router /like/action [POST]
 func LikeAction(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req like.LikeActionRequest
+	var req api.LikeActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(like.LikeActionResponse)
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	err = rpc.LikeActionRPC(ctx, &like.LikeActionRequest{
+		VideoId:    req.VideoId,
+		CommentId:  req.CommentId,
+		ActionType: req.ActionType,
+		UserId:     uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+	}
+
+	pack.RespSuccess(c)
 }
 
 // LikeList .
@@ -33,11 +57,29 @@ func LikeList(ctx context.Context, c *app.RequestContext) {
 	var req like.LikeListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(like.LikeListResponse)
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	data, err := rpc.LikeListRPC(ctx, &like.LikeListRequest{
+		Uid:    uid,
+		Cursor: req.Cursor,
+		Limit:  req.Limit,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+	}
+
+	pack.RespData(c, data)
 }

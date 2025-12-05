@@ -68,3 +68,11 @@ func (c *likeCache) GetVideoIdFromUserLike(ctx context.Context, key string, curs
 	}
 	return ids, nil
 }
+
+func (c *likeCache) GetVideoLikeCount(ctx context.Context, key string) (int64, error) {
+	total, err := c.client.ZCard(ctx, key).Result()
+	if err != nil {
+		return 0, errno.Errorf(errno.InternalRedisErrorCode, "redis: failed to get user video like count: %v", err)
+	}
+	return total, nil
+}

@@ -88,3 +88,7 @@ func (us *useCase) VideoLikeAction(ctx context.Context, videoId, actionType int6
 		return us.svc.IncrVideoLike(ctx, videoId)
 	}
 }
+
+func (us *useCase) GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Video, error) {
+	return us.svc.GetVideosByIds(ctx, ids)
+}

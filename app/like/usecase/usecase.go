@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"myreel/app/like/domain/model"
 	"myreel/app/like/domain/repository"
 	"myreel/app/like/domain/service"
 )
@@ -15,6 +16,7 @@ type useCase struct {
 
 type LikeUseCase interface {
 	LikeAction(ctx context.Context, videoId, commentId, uid, actionType int64) error
+	GetVideosByUserLike(ctx context.Context, userId, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 }
 
 func NewLikeUseCase(db repository.LikeDB, svc service.LikeService, cache repository.LikeCache, lRpc repository.RpcPort) *useCase {

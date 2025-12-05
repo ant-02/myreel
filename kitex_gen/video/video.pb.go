@@ -616,6 +616,52 @@ func (x *VideoLikeActionResponse) GetBase() *model.BaseResp {
 	return nil
 }
 
+type GetVideosByIdsRequest struct {
+	Id []int64 `protobuf:"varint,1,rep,packed,name=id" json:"id,omitempty"`
+}
+
+func (x *GetVideosByIdsRequest) Reset() { *x = GetVideosByIdsRequest{} }
+
+func (x *GetVideosByIdsRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *GetVideosByIdsRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GetVideosByIdsRequest) GetId() []int64 {
+	if x != nil {
+		return x.Id
+	}
+	return nil
+}
+
+type GetVideosByIdsResponse struct {
+	Base  *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+	Items []*Video        `protobuf:"bytes,2,rep,name=items" json:"items,omitempty"`
+}
+
+func (x *GetVideosByIdsResponse) Reset() { *x = GetVideosByIdsResponse{} }
+
+func (x *GetVideosByIdsResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *GetVideosByIdsResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GetVideosByIdsResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetVideosByIdsResponse) GetItems() []*Video {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
 type VideoService interface {
 	VideoStream(ctx context.Context, req *VideoStreamRequest) (res *VideoStreamResponse, err error)
 	GetVideoUploadToken(ctx context.Context, req *GetVideoUploadTokenRequest) (res *GetVideoUploadTokenResponse, err error)
@@ -625,4 +671,5 @@ type VideoService interface {
 	Popular(ctx context.Context, req *PopularRequest) (res *PopularResponse, err error)
 	Search(ctx context.Context, req *SearchRequest) (res *SearchResponse, err error)
 	VideoLikeAction(ctx context.Context, req *VideoLikeActionRequest) (res *VideoLikeActionResponse, err error)
+	GetVideosByIds(ctx context.Context, req *GetVideosByIdsRequest) (res *GetVideosByIdsResponse, err error)
 }

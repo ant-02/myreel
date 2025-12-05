@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"myreel/app/like/domain/model"
 	"myreel/app/like/domain/repository"
 	"myreel/kitex_gen/video"
 	"myreel/kitex_gen/video/videoservice"
@@ -12,7 +13,7 @@ type likeRpcImpl struct {
 	video videoservice.Client
 }
 
-func NewVideoRpcImpl(v videoservice.Client) repository.RpcPort {
+func NewLikeRpcImpl(v videoservice.Client) repository.RpcPort {
 	return &likeRpcImpl{
 		video: v,
 	}
@@ -20,7 +21,7 @@ func NewVideoRpcImpl(v videoservice.Client) repository.RpcPort {
 
 func (rpc *likeRpcImpl) VideoLikeAction(ctx context.Context, videoId, actionType int64) error {
 	resp, err := rpc.video.VideoLikeAction(ctx, &video.VideoLikeActionRequest{
-		VideoId: videoId,
+		VideoId:    videoId,
 		ActionType: actionType,
 	})
 	if err != nil {
@@ -32,4 +33,38 @@ func (rpc *likeRpcImpl) VideoLikeAction(ctx context.Context, videoId, actionType
 	}
 
 	return nil
+}
+
+func (rpc *likeRpcImpl) GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Video, error) {
+	resp, err := rpc.video.GetVideosByIds(ctx, &video.GetVideosByIdsRequest{
+		Id: ids,
+	})
+	if err != nil {
+		return nil, errno.Errorf(errno.InternalRPCErrorCode, "rpc: failed to action video likes: %v", err)
+	}
+
+	if resp.Base.Code != errno.SuccessCode {
+		return nil, errno.NewErrNo(errno.InternalRPCErrorCode, "rpc: ffailed to action video likes")
+	}
+
+	l := len(resp.Items)
+	videos := make([]*model.Video, l)
+	if l > 0 {
+		for i, item := range resp.Items {
+			videos[i] = &model.Video{
+				Id:           item.Id,
+				Uid:          item.Uid,
+				Title:        item.Title,
+				Description:  item.Description,
+				VideoUrl:     item.VideoUrl,
+				CoverUrl:     item.CoverUrl,
+				LikeCount:    *item.LikeCount,
+				CommentCount: *item.CommentCount,
+				VisitCount:   *item.VisitCount,
+				CreatedAt:    item.CreatedAt,
+				UpdatedAt:    item.UpdatedAt,
+			}
+		}
+	}
+	return videos, nil
 }

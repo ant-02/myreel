@@ -11,9 +11,10 @@ import (
 )
 
 type LikeActionRequest struct {
-	VideoId    string `protobuf:"bytes,1,opt,name=videoId" json:"videoId,omitempty"`
-	CommentId  string `protobuf:"bytes,2,opt,name=commentId" json:"commentId,omitempty"`
-	ActionType int64  `protobuf:"varint,3,opt,name=actionType" json:"actionType,omitempty"`
+	VideoId    int64 `protobuf:"varint,1,opt,name=videoId" json:"videoId,omitempty"`
+	CommentId  int64 `protobuf:"varint,2,opt,name=commentId" json:"commentId,omitempty"`
+	ActionType int64 `protobuf:"varint,3,opt,name=actionType" json:"actionType,omitempty"`
+	UserId     int64 `protobuf:"varint,4,opt,name=userId" json:"userId,omitempty"`
 }
 
 func (x *LikeActionRequest) Reset() { *x = LikeActionRequest{} }
@@ -22,23 +23,30 @@ func (x *LikeActionRequest) Marshal(in []byte) ([]byte, error) { return prutal.M
 
 func (x *LikeActionRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
-func (x *LikeActionRequest) GetVideoId() string {
+func (x *LikeActionRequest) GetVideoId() int64 {
 	if x != nil {
 		return x.VideoId
 	}
-	return ""
+	return 0
 }
 
-func (x *LikeActionRequest) GetCommentId() string {
+func (x *LikeActionRequest) GetCommentId() int64 {
 	if x != nil {
 		return x.CommentId
 	}
-	return ""
+	return 0
 }
 
 func (x *LikeActionRequest) GetActionType() int64 {
 	if x != nil {
 		return x.ActionType
+	}
+	return 0
+}
+
+func (x *LikeActionRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }
@@ -69,9 +77,9 @@ func (x *LikeActionResponse) GetMsg() string {
 }
 
 type LikeListRequest struct {
-	Uid    string `protobuf:"bytes,1,opt,name=uid" json:"uid,omitempty"`
-	Cursor int64  `protobuf:"varint,2,opt,name=cursor" json:"cursor,omitempty"`
-	Limit  int64  `protobuf:"varint,3,opt,name=limit" json:"limit,omitempty"`
+	Uid    int64 `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
+	Cursor int64 `protobuf:"varint,2,opt,name=cursor" json:"cursor,omitempty"`
+	Limit  int64 `protobuf:"varint,3,opt,name=limit" json:"limit,omitempty"`
 }
 
 func (x *LikeListRequest) Reset() { *x = LikeListRequest{} }
@@ -80,11 +88,11 @@ func (x *LikeListRequest) Marshal(in []byte) ([]byte, error) { return prutal.Mar
 
 func (x *LikeListRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
-func (x *LikeListRequest) GetUid() string {
+func (x *LikeListRequest) GetUid() int64 {
 	if x != nil {
 		return x.Uid
 	}
-	return ""
+	return 0
 }
 
 func (x *LikeListRequest) GetCursor() int64 {

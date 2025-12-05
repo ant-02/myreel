@@ -24,6 +24,7 @@ type VideoUseCase interface {
 	GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 	GetVideosByKeywords(ctx context.Context, keywords, userrname string, fromDate, toDate, cursor, limit int64) ([]*model.Video, *model.Pagination, error)
 	VideoLikeAction(ctx context.Context, videoId, actionType int64) error
+	GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Video, error)
 }
 
 func NewVideoUseCase(db repository.VideoDB, svc service.VideoService, cache repository.VideoCache, vRpc repository.RpcPort) VideoUseCase {
