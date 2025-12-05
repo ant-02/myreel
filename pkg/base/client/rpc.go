@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"myreel/kitex_gen/comment/commentservice"
 	"myreel/kitex_gen/like/likeservice"
 	"myreel/kitex_gen/user/userservice"
 	"myreel/kitex_gen/video/videoservice"
@@ -28,4 +29,8 @@ func InitVideoRPC() (*videoservice.Client, error) {
 
 func InitLikeRPC() (*likeservice.Client, error) {
 	return initRPCClient(string(constants.LikeServiceName), "127.0.0.1:20004", likeservice.NewClient)
+}
+
+func InitCommentRPC() (*commentservice.Client, error) {
+	return initRPCClient(string(constants.CommentServiceName), "127.0.0.1:20005", commentservice.NewClient)
 }

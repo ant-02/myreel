@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package comment;
+
+option go_package = "/api/comment";
+
+import "api.proto";
+
+message Comment {
+    int64 id = 1[(api.body)="id"];
+    int64 uid = 2[(api.body)="uid"];
+    int64 videoId = 3[(api.body)="videoId"];
+    int64 parentId = 4[(api.body)="parentId"];
+    optional int64 likeCount = 5[(api.body)="likeCount"];
+    optional int64 childCount = 6[(api.body)="childCount"];
+    string content = 7[(api.body)="content"];
+    int64 createdAt = 8[(api.body)="createdAt"];
+    int64 updatedAt = 9[(api.body)="updatedAt"];
+    int64 deletedAt = 10[(api.body)="deletedAt"];
+}
+
+message CommentList {
+    repeated Comment items = 1;
+}
+
+message CommentPublishRequest {
+    int64 videoId = 1[(api.body)="videoId"];
+    int64 commentId = 2[(api.body)="commentId"];
+    string content = 3[(api.body)="content"];
+}
+
+message CommentPublishResponse {}
+
+message CommentListRequest {
+    int64 videoId = 1[(api.query)="videoId"];
+    int64 commentId = 2[(api.query)="commentId"];
+    int64 cursor = 3[(api.query)="cursor"];
+    int64 limit = 4[(api.query)="limit"];
+}
+
+message CommentListResponse {
+    CommentList data = 2;
+}
+
+message DeleteRequest {
+    int64 videoId = 1[(api.body)="videoId"];
+    int64 commentId = 2[(api.body)="commentId"];
+}
+
+message DeleteResponse {}
+
+service CommentService {
+    rpc CommentPublish(CommentPublishRequest) returns (CommentPublishResponse) {
+        option (api.post)="/api/v1/comment/publish";
+    }
+    rpc CommentList(CommentListRequest) returns(CommentListResponse) {
+        option (api.get)="/api/v1/comment/list";
+    }
+    rpc Delete(DeleteRequest) returns (DeleteResponse) {
+        option (api.delete)="/api/v1/comment/delete";
+    }
+}

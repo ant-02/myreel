@@ -17,7 +17,8 @@ const (
 )
 
 const (
-	UserTableName  = "users"
-	VideoTableName = "videos"
-	LikeTableName  = "likes"
+	UserTableName    = "users"
+	VideoTableName   = "videos"
+	LikeTableName    = "likes"
+	CommentTableName = "comments"
 )

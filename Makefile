@@ -7,6 +7,8 @@ OUTPUT_DIR := output
 GATEWAY_DIR := $(OUTPUT_DIR)/gateway
 USER_DIR := $(OUTPUT_DIR)/user
 VIDEO_DIR := $(OUTPUT_DIR)/video
+LIKE_DIR := $(OUTPUT_DIR)/like
+COMMENT_DIR := $(OUTPUT_DIR)/comment
 TMUX_SESSION := go-apps
 DOCKER_COMPOSE_DIR := docker
 DOCKER_COMPOSE_FILE := $(DOCKER_COMPOSE_DIR)/docker-compose.yml
@@ -24,7 +26,7 @@ down:
 	@cd $(DOCKER_COMPOSE_DIR) && docker compose down
 
 # 构建 Go 服务
-build: build-gateway build-user build-video
+build: build-gateway build-user build-video build-like build-comment
 
 build-gateway:
 	$(GO) build -o $(GATEWAY_DIR) ./cmd/gateway
@@ -34,6 +36,12 @@ build-user:
 
 build-video:
 	$(GO) build -o $(VIDEO_DIR) ./cmd/video
+
+build-like:
+	$(GO) build -o $(LIKE_DIR) ./cmd/like
+
+build-comment:
+	$(GO) build -o $(COMMENT_DIR) ./cmd/comment
 
 run:
 	@echo "🔧 Building Go services..."
