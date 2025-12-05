@@ -572,8 +572,7 @@ func (x *SearchResponse) GetData() *VideoList {
 
 type VideoLikeActionRequest struct {
 	VideoId    int64 `protobuf:"varint,1,opt,name=videoId" json:"videoId,omitempty"`
-	UserId     int64 `protobuf:"varint,2,opt,name=userId" json:"userId,omitempty"`
-	ActionType int64 `protobuf:"varint,3,opt,name=actionType" json:"actionType,omitempty"`
+	ActionType int64 `protobuf:"varint,2,opt,name=actionType" json:"actionType,omitempty"`
 }
 
 func (x *VideoLikeActionRequest) Reset() { *x = VideoLikeActionRequest{} }
@@ -587,13 +586,6 @@ func (x *VideoLikeActionRequest) Unmarshal(in []byte) error { return prutal.Unma
 func (x *VideoLikeActionRequest) GetVideoId() int64 {
 	if x != nil {
 		return x.VideoId
-	}
-	return 0
-}
-
-func (x *VideoLikeActionRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }

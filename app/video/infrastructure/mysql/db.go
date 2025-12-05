@@ -186,25 +186,25 @@ func (db *videoDB) GetVideoById(ctx context.Context, id int64) (*model.Video, er
 	return &video, nil
 }
 
-// func (db *videoDB) AddLikeCount(ctx context.Context, id string) error {
-// 	if err := db.client.WithContext(ctx).
-// 		Model(&Video{}).
-// 		Where("id = ?", id).
-// 		Update("like_count", gorm.Expr("like_count + ?", 1)).Error; err != nil {
-// 		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to add like_count: %v", err)
-// 	}
-// 	return nil
-// }
+func (db *videoDB) AddLikeCount(ctx context.Context, id int64) error {
+	if err := db.client.WithContext(ctx).
+		Model(&Video{}).
+		Where("id = ?", id).
+		Update("like_count", gorm.Expr("like_count + ?", 1)).Error; err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to add like_count: %v", err)
+	}
+	return nil
+}
 
-// func (db *videoDB) SubtractLikeCount(ctx context.Context, id string) error {
-// 	if err := db.client.WithContext(ctx).
-// 		Model(&Video{}).
-// 		Where("id = ?", id).
-// 		Update("like_count", gorm.Expr("like_count - ?", 1)).Error; err != nil {
-// 		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to add like_count: %v", err)
-// 	}
-// 	return nil
-// }
+func (db *videoDB) SubtractLikeCount(ctx context.Context, id int64) error {
+	if err := db.client.WithContext(ctx).
+		Model(&Video{}).
+		Where("id = ?", id).
+		Update("like_count", gorm.Expr("like_count - ?", 1)).Error; err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to add like_count: %v", err)
+	}
+	return nil
+}
 
 // func (db *videoDB) GetVideosByIds(ids []*string) ([]*Video, error) {
 // 	var videos []*Video

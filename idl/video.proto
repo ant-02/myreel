@@ -109,8 +109,7 @@ message SearchResponse {
 
 message VideoLikeActionRequest {
     int64 videoId = 1;
-    int64 userId = 2;
-    int64 actionType = 3;
+    int64 actionType = 2;
 }
 
 message VideoLikeActionResponse {

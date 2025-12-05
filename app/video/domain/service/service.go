@@ -149,7 +149,7 @@ func (vs *videoService) GetVideosByKeywords(ctx context.Context, keywords string
 	return videos, pagination, nil
 }
 
-func (vs *videoService) CalculateHotScore(video *model.Video) int64 {	
+func (vs *videoService) CalculateHotScore(video *model.Video) int64 {
 	if video == nil {
 		return 0
 	}
@@ -171,4 +171,56 @@ func (vs *videoService) CalculateHotScore(video *model.Video) int64 {
 	floatScore := float64(baseScore) / denominator
 	scaled := floatScore * 1000.0
 	return int64(math.Round(scaled))
+}
+
+func (vs *videoService) DecrVideoLike(ctx context.Context, videoId int64) error {
+	key := fmt.Sprintf("%s%d", constants.RedisVideoLikeKey, videoId)
+	if exist := vs.cache.IsExist(ctx, key); !exist {
+		video, err := vs.db.GetVideoById(ctx, videoId)
+		if err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video by id").WithError(err)
+		}
+		err = vs.cache.AddVideoLike(ctx, key, video.LikeCount-1, constants.NeverExpire)
+		if err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add video like to redis").WithError(err)
+		}
+		err = vs.cache.AddVideoWithTLL(ctx, fmt.Sprintf("%s%d", constants.RedisVideoKey, videoId), video, constants.RedisVideoExpireTime)
+		if err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add video to redis").WithError(err)
+		}
+	} else {
+		if err := vs.cache.VideoLikeDecr(ctx, key); err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to decr video like").WithError(err)
+		}
+	}
+	if err := vs.db.SubtractLikeCount(ctx, videoId); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to decr video like").WithError(err)
+	}
+	return nil
+}
+
+func (vs *videoService) IncrVideoLike(ctx context.Context, videoId int64) error {
+	key := fmt.Sprintf("%s%d", constants.RedisVideoLikeKey, videoId)
+	if exist := vs.cache.IsExist(ctx, key); !exist {
+		video, err := vs.db.GetVideoById(ctx, videoId)
+		if err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video by id").WithError(err)
+		}
+		err = vs.cache.AddVideoLike(ctx, key, video.LikeCount+1, constants.NeverExpire)
+		if err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add video like to redis").WithError(err)
+		}
+		err = vs.cache.AddVideoWithTLL(ctx, fmt.Sprintf("%s%d", constants.RedisVideoKey, videoId), video, constants.RedisVideoExpireTime)
+		if err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add video to redis").WithError(err)
+		}
+	} else {
+		if err := vs.cache.VideoLikeIncr(ctx, key); err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to incr video like").WithError(err)
+		}
+	}
+	if err := vs.db.AddLikeCount(ctx, videoId); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to incr video like").WithError(err)
+	}
+	return nil
 }

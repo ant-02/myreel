@@ -1,8 +1,11 @@
 package rpc
 
 import (
+	"context"
 	"myreel/app/like/domain/repository"
+	"myreel/kitex_gen/video"
 	"myreel/kitex_gen/video/videoservice"
+	"myreel/pkg/errno"
 )
 
 type likeRpcImpl struct {
@@ -15,17 +18,18 @@ func NewVideoRpcImpl(v videoservice.Client) repository.RpcPort {
 	}
 }
 
-// func (rpc *likeRpcImpl) GetUserIdByUsername(ctx context.Context, username string) (int64, error) {
-// 	resp, err := rpc.video.GetUseridByUsername(ctx, &user.GetUserIdByUsernameRequest{
-// 		Username: username,
-// 	})
-// 	if err != nil {
-// 		return 0, errno.Errorf(errno.InternalRPCErrorCode, "rpc: failed to get user id by username: %v", err)
-// 	}
+func (rpc *likeRpcImpl) VideoLikeAction(ctx context.Context, videoId, actionType int64) error {
+	resp, err := rpc.video.VideoLikeAction(ctx, &video.VideoLikeActionRequest{
+		VideoId: videoId,
+		ActionType: actionType,
+	})
+	if err != nil {
+		return errno.Errorf(errno.InternalRPCErrorCode, "rpc: failed to action video likes: %v", err)
+	}
 
-// 	if resp.Base.Code != errno.SuccessCode {
-// 		return 0, errno.NewErrNo(errno.InternalRPCErrorCode, "rpc: failed to get user id by username")
-// 	}
+	if resp.Base.Code != errno.SuccessCode {
+		return errno.NewErrNo(errno.InternalRPCErrorCode, "rpc: ffailed to action video likes")
+	}
 
-// 	return resp.UserId, nil
-// }
+	return nil
+}

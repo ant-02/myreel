@@ -93,3 +93,24 @@ func (vs *videoCache) GetVideo(ctx context.Context, key string) (*model.Video, e
 	}
 	return video, nil
 }
+
+func (vs *videoCache) AddVideoLike(ctx context.Context, key string, val interface{}, ttl time.Duration) error {
+	if err := vs.client.Set(ctx, key, val, ttl).Err(); err != nil {
+		return errno.Errorf(errno.InternalRedisErrorCode, "redis: failed to add video like: %v", err)
+	}
+	return nil
+}
+
+func (vs *videoCache) VideoLikeDecr(ctx context.Context, key string) error {
+	if err := vs.client.Decr(ctx, key).Err(); err != nil {
+		return errno.Errorf(errno.InternalRedisErrorCode, "redis: failed to decr video likes: %v", err)
+	}
+	return nil
+}
+
+func (vs *videoCache) VideoLikeIncr(ctx context.Context, key string) error {
+	if err := vs.client.Incr(ctx, key).Err(); err != nil {
+		return errno.Errorf(errno.InternalRedisErrorCode, "redis: failed to incr video likes: %v", err)
+	}
+	return nil
+}

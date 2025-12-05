@@ -25,6 +25,8 @@ type VideoService interface {
 	GetVideosByKeywords(ctx context.Context, keywords string, fromDate, toDate, cursor, uid, limit int64) ([]*model.Video, *model.Pagination, error)
 	GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Video, error)
 	CalculateHotScore(video *model.Video) int64
+	DecrVideoLike(ctx context.Context, videoId int64) error
+	IncrVideoLike(ctx context.Context, videoId int64) error
 }
 
 func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository.VideoCache, vRpc repository.RpcPort) VideoService {

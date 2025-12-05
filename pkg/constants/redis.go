@@ -32,11 +32,13 @@ const (
 
 // Redis Keys
 const (
-	RedisUserLoginKey = "login:user:"
-	RedisUserBanedKey = "ban:user:"
+	RedisUserLoginKey = "user:login:"
+	RedisUserBanedKey = "user:ban:"
+	RedisUserLikeKey  = "user:liked"
 
-	RedisVideoPopularKey = "pop:video"
+	RedisVideoPopularKey = "video:pop"
 	RedisVideoKey        = "video:"
+	RedisVideoLikeKey    = "video:likes:"
 )
 
 // Redis DB Name

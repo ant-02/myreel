@@ -80,3 +80,11 @@ func (us *useCase) GetVideosByKeywords(ctx context.Context, keywords, username s
 	}
 	return us.svc.GetVideosByKeywords(ctx, keywords, fromDate, toDate, cursor, id, limit)
 }
+
+func (us *useCase) VideoLikeAction(ctx context.Context, videoId, actionType int64) error {
+	if actionType == 0 {
+		return us.svc.DecrVideoLike(ctx, videoId)
+	} else {
+		return us.svc.IncrVideoLike(ctx, videoId)
+	}
+}

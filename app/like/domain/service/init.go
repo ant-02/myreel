@@ -8,8 +8,9 @@ import (
 )
 
 type likeService struct {
-	db repository.LikeDB
-	sf *util.Snowflake
+	db   repository.LikeDB
+	sf   *util.Snowflake
+	lRpc repository.RpcPort
 }
 
 type LikeService interface {
@@ -17,14 +18,15 @@ type LikeService interface {
 	CreateLike(ctx context.Context, l *model.Like) error
 }
 
-func NewLikeService(db repository.LikeDB, sf *util.Snowflake) LikeService {
+func NewLikeService(db repository.LikeDB, sf *util.Snowflake, lRpc repository.RpcPort) LikeService {
 	if db == nil {
 		panic("LikeService`s db should not be nil")
 	}
 
 	svc := &likeService{
-		db: db,
-		sf: sf,
+		db:   db,
+		sf:   sf,
+		lRpc: lRpc,
 	}
 	return svc
 }

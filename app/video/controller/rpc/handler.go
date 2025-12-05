@@ -130,6 +130,14 @@ func (s *VideoServiceImpl) Search(ctx context.Context, req *video.SearchRequest)
 
 // VideoLikeAction implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) VideoLikeAction(ctx context.Context, req *video.VideoLikeActionRequest) (resp *video.VideoLikeActionResponse, err error) {
-	// TODO: Your code here...
+	resp = new(video.VideoLikeActionResponse)
+
+	err = s.useCase.VideoLikeAction(ctx, req.VideoId, req.ActionType)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
 	return
 }
