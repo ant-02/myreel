@@ -17,7 +17,7 @@ type Video struct {
 	CommentCount int64     `gorm:"type:int;default:0"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 	UpdatedAt    time.Time `gorm:"autoUpdateTime"`
-	DeletedAt    time.Time `gorm:"type:datetime;default:null"`
+	DeletedAt    time.Time `gorm:"index"`
 }
 
 func (Video) TableName() string {

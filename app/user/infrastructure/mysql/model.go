@@ -12,7 +12,7 @@ type User struct {
 	AvatarUrl string    `gorm:"type:varchar(256)"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
-	DeletedAt time.Time `gorm:"default:null"`
+	DeletedAt time.Time `gorm:"index"`
 }
 
 func (User) TableName() string {

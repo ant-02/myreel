@@ -15,7 +15,7 @@ type Comment struct {
 	Content    string    `gorm:"type:varchar(1000);null not"`
 	CreatedAt  time.Time `gorm:"autoCreateTime"`
 	UpdatedAt  time.Time `gorm:"autoUpdateTime"`
-	DeletedAt  time.Time `gorm:"type:datetime;default:null"`
+	DeletedAt  time.Time `gorm:"index"`
 }
 
 func (Comment) TableName() string {

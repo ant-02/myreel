@@ -146,11 +146,3 @@ func (db *commentDB) GetCommentListByCommentId(ctx context.Context, commentId, c
 	return result, total, nil
 }
 
-// func (cr *commentRepository) DeleteCommentsByVideoId(videoId string) error {
-// 	return cr.db.Where("video_id = ?", videoId).
-// 		Delete(&model.Comment{}).Error
-// }
-
-// func (cr *commentRepository) DeleteCommentById(id string) error {
-// 	return cr.db.Delete(&model.Comment{}, id).Error
-// }
