@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math"
 	"myreel/app/video/domain/model"
@@ -229,5 +230,21 @@ func (vs *videoService) AddCommentCount(ctx context.Context, id int64) error {
 	if err := vs.db.AddCommentCount(ctx, id); err != nil {
 		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add comment count").WithError(err)
 	}
+	return nil
+}
+
+func (vs *videoService) CheckVideoUser(ctx context.Context, id, uid int64) error {
+	userId, err := vs.db.GetUserIdById(ctx, id)
+	if err != nil {
+		if errors.Is(err, errno.VideoNotFound) {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "video not found by id")
+		}
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get user id by id").WithError(err)
+	}
+
+	if userId != uid {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "this video is not belong this user")
+	}
+
 	return nil
 }

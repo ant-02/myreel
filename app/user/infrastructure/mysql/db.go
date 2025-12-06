@@ -41,7 +41,6 @@ func (db *userDB) CreateUser(ctx context.Context, user *model.User) error {
 func (db *userDB) GetUserByUsername(ctx context.Context, username string) (*model.User, error) {
 	var user User
 	err := db.client.WithContext(ctx).Where("username = ?", username).
-		Where("deleted_at IS NULL").
 		First(&user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

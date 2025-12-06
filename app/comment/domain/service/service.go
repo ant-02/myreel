@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"myreel/app/comment/domain/model"
 	"myreel/pkg/errno"
 )
@@ -64,4 +65,41 @@ func (cs *commentService) GetCommentListByCommentId(ctx context.Context, comment
 		PrevCursor: cursor,
 		Total:      total,
 	}, nil
+}
+
+func (cs *commentService) DeleteCommentById(ctx context.Context, id, uid int64) error {
+	comment, err := cs.db.GetCommentById(ctx, id)
+	if err != nil {
+		if errors.Is(err, errno.CommentNotFound) {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "comment not found")
+		}
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get comment parent id by id").WithError(err)
+	}
+
+	if comment.Uid != uid {
+		return errno.NewErrNo(errno.AuthInvalidCode, "you can't delete other's comment")
+	}
+
+	err = cs.db.DeleteCommentById(ctx, id)
+	if err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to delete comment by id").WithError(err)
+	}
+
+	err = cs.db.SubtractChildCount(ctx, comment.ParentId)
+	if err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to subtract parent comment's child count").WithError(err)
+	}
+
+	return nil
+}
+
+func (cs *commentService) DeleteCommentsByVideoId(ctx context.Context, videoId, uid int64) error {
+	if err := cs.vRpc.CheckVideoUser(ctx, videoId, uid); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "can not verify video's user").WithError(err)
+	}
+	
+	if err := cs.db.DeleteCommentsByVideoId(ctx, videoId); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to delete comments by video id").WithError(err)
+	}
+	return nil
 }

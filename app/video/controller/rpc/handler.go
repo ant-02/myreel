@@ -169,3 +169,16 @@ func (s *VideoServiceImpl) AddCommentCount(ctx context.Context, req *video.AddCo
 	resp.Base = base.BuildSuccessResp()
 	return
 }
+
+// CheckVideoUser implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) CheckVideoUser(ctx context.Context, req *video.CheckVideoUserRequest) (resp *video.CheckVideoUserResponse, err error) {
+	resp = new(video.CheckVideoUserResponse)
+	err = s.useCase.CheckVideoUser(ctx, req.VideoId, req.Uid)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	return
+}

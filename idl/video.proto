@@ -133,6 +133,15 @@ message AddCommentCountResponse {
     model.BaseResp base = 1;
 }
 
+message CheckVideoUserRequest {
+    int64 uid = 1;
+    int64 videoId = 2;
+}
+
+message CheckVideoUserResponse {
+    model.BaseResp base = 1;
+}
+
 service VideoService {
     rpc VideoStream(VideoStreamRequest) returns (VideoStreamResponse);
     rpc GetVideoUploadToken(GetVideoUploadTokenRequest) returns (GetVideoUploadTokenResponse);
@@ -144,4 +153,5 @@ service VideoService {
     rpc VideoLikeAction(VideoLikeActionRequest) returns (VideoLikeActionResponse);
     rpc GetVideosByIds(GetVideosByIdsRequest) returns (GetVideosByIdsResponse);
     rpc AddCommentCount(AddCommentCountRequest) returns (AddCommentCountResponse);
+    rpc CheckVideoUser(CheckVideoUserRequest) returns (CheckVideoUserResponse);
 }

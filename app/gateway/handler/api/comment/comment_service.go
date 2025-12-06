@@ -12,7 +12,6 @@ import (
 	"myreel/pkg/errno"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // CommentPublish .
@@ -80,14 +79,33 @@ func CommentList(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/comment/delete [DELETE]
 func Delete(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req comment.DeleteRequest
+	var req api.DeleteRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(comment.DeleteResponse)
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	err = rpc.DeleteCommentRPC(ctx, &comment.DeleteRequest{
+		VideoId:   req.VideoId,
+		CommentId: req.CommentId,
+		UserId:    uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespSuccess(c)
 }

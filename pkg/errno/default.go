@@ -3,10 +3,11 @@ package errno
 var (
 	Success = NewErrNo(SuccessCode, "ok")
 
-	UserNotFound = NewErrNo(ErrRecordNotFound, "user not found")
-	UserIsBaned  = NewErrNo(UserBaned, "user is baned")
-
-	LikeNotFound = NewErrNo(ErrRecordNotFound, "like not found")
+	UserNotFound    = NewErrNo(ErrRecordNotFound, "user not found")
+	UserIsBaned     = NewErrNo(UserBaned, "user is baned")
+	LikeNotFound    = NewErrNo(ErrRecordNotFound, "like not found")
+	CommentNotFound = NewErrNo(ErrRecordNotFound, "comment not found")
+	VideoNotFound   = NewErrNo(ErrRecordNotFound, "video not found")
 
 	ParamVerifyError  = NewErrNo(ParamVerifyErrorCode, "parameter validation failed")
 	ParamMissingError = NewErrNo(ParamMissingErrorCode, "missing parameter")

@@ -19,6 +19,8 @@ type CommentService interface {
 	AddChildCount(ctx context.Context, commentId int64) error
 	GetCommentListByVideoId(ctx context.Context, videoId, cursor, limit int64) ([]*model.Comment, *model.Pagination, error)
 	GetCommentListByCommentId(ctx context.Context, commentId, cursor, limit int64) ([]*model.Comment, *model.Pagination, error)
+	DeleteCommentById(ctx context.Context, id, uid int64) error
+	DeleteCommentsByVideoId(ctx context.Context, videoId, uid int64) error
 }
 
 func NewCommentService(db repository.CommentDB, sf *util.Snowflake, vRpc repository.RpcPort) CommentService {

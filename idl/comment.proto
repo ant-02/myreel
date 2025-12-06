@@ -55,6 +55,7 @@ message CommentListResponse {
 message DeleteRequest {
     int64 videoId = 1;
     int64 commentId = 2;
+    int64 userId = 3;
 }
 
 message DeleteResponse {

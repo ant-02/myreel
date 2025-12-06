@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"errors"
 	"myreel/app/video/domain/model"
 	"myreel/app/video/domain/repository"
 	"myreel/pkg/errno"
@@ -30,7 +31,6 @@ func (db *videoDB) GetVideosByLatestTime(ctx context.Context, latestTime time.Ti
 
 	err := db.client.WithContext(ctx).
 		Where("created_at > ?").
-		Where("deleted_at IS NULL").
 		Find(&videos).Error
 	if err != nil {
 		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get videos by latest time: %v", err)
@@ -83,8 +83,7 @@ func (db *videoDB) GetVideosByUid(ctx context.Context, uid, cursor, limit int64)
 	var err error
 
 	tx := db.client.WithContext(ctx).Model(&Video{}).
-		Where("uid = ?", uid).
-		Where("deleted_at IS NULL")
+		Where("uid = ?", uid)
 
 	err = tx.Count(&total).Error
 	if err != nil {
@@ -132,7 +131,6 @@ func (db *videoDB) GetVideosByKeywords(ctx context.Context, keywords string, fro
 
 	tx := db.client.WithContext(ctx).
 		Model(&Video{}).
-		Where("deleted_at IS NULL").
 		Where("title LIKE ? or description LIKE ?", "%"+keywords+"%", "%"+keywords+"%").
 		Where("created_at between ? and ?", fromDate, toDate)
 
@@ -180,7 +178,6 @@ func (db *videoDB) GetVideosByKeywords(ctx context.Context, keywords string, fro
 func (db *videoDB) GetVideoById(ctx context.Context, id int64) (*model.Video, error) {
 	var video model.Video
 	if err := db.client.WithContext(ctx).
-		Where("deleted_at IS NULL").
 		First(&video, id).Error; err != nil {
 		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video by id: %v", err)
 	}
@@ -217,12 +214,17 @@ func (db *videoDB) AddCommentCount(ctx context.Context, id int64) error {
 	return nil
 }
 
-// func (db *videoDB) GetVideosByIds(ids []*string) ([]*Video, error) {
-// 	var videos []*Video
-// 	err := db.client.Where("id IN ?", ids).Find(&videos).Error
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return videos, nil
-// }
+func (db *videoDB) GetUserIdById(ctx context.Context, id int64) (int64, error) {
+	var uid int64
+	if err := db.client.WithContext(ctx).
+		Model(&Video{}).
+		Select("uid").
+		First(&uid, id).
+		Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return 0, errno.CommentNotFound
+		}
+		return 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video's uid by id: %v", err)
+	}
+	return uid, nil
+}

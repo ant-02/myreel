@@ -66,3 +66,16 @@ func GetCommentList(ctx context.Context, req *comment.CommentListRequest) (*api.
 		},
 	}, nil
 }
+
+func DeleteCommentRPC(ctx context.Context, req *comment.DeleteRequest) error {
+	resp, err := commentClient.Delete(ctx, req)
+	if err != nil {
+		logger.Errorf("DeleteCommentRPC: RPC called failed: %v", err.Error())
+		return  errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return nil
+}

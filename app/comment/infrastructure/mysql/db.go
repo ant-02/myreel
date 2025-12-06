@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"errors"
 	"myreel/app/comment/domain/model"
 	"myreel/app/comment/domain/repository"
 	"myreel/pkg/errno"
@@ -146,3 +147,44 @@ func (db *commentDB) GetCommentListByCommentId(ctx context.Context, commentId, c
 	return result, total, nil
 }
 
+func (db *commentDB) DeleteCommentById(ctx context.Context, id int64) error {
+	if err := db.client.WithContext(ctx).
+		Delete(&Comment{}, id).
+		Error; err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to delete comment by id: %v", err)
+	}
+	return nil
+}
+
+func (db *commentDB) DeleteCommentsByVideoId(ctx context.Context, id int64) error {
+	if err := db.client.WithContext(ctx).
+		Where("video_id = ?", id).
+		Delete(&Comment{}).
+		Error; err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to delete comments by video id: %v", err)
+	}
+	return nil
+}
+
+func (db *commentDB) GetCommentById(ctx context.Context, id int64) (*model.Comment, error) {
+	var c Comment
+	if err := db.client.WithContext(ctx).
+		First(&c, id).
+		Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errno.CommentNotFound
+		}
+		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "failed to get comment by id: %v", err)
+	}
+	return &model.Comment{
+		Id:         c.Id,
+		VideoId:    c.VideoId,
+		Uid:        c.Uid,
+		ParentId:   c.ParentId,
+		LikeCount:  c.LikeCount,
+		ChildCount: c.ChildCount,
+		Content:    c.Content,
+		CreatedAt:  c.CreatedAt.Unix(),
+		UpdatedAt:  c.UpdatedAt.Unix(),
+	}, nil
+}

@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"myreel/app/comment/domain/model"
+	"myreel/pkg/errno"
 )
 
 func (uc *useCase) CommentPublish(ctx context.Context, videoId, commentId, userId int64, content string) error {
@@ -37,4 +38,15 @@ func (uc *useCase) GetCommentList(ctx context.Context, videoId, commentId, curso
 		return uc.svc.GetCommentListByVideoId(ctx, videoId, cursor, limit)
 	}
 	return uc.svc.GetCommentListByCommentId(ctx, commentId, cursor, limit)
+}
+
+func (uc *useCase) DeleteComment(ctx context.Context, videoId, commentId, uid int64) error {
+	if commentId == 0 && videoId == 0 {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "video id and comment id all empty")
+	}
+	if commentId == 0 {
+		return uc.svc.DeleteCommentsByVideoId(ctx, videoId, uid)
+	} else {
+		return uc.svc.DeleteCommentById(ctx, commentId, uid)
+	}
 }

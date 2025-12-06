@@ -16,6 +16,7 @@ type useCase struct {
 type CommentUseCase interface {
 	CommentPublish(ctx context.Context, videoId, commentId, userId int64, content string) error
 	GetCommentList(ctx context.Context, videoId, commentId, cursor, limit int64) ([]*model.Comment, *model.Pagination, error)
+	DeleteComment(ctx context.Context, videoId, commentId, uid int64) error
 }
 
 func NewCommentUseCase(db repository.CommentDB, svc service.CommentService, vRpc repository.RpcPort) CommentUseCase {

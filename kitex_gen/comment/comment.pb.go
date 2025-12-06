@@ -279,6 +279,7 @@ func (x *CommentListResponse) GetData() *CommentList {
 type DeleteRequest struct {
 	VideoId   int64 `protobuf:"varint,1,opt,name=videoId" json:"videoId,omitempty"`
 	CommentId int64 `protobuf:"varint,2,opt,name=commentId" json:"commentId,omitempty"`
+	UserId    int64 `protobuf:"varint,3,opt,name=userId" json:"userId,omitempty"`
 }
 
 func (x *DeleteRequest) Reset() { *x = DeleteRequest{} }
@@ -297,6 +298,13 @@ func (x *DeleteRequest) GetVideoId() int64 {
 func (x *DeleteRequest) GetCommentId() int64 {
 	if x != nil {
 		return x.CommentId
+	}
+	return 0
+}
+
+func (x *DeleteRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }

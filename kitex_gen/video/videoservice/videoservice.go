@@ -85,6 +85,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"CheckVideoUser": kitex.NewMethodInfo(
+		checkVideoUserHandler,
+		newCheckVideoUserArgs,
+		newCheckVideoUserResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -1261,6 +1268,117 @@ func (p *AddCommentCountResult) GetResult() interface{} {
 	return p.Success
 }
 
+func checkVideoUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(video.CheckVideoUserRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(video.VideoService).CheckVideoUser(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CheckVideoUserArgs:
+		success, err := handler.(video.VideoService).CheckVideoUser(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CheckVideoUserResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newCheckVideoUserArgs() interface{} {
+	return &CheckVideoUserArgs{}
+}
+
+func newCheckVideoUserResult() interface{} {
+	return &CheckVideoUserResult{}
+}
+
+type CheckVideoUserArgs struct {
+	Req *video.CheckVideoUserRequest
+}
+
+func (p *CheckVideoUserArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CheckVideoUserArgs) Unmarshal(in []byte) error {
+	msg := new(video.CheckVideoUserRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckVideoUserArgs_Req_DEFAULT *video.CheckVideoUserRequest
+
+func (p *CheckVideoUserArgs) GetReq() *video.CheckVideoUserRequest {
+	if !p.IsSetReq() {
+		return CheckVideoUserArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckVideoUserArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CheckVideoUserArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CheckVideoUserResult struct {
+	Success *video.CheckVideoUserResponse
+}
+
+var CheckVideoUserResult_Success_DEFAULT *video.CheckVideoUserResponse
+
+func (p *CheckVideoUserResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CheckVideoUserResult) Unmarshal(in []byte) error {
+	msg := new(video.CheckVideoUserResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckVideoUserResult) GetSuccess() *video.CheckVideoUserResponse {
+	if !p.IsSetSuccess() {
+		return CheckVideoUserResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckVideoUserResult) SetSuccess(x interface{}) {
+	p.Success = x.(*video.CheckVideoUserResponse)
+}
+
+func (p *CheckVideoUserResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckVideoUserResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -1366,6 +1484,16 @@ func (p *kClient) AddCommentCount(ctx context.Context, Req *video.AddCommentCoun
 	_args.Req = Req
 	var _result AddCommentCountResult
 	if err = p.c.Call(ctx, "AddCommentCount", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CheckVideoUser(ctx context.Context, Req *video.CheckVideoUserRequest) (r *video.CheckVideoUserResponse, err error) {
+	var _args CheckVideoUserArgs
+	_args.Req = Req
+	var _result CheckVideoUserResult
+	if err = p.c.Call(ctx, "CheckVideoUser", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

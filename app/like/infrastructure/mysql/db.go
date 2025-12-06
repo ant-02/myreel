@@ -29,7 +29,6 @@ func (db *likeDB) GetVideoLike(ctx context.Context, videoId, uid int64) (*model.
 	var like model.Like
 	err := db.client.WithContext(ctx).
 		Where("uid = ? and video_id = ?", uid, videoId).
-		Where("deleted_at IS NULL").
 		First(&like).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -44,7 +43,6 @@ func (db *likeDB) GetCommentLike(ctx context.Context, commentId, uid int64) (*mo
 	var like model.Like
 	err := db.client.WithContext(ctx).
 		Where("uid = ? and comment_id = ?", uid, commentId).
-		Where("deleted_at IS NULL").
 		First(&like).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -59,7 +57,6 @@ func (db *likeDB) SetLikeStatus(ctx context.Context, id int64, status int64) err
 	err := db.client.WithContext(ctx).
 		Model(&Like{}).
 		Where("id = ?", id).
-		Where("deleted_at IS NULL").
 		Update("status", status).Error
 	if err != nil {
 		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to set like status: %v", err)

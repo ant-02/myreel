@@ -96,3 +96,7 @@ func (us *useCase) GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Vi
 func (us *useCase) AddCommentCount(ctx context.Context, id int64) error {
 	return us.svc.AddCommentCount(ctx, id)
 }
+
+func (us *useCase) CheckVideoUser(ctx context.Context, id, uid int64) error {
+	return us.svc.CheckVideoUser(ctx, id, uid)
+}

@@ -30,7 +30,9 @@ func _commentMw() []app.HandlerFunc {
 
 func _deleteMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }
 
 func _commentlistMw() []app.HandlerFunc {

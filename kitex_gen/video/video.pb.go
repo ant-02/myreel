@@ -700,6 +700,52 @@ func (x *AddCommentCountResponse) GetBase() *model.BaseResp {
 	return nil
 }
 
+type CheckVideoUserRequest struct {
+	Uid     int64 `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
+	VideoId int64 `protobuf:"varint,2,opt,name=videoId" json:"videoId,omitempty"`
+}
+
+func (x *CheckVideoUserRequest) Reset() { *x = CheckVideoUserRequest{} }
+
+func (x *CheckVideoUserRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *CheckVideoUserRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *CheckVideoUserRequest) GetUid() int64 {
+	if x != nil {
+		return x.Uid
+	}
+	return 0
+}
+
+func (x *CheckVideoUserRequest) GetVideoId() int64 {
+	if x != nil {
+		return x.VideoId
+	}
+	return 0
+}
+
+type CheckVideoUserResponse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+}
+
+func (x *CheckVideoUserResponse) Reset() { *x = CheckVideoUserResponse{} }
+
+func (x *CheckVideoUserResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *CheckVideoUserResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *CheckVideoUserResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
 type VideoService interface {
 	VideoStream(ctx context.Context, req *VideoStreamRequest) (res *VideoStreamResponse, err error)
 	GetVideoUploadToken(ctx context.Context, req *GetVideoUploadTokenRequest) (res *GetVideoUploadTokenResponse, err error)
@@ -711,4 +757,5 @@ type VideoService interface {
 	VideoLikeAction(ctx context.Context, req *VideoLikeActionRequest) (res *VideoLikeActionResponse, err error)
 	GetVideosByIds(ctx context.Context, req *GetVideosByIdsRequest) (res *GetVideosByIdsResponse, err error)
 	AddCommentCount(ctx context.Context, req *AddCommentCountRequest) (res *AddCommentCountResponse, err error)
+	CheckVideoUser(ctx context.Context, req *CheckVideoUserRequest) (res *CheckVideoUserResponse, err error)
 }

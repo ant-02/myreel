@@ -26,6 +26,7 @@ type VideoUseCase interface {
 	VideoLikeAction(ctx context.Context, videoId, actionType int64) error
 	GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Video, error)
 	AddCommentCount(ctx context.Context, id int64) error
+	CheckVideoUser(ctx context.Context, id, uid int64) error
 }
 
 func NewVideoUseCase(db repository.VideoDB, svc service.VideoService, cache repository.VideoCache, vRpc repository.RpcPort) VideoUseCase {
