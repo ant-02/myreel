@@ -36,5 +36,5 @@ func (uc *useCase) GetCommentList(ctx context.Context, videoId, commentId, curso
 	if commentId == 0 {
 		return uc.svc.GetCommentListByVideoId(ctx, videoId, cursor, limit)
 	}
-	return uc.svc.GetCommentListByVideoId(ctx, commentId, cursor, limit)
+	return uc.svc.GetCommentListByCommentId(ctx, commentId, cursor, limit)
 }
