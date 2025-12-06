@@ -3,6 +3,8 @@
 package comment
 
 import (
+	"myreel/app/gateway/mv"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -33,10 +35,14 @@ func _deleteMw() []app.HandlerFunc {
 
 func _commentlistMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }
 
 func _commentpublishMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }

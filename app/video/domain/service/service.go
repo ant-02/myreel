@@ -224,3 +224,10 @@ func (vs *videoService) IncrVideoLike(ctx context.Context, videoId int64) error 
 	}
 	return nil
 }
+
+func (vs *videoService) AddCommentCount(ctx context.Context, id int64) error {
+	if err := vs.db.AddCommentCount(ctx, id); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add comment count").WithError(err)
+	}
+	return nil
+}

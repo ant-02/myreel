@@ -10,4 +10,10 @@ type CommentDB interface {
 	CreateComment(ctx context.Context, comment *model.Comment) error
 	AddChildCount(ctx context.Context, commentId int64) error
 	SubtractChildCount(ctx context.Context, commentId int64) error
+	GetCommentListByVideoId(ctx context.Context, videoId, limit, cursor int64) ([]*model.Comment, int64, error)
+	GetCommentListByCommentId(ctx context.Context, commentId, limit, cursor int64) ([]*model.Comment, int64, error)
+}
+
+type RpcPort interface {
+	AddCommentCount(ctx context.Context, id int64) error
 }

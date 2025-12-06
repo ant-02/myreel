@@ -12,7 +12,12 @@ func (uc *useCase) CommentPublish(ctx context.Context, videoId, commentId, userI
 	}
 
 	if commentId != 0 {
-		err = uc.svc.AddChildCount(ctx, commentId); 
+		err = uc.svc.AddChildCount(ctx, commentId)
+		if err != nil {
+			return err
+		}
+	} else {
+		err = uc.vRpc.AddCommentCount(ctx, videoId)
 		if err != nil {
 			return err
 		}
@@ -25,4 +30,11 @@ func (uc *useCase) CommentPublish(ctx context.Context, videoId, commentId, userI
 		ParentId: commentId,
 		Content:  content,
 	})
+}
+
+func (uc *useCase) GetCommentList(ctx context.Context, videoId, commentId, cursor, limit int64) ([]*model.Comment, *model.Pagination, error) {
+	if commentId == 0 {
+		return uc.svc.GetCommentListByVideoId(ctx, videoId, cursor, limit)
+	}
+	return uc.svc.GetCommentListByVideoId(ctx, commentId, cursor, limit)
 }

@@ -78,6 +78,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"AddCommentCount": kitex.NewMethodInfo(
+		addCommentCountHandler,
+		newAddCommentCountArgs,
+		newAddCommentCountResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -1143,6 +1150,117 @@ func (p *GetVideosByIdsResult) GetResult() interface{} {
 	return p.Success
 }
 
+func addCommentCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(video.AddCommentCountRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(video.VideoService).AddCommentCount(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *AddCommentCountArgs:
+		success, err := handler.(video.VideoService).AddCommentCount(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*AddCommentCountResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newAddCommentCountArgs() interface{} {
+	return &AddCommentCountArgs{}
+}
+
+func newAddCommentCountResult() interface{} {
+	return &AddCommentCountResult{}
+}
+
+type AddCommentCountArgs struct {
+	Req *video.AddCommentCountRequest
+}
+
+func (p *AddCommentCountArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *AddCommentCountArgs) Unmarshal(in []byte) error {
+	msg := new(video.AddCommentCountRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AddCommentCountArgs_Req_DEFAULT *video.AddCommentCountRequest
+
+func (p *AddCommentCountArgs) GetReq() *video.AddCommentCountRequest {
+	if !p.IsSetReq() {
+		return AddCommentCountArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AddCommentCountArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *AddCommentCountArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type AddCommentCountResult struct {
+	Success *video.AddCommentCountResponse
+}
+
+var AddCommentCountResult_Success_DEFAULT *video.AddCommentCountResponse
+
+func (p *AddCommentCountResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *AddCommentCountResult) Unmarshal(in []byte) error {
+	msg := new(video.AddCommentCountResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AddCommentCountResult) GetSuccess() *video.AddCommentCountResponse {
+	if !p.IsSetSuccess() {
+		return AddCommentCountResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AddCommentCountResult) SetSuccess(x interface{}) {
+	p.Success = x.(*video.AddCommentCountResponse)
+}
+
+func (p *AddCommentCountResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AddCommentCountResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -1238,6 +1356,16 @@ func (p *kClient) GetVideosByIds(ctx context.Context, Req *video.GetVideosByIdsR
 	_args.Req = Req
 	var _result GetVideosByIdsResult
 	if err = p.c.Call(ctx, "GetVideosByIds", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) AddCommentCount(ctx context.Context, Req *video.AddCommentCountRequest) (r *video.AddCommentCountResponse, err error) {
+	var _args AddCommentCountArgs
+	_args.Req = Req
+	var _result AddCommentCountResult
+	if err = p.c.Call(ctx, "AddCommentCount", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

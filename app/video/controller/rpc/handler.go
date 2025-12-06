@@ -156,3 +156,16 @@ func (s *VideoServiceImpl) GetVideosByIds(ctx context.Context, req *video.GetVid
 	resp.Items = build.BuildVideos(videos)
 	return
 }
+
+// AddCommentCount implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) AddCommentCount(ctx context.Context, req *video.AddCommentCountRequest) (resp *video.AddCommentCountResponse, err error) {
+	resp = new(video.AddCommentCountResponse)
+	err = s.useCase.AddCommentCount(ctx, req.Id)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	return
+}

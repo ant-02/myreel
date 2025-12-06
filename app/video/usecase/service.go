@@ -92,3 +92,7 @@ func (us *useCase) VideoLikeAction(ctx context.Context, videoId, actionType int6
 func (us *useCase) GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Video, error) {
 	return us.svc.GetVideosByIds(ctx, ids)
 }
+
+func (us *useCase) AddCommentCount(ctx context.Context, id int64) error {
+	return us.svc.AddCommentCount(ctx, id)
+}

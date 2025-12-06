@@ -147,6 +147,7 @@ func (db *videoDB) GetVideosByKeywords(ctx context.Context, keywords string, fro
 
 	err = tx.Where("created_at < ?", cursor).
 		Limit(int(limit)).
+		Order("created_at DESC").
 		Find(&videos).Error
 
 	if err != nil {
@@ -201,7 +202,17 @@ func (db *videoDB) SubtractLikeCount(ctx context.Context, id int64) error {
 		Model(&Video{}).
 		Where("id = ?", id).
 		Update("like_count", gorm.Expr("like_count - ?", 1)).Error; err != nil {
-		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to add like_count: %v", err)
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to subtract like_count: %v", err)
+	}
+	return nil
+}
+
+func (db *videoDB) AddCommentCount(ctx context.Context, id int64) error {
+	if err := db.client.WithContext(ctx).
+		Model(&Video{}).
+		Where("id = ?", id).
+		Update("comment_count", gorm.Expr("comment_count + ?", 1)).Error; err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to add comment_count: %v", err)
 	}
 	return nil
 }

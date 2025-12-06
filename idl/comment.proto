@@ -16,11 +16,17 @@ message Comment {
     string content = 7;
     int64 createdAt = 8;
     int64 updatedAt = 9;
-    int64 deletedAt = 10;
+}
+
+message Pagination {
+    int64 nextCursor = 1;
+    int64 prevCursor = 2;
+    int64 total = 3;
 }
 
 message CommentList {
     repeated Comment items = 1;
+    Pagination pagination = 2;
 }
 
 message CommentPublishRequest {

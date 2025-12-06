@@ -45,6 +45,7 @@ func CommentPublish(ctx context.Context, c *app.RequestContext) {
 	})
 	if err != nil {
 		pack.RespError(c, err)
+		return
 	}
 
 	pack.RespSuccess(c)
@@ -54,16 +55,25 @@ func CommentPublish(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/comment/list [GET]
 func CommentList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req comment.CommentListRequest
+	var req api.CommentListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(comment.CommentListResponse)
+	data, err := rpc.GetCommentList(ctx, &comment.CommentListRequest{
+		VideoId:   req.VideoId,
+		CommentId: req.CommentId,
+		Cursor:    req.Cursor,
+		Limit:     req.Limit,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	pack.RespData(c, data)
 }
 
 // Delete .

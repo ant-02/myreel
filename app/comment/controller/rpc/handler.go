@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	build "myreel/app/comment/controller/rpc/pack"
 	"myreel/app/comment/usecase"
 	comment "myreel/kitex_gen/comment"
 	base "myreel/pkg/base/context"
@@ -32,7 +33,16 @@ func (s *CommentServiceImpl) CommentPublish(ctx context.Context, req *comment.Co
 
 // CommentList implements the CommentServiceImpl interface.
 func (s *CommentServiceImpl) CommentList(ctx context.Context, req *comment.CommentListRequest) (resp *comment.CommentListResponse, err error) {
-	// TODO: Your code here...
+	resp = new(comment.CommentListResponse)
+
+	videos, pagination, err := s.useCase.GetCommentList(ctx, req.VideoId, req.CommentId, req.Cursor, req.Limit)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildCommentList(build.BuildComments(videos), build.BuildPagination(pagination))
 	return
 }
 

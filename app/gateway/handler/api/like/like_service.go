@@ -45,6 +45,7 @@ func LikeAction(ctx context.Context, c *app.RequestContext) {
 	})
 	if err != nil {
 		pack.RespError(c, err)
+		return
 	}
 
 	pack.RespSuccess(c)
@@ -79,6 +80,7 @@ func LikeList(ctx context.Context, c *app.RequestContext) {
 	})
 	if err != nil {
 		pack.RespError(c, err)
+		return
 	}
 
 	pack.RespData(c, data)

@@ -14,7 +14,7 @@ import (
 )
 
 func init() {
-	config.Init(constants.UserServiceName)
+	config.Init(constants.CommentServiceName)
 }
 
 func main() {

@@ -125,6 +125,14 @@ message GetVideosByIdsResponse {
     repeated Video items = 2;
 }
 
+message AddCommentCountRequest {
+    int64 id = 1;
+}
+
+message AddCommentCountResponse {
+    model.BaseResp base = 1;
+}
+
 service VideoService {
     rpc VideoStream(VideoStreamRequest) returns (VideoStreamResponse);
     rpc GetVideoUploadToken(GetVideoUploadTokenRequest) returns (GetVideoUploadTokenResponse);
@@ -135,4 +143,5 @@ service VideoService {
     rpc Search(SearchRequest) returns (SearchResponse);
     rpc VideoLikeAction(VideoLikeActionRequest) returns (VideoLikeActionResponse);
     rpc GetVideosByIds(GetVideosByIdsRequest) returns (GetVideosByIdsResponse);
+    rpc AddCommentCount(AddCommentCountRequest) returns (AddCommentCountResponse);
 }

@@ -32,12 +32,21 @@ services:
     load-balance: false
     addr:
       - 0.0.0.0:20002
-
   video:
     name: video
     load-balance: false
     addr:
       - 0.0.0.0:20003
+  like:
+    name: like
+    load-balance: false
+    addr:
+      - 0.0.0.0:20004
+  comment:
+    name: comment
+    load-balance: false
+    addr:
+      - 0.0.0.0:20005
 
 upyun:
   bucket: "myreel-img"

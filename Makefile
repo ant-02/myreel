@@ -1,80 +1,115 @@
 SHELL := /bin/bash
 
-# 获取 go 路径（兼容 goenv）
+# 获取 Go 路径（兼容 goenv）
 GO := $(shell command -v goenv >/dev/null 2>&1 && goenv which go || echo go)
 
-OUTPUT_DIR := output
-GATEWAY_DIR := $(OUTPUT_DIR)/gateway
-USER_DIR := $(OUTPUT_DIR)/user
-VIDEO_DIR := $(OUTPUT_DIR)/video
-LIKE_DIR := $(OUTPUT_DIR)/like
-COMMENT_DIR := $(OUTPUT_DIR)/comment
+# 输出目录和日志目录
+OUTPUT := output/bin
+LOGS := logs
+
+# Go 服务列表
+SERVICES := gateway user video like comment
+BINS := $(addprefix $(OUTPUT)/, $(SERVICES))
+
+# tmux 会话名
 TMUX_SESSION := go-apps
+
+# Docker Compose 配置
 DOCKER_COMPOSE_DIR := docker
 DOCKER_COMPOSE_FILE := $(DOCKER_COMPOSE_DIR)/docker-compose.yml
 
-.PHONY: build build-gateway build-user run-tmux clean up down up-and-run
+.PHONY: all build clean run restart up down up-and-run stop-tmux
 
-# 启动 Docker 容器
+#======== Docker ========
 up:
 	@echo "🐳 Starting Docker containers..."
 	@cd $(DOCKER_COMPOSE_DIR) && docker compose up -d
 
-# 停止 Docker 容器
 down:
 	@echo "🛑 Stopping Docker containers..."
 	@cd $(DOCKER_COMPOSE_DIR) && docker compose down
 
-# 构建 Go 服务
-build: build-gateway build-user build-video build-like build-comment
+#======== Go Build（每次都构建）========
+build:
+	@echo "🔧 Building all Go services..."
+	@mkdir -p $(OUTPUT)
+	@for srv in $(SERVICES); do \
+		echo "Building $$srv..."; \
+		$(GO) build -o $(OUTPUT)/$$srv ./cmd/$$srv; \
+	done
 
-build-gateway:
-	$(GO) build -o $(GATEWAY_DIR) ./cmd/gateway
-
-build-user:
-	$(GO) build -o $(USER_DIR) ./cmd/user
-
-build-video:
-	$(GO) build -o $(VIDEO_DIR) ./cmd/video
-
-build-like:
-	$(GO) build -o $(LIKE_DIR) ./cmd/like
-
-build-comment:
-	$(GO) build -o $(COMMENT_DIR) ./cmd/comment
-
-run:
-	@echo "🔧 Building Go services..."
-	@$(MAKE) build
-
-	@if [ ! -f "$(USER_DIR)" ]; then echo "❌ $(USER_DIR) not built!"; exit 1; fi
-	@if [ -f "$(GATEWAY_DIR)" ]; then echo "✅ Gateway built"; else echo "❌ $(GATEWAY_DIR) not built!"; exit 1; fi
-	@if [ -f "$(VIDEO_DIR)" ]; then echo "✅ Video built"; else echo "❌ $(VIDEO_DIR) not built!"; exit 1; fi
-
+#======== Run (tmux，构建 + 启动) ========
+run: build
 	@echo "🧹 Killing old tmux session..."
-	-tmux kill-session -t $(TMUX_SESSION) 2>/dev/null
+	-@tmux kill-session -t $(TMUX_SESSION) 2>/dev/null || true
 
 	@echo "🚀 Starting Go services in tmux..."
-	tmux new-session -d -s $(TMUX_SESSION) "$(GATEWAY_DIR)"
-	sleep 0.2
-	tmux split-window -h -t $(TMUX_SESSION) "$(USER_DIR)"
-	sleep 0.2 
-	tmux split-window -h -t $(TMUX_SESSION) "$(VIDEO_DIR)"
+	@mkdir -p $(LOGS)
 
-	@echo "✅ Attaching to tmux session: $(TMUX_SESSION)"
+	# gateway
+	tmux new-session -d -s $(TMUX_SESSION) -n gateway \
+		"$(OUTPUT)/gateway 2>&1 | tee -a $(LOGS)/gateway.log"
+
+	sleep 0.3
+
+	# 其他服务
+	for srv in user video like comment; do \
+		echo "Starting $$srv..."; \
+		tmux new-window -t $(TMUX_SESSION) -n $$srv \
+			"$(OUTPUT)/$$srv 2>&1 | tee -a $(LOGS)/$$srv.log"; \
+		sleep 0.3; \
+	done
+
+	# 选择第一个窗口
+	tmux select-window -t $(TMUX_SESSION):gateway
+
+	@echo "✅ All services started. Attaching to tmux session..."
 	tmux attach -t $(TMUX_SESSION)
 
-# 启动 Docker + Go 服务（一体化）
-up-and-run: up 
-	@echo "⏳ Waiting for services to be ready..."
-	# 可选：等待 MySQL/Redis 就绪（简单 sleep）
-	sleep 5
-	
+#======== Restart (不构建，直接重开) ========
+restart:
+	@echo "🧹 Killing old tmux session..."
+	-@tmux kill-session -t $(TMUX_SESSION) 2>/dev/null || true
+
+	@echo "🚀 Restarting Go services in tmux..."
+	@mkdir -p $(LOGS)
+
+	# gateway
+	tmux new-session -d -s $(TMUX_SESSION) -n gateway \
+		"$(OUTPUT)/gateway 2>&1 | tee -a $(LOGS)/gateway.log"
+
+	sleep 0.3
+
+	# 其他服务
+	for srv in user video like comment; do \
+		echo "Restarting $$srv..."; \
+		tmux new-window -t $(TMUX_SESSION) -n $$srv \
+			"$(OUTPUT)/$$srv 2>&1 | tee -a $(LOGS)/$$srv.log"; \
+		sleep 0.3; \
+	done
+
+	# 选择第一个窗口
+	tmux select-window -t $(TMUX_SESSION):gateway
+
+	@echo "✅ All services restarted. Attaching to tmux session..."
+	tmux attach -t $(TMUX_SESSION)
+
+#======== All-in-one: Docker + Go ========
+up-and-run: up
+	@echo "⏳ Waiting for dependent services..."
+	sleep 2
 	@$(MAKE) run
 
-# 清理 Go 构建产物
+#======== Clean ========
 clean:
-	rm -rf $(OUTPUT_DIR)
+	rm -rf $(OUTPUT) $(LOGS)
 
-# 完整清理：停容器 + 清构建
-up-and-run-clean: down clean
+#======== Stop tmux + kill Go 服务 ========
+stop-tmux:
+	@echo "🛑 Killing tmux session and all Go services..."
+	-@tmux list-panes -s -F "#{session_name}:#{window_index}:#{pane_pid}" | grep $(TMUX_SESSION) | \
+	while read line; do \
+		pid=$$(echo $$line | cut -d: -f3); \
+		kill -9 $$pid 2>/dev/null || true; \
+	done
+	-@tmux kill-session -t $(TMUX_SESSION) 2>/dev/null || true

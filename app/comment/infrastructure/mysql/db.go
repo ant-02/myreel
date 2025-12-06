@@ -5,6 +5,7 @@ import (
 	"myreel/app/comment/domain/model"
 	"myreel/app/comment/domain/repository"
 	"myreel/pkg/errno"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -60,30 +61,90 @@ func (db *commentDB) SubtractChildCount(ctx context.Context, commentId int64) er
 	return nil
 }
 
-// func (cr *commentRepository) GetCommentListByVideoId(videoId string, pageNum, pageSize int64) ([]*model.Comment, error) {
-// 	var comments []*model.Comment
-// 	err := cr.db.Where("video_id = ?", videoId).
-// 		Where("parent_id IS NULL").
-// 		Offset((int(pageNum) - 1) * int(pageSize)).
-// 		Limit(int(pageSize)).
-// 		Find(&comments).Error
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return comments, nil
-// }
+func (db *commentDB) GetCommentListByVideoId(ctx context.Context, videoId, cursor, limit int64) ([]*model.Comment, int64, error) {
+	var comments []*Comment
+	var total int64
+	tx := db.client.WithContext(ctx).
+		Model(&Comment{}).
+		Where("video_id = ?", videoId).
+		Where("parent_id = 0").
+		Limit(int(limit)).
+		Order("created_at DESC")
 
-// func (cr *commentRepository) GetCommentListByCommentId(commentId string, pageNum, pageSize int64) ([]*model.Comment, error) {
-// 	var comments []*model.Comment
-// 	err := cr.db.Where("parent_id = ?", commentId).
-// 		Offset((int(pageNum) - 1) * int(pageSize)).
-// 		Limit(int(pageSize)).
-// 		Find(&comments).Error
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return comments, nil
-// }
+	if err := tx.Count(&total).Error; err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get comments count by video id: %v", err)
+	}
+
+	if cursor != 0 {
+		tx = tx.Where("created_at < ?", time.Unix(cursor, 0))
+	}
+
+	if err := tx.Find(&comments).
+		Error; err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get comments by video id: %v", err)
+	}
+
+	l := len(comments)
+	result := make([]*model.Comment, l)
+	if l > 0 {
+		for i, comment := range comments {
+			result[i] = &model.Comment{
+				Id:         comment.Id,
+				VideoId:    comment.VideoId,
+				Uid:        comment.Uid,
+				ParentId:   comment.ParentId,
+				LikeCount:  comment.LikeCount,
+				ChildCount: comment.ChildCount,
+				Content:    comment.Content,
+				CreatedAt:  comment.CreatedAt.Unix(),
+				UpdatedAt:  comment.UpdatedAt.Unix(),
+			}
+		}
+	}
+	return result, total, nil
+}
+
+func (db *commentDB) GetCommentListByCommentId(ctx context.Context, commentId, cursor, limit int64) ([]*model.Comment, int64, error) {
+	var comments []*Comment
+	var total int64
+	tx := db.client.WithContext(ctx).
+		Model(&Comment{}).
+		Where("parent_id = ?", commentId).
+		Limit(int(limit)).
+		Order("created_at DESC")
+
+	if err := tx.Count(&total).Error; err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get comments count by comment id: %v", err)
+	}
+
+	if cursor != 0 {
+		tx = tx.Where("created_at < ?", time.Unix(cursor, 0))
+	}
+
+	if err := tx.Find(&comments).
+		Error; err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get comments by comment id: %v", err)
+	}
+
+	l := len(comments)
+	result := make([]*model.Comment, l)
+	if l > 0 {
+		for i, comment := range comments {
+			result[i] = &model.Comment{
+				Id:         comment.Id,
+				VideoId:    comment.VideoId,
+				Uid:        comment.Uid,
+				ParentId:   comment.ParentId,
+				LikeCount:  comment.LikeCount,
+				ChildCount: comment.ChildCount,
+				Content:    comment.Content,
+				CreatedAt:  comment.CreatedAt.Unix(),
+				UpdatedAt:  comment.UpdatedAt.Unix(),
+			}
+		}
+	}
+	return result, total, nil
+}
 
 // func (cr *commentRepository) DeleteCommentsByVideoId(videoId string) error {
 // 	return cr.db.Where("video_id = ?", videoId).

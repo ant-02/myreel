@@ -1,9 +1,10 @@
 package comment
 
 import (
-	rpc "myreel/app/comment/controller/api"
+	"myreel/app/comment/controller/rpc"
 	"myreel/app/comment/domain/service"
 	"myreel/app/comment/infrastructure/mysql"
+	commentRpcPkg "myreel/app/comment/infrastructure/rpc"
 	"myreel/app/comment/usecase"
 	"myreel/config"
 	"myreel/kitex_gen/comment"
@@ -32,8 +33,15 @@ func InjectCommentHandler() comment.CommentService {
 		panic(err)
 	}
 
-	svc := service.NewCommentService(db, sf)
-	uc := usecase.NewCommentUseCase(db, svc)
+	videoClient, err := client.InitVideoRPC()
+	if err != nil {
+		panic(err)
+	}
+
+	vRpc := commentRpcPkg.NewCommentRpcImpl(*videoClient)
+
+	svc := service.NewCommentService(db, sf, vRpc)
+	uc := usecase.NewCommentUseCase(db, svc, vRpc)
 
 	return rpc.NewCommentServiceImpl(uc)
 }

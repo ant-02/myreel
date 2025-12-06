@@ -16,11 +16,12 @@ message Comment {
     string content = 7[(api.body)="content"];
     int64 createdAt = 8[(api.body)="createdAt"];
     int64 updatedAt = 9[(api.body)="updatedAt"];
-    int64 deletedAt = 10[(api.body)="deletedAt"];
 }
 
-message CommentList {
-    repeated Comment items = 1;
+message Pagination {
+    int64 nextCursor = 1;
+    int64 prevCursor = 2;
+    int64 total = 3;
 }
 
 message CommentPublishRequest {
@@ -39,7 +40,8 @@ message CommentListRequest {
 }
 
 message CommentListResponse {
-    CommentList data = 2;
+    repeated Comment items = 1;
+    Pagination pagination = 2;
 }
 
 message DeleteRequest {

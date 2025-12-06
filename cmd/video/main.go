@@ -20,12 +20,12 @@ func init() {
 func main() {
 	listenAddr, err := util.GetAvailablePort()
 	if err != nil {
-		logger.Fatalf("User: get available port failed, err: %v", err)
+		logger.Fatalf("Video: get available port failed, err: %v", err)
 	}
 
 	addr, err := net.ResolveTCPAddr("tcp", listenAddr)
 	if err != nil {
-		logger.Fatalf("User: resolve tcp addr failed, err: %v", err)
+		logger.Fatalf("Video: resolve tcp addr failed, err: %v", err)
 	}
 
 	svr := videoservice.NewServer(
@@ -37,6 +37,6 @@ func main() {
 	)
 
 	if err = svr.Run(); err != nil {
-		logger.Fatalf("User: run server failed, err: %v", err)
+		logger.Fatalf("Video: run server failed, err: %v", err)
 	}
 }

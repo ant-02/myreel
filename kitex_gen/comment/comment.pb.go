@@ -19,7 +19,6 @@ type Comment struct {
 	Content    string `protobuf:"bytes,7,opt,name=content" json:"content,omitempty"`
 	CreatedAt  int64  `protobuf:"varint,8,opt,name=createdAt" json:"createdAt,omitempty"`
 	UpdatedAt  int64  `protobuf:"varint,9,opt,name=updatedAt" json:"updatedAt,omitempty"`
-	DeletedAt  int64  `protobuf:"varint,10,opt,name=deletedAt" json:"deletedAt,omitempty"`
 }
 
 func (x *Comment) Reset() { *x = Comment{} }
@@ -91,15 +90,42 @@ func (x *Comment) GetUpdatedAt() int64 {
 	return 0
 }
 
-func (x *Comment) GetDeletedAt() int64 {
+type Pagination struct {
+	NextCursor int64 `protobuf:"varint,1,opt,name=nextCursor" json:"nextCursor,omitempty"`
+	PrevCursor int64 `protobuf:"varint,2,opt,name=prevCursor" json:"prevCursor,omitempty"`
+	Total      int64 `protobuf:"varint,3,opt,name=total" json:"total,omitempty"`
+}
+
+func (x *Pagination) Reset() { *x = Pagination{} }
+
+func (x *Pagination) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *Pagination) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *Pagination) GetNextCursor() int64 {
 	if x != nil {
-		return x.DeletedAt
+		return x.NextCursor
+	}
+	return 0
+}
+
+func (x *Pagination) GetPrevCursor() int64 {
+	if x != nil {
+		return x.PrevCursor
+	}
+	return 0
+}
+
+func (x *Pagination) GetTotal() int64 {
+	if x != nil {
+		return x.Total
 	}
 	return 0
 }
 
 type CommentList struct {
-	Items []*Comment `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
+	Items      []*Comment  `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
+	Pagination *Pagination `protobuf:"bytes,2,opt,name=pagination" json:"pagination,omitempty"`
 }
 
 func (x *CommentList) Reset() { *x = CommentList{} }
@@ -111,6 +137,13 @@ func (x *CommentList) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x
 func (x *CommentList) GetItems() []*Comment {
 	if x != nil {
 		return x.Items
+	}
+	return nil
+}
+
+func (x *CommentList) GetPagination() *Pagination {
+	if x != nil {
+		return x.Pagination
 	}
 	return nil
 }

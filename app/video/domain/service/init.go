@@ -27,6 +27,7 @@ type VideoService interface {
 	CalculateHotScore(video *model.Video) int64
 	DecrVideoLike(ctx context.Context, videoId int64) error
 	IncrVideoLike(ctx context.Context, videoId int64) error
+	AddCommentCount(ctx context.Context, id int64) error
 }
 
 func NewVideoService(db repository.VideoDB, sf *util.Snowflake, cache repository.VideoCache, vRpc repository.RpcPort) VideoService {

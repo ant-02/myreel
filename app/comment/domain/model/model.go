@@ -11,3 +11,9 @@ type Comment struct {
 	CreatedAt  int64
 	UpdatedAt  int64
 }
+
+type Pagination struct {
+	NextCursor int64
+	PrevCursor int64
+	Total      int64
+}

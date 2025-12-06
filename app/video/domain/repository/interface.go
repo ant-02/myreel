@@ -15,6 +15,7 @@ type VideoDB interface {
 	GetVideoById(ctx context.Context, id int64) (*model.Video, error)
 	AddLikeCount(ctx context.Context, id int64) error
 	SubtractLikeCount(ctx context.Context, id int64) error
+	AddCommentCount(ctx context.Context, id int64) error
 }
 
 type VideoCache interface {

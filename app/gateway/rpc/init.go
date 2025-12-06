@@ -18,4 +18,5 @@ func Init() {
 	InitUserClient()
 	InitVideoClient()
 	InitLikeClient()
+	InitCommentClient()
 }

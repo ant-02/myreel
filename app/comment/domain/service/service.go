@@ -27,3 +27,41 @@ func (cs *commentService) AddChildCount(ctx context.Context, commentId int64) er
 	}
 	return nil
 }
+
+func (cs *commentService) GetCommentListByVideoId(ctx context.Context, videoId, cursor, limit int64) ([]*model.Comment, *model.Pagination, error) {
+	videos, total, err := cs.db.GetCommentListByVideoId(ctx, videoId, cursor, limit)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get comments by video id").WithError(err)
+	}
+	l := len(videos)
+	var nextCursor int64
+	if l > 0 {
+		nextCursor = videos[l-1].CreatedAt
+	} else {
+		nextCursor = cursor
+	}
+	return videos, &model.Pagination{
+		NextCursor: nextCursor,
+		PrevCursor: cursor,
+		Total:      total,
+	}, nil
+}
+
+func (cs *commentService) GetCommentListByCommentId(ctx context.Context, commentId, cursor, limit int64) ([]*model.Comment, *model.Pagination, error) {
+	videos, total, err := cs.db.GetCommentListByCommentId(ctx, commentId, cursor, limit)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get comments by comment id").WithError(err)
+	}
+	l := len(videos)
+	var nextCursor int64
+	if l > 0 {
+		nextCursor = videos[l-1].CreatedAt
+	} else {
+		nextCursor = cursor
+	}
+	return videos, &model.Pagination{
+		NextCursor: nextCursor,
+		PrevCursor: cursor,
+		Total:      total,
+	}, nil
+}

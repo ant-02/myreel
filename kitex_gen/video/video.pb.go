@@ -662,6 +662,44 @@ func (x *GetVideosByIdsResponse) GetItems() []*Video {
 	return nil
 }
 
+type AddCommentCountRequest struct {
+	Id int64 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+}
+
+func (x *AddCommentCountRequest) Reset() { *x = AddCommentCountRequest{} }
+
+func (x *AddCommentCountRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *AddCommentCountRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *AddCommentCountRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AddCommentCountResponse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+}
+
+func (x *AddCommentCountResponse) Reset() { *x = AddCommentCountResponse{} }
+
+func (x *AddCommentCountResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *AddCommentCountResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *AddCommentCountResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
 type VideoService interface {
 	VideoStream(ctx context.Context, req *VideoStreamRequest) (res *VideoStreamResponse, err error)
 	GetVideoUploadToken(ctx context.Context, req *GetVideoUploadTokenRequest) (res *GetVideoUploadTokenResponse, err error)
@@ -672,4 +710,5 @@ type VideoService interface {
 	Search(ctx context.Context, req *SearchRequest) (res *SearchResponse, err error)
 	VideoLikeAction(ctx context.Context, req *VideoLikeActionRequest) (res *VideoLikeActionResponse, err error)
 	GetVideosByIds(ctx context.Context, req *GetVideosByIdsRequest) (res *GetVideosByIdsResponse, err error)
+	AddCommentCount(ctx context.Context, req *AddCommentCountRequest) (res *AddCommentCountResponse, err error)
 }

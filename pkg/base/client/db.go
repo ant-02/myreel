@@ -5,13 +5,11 @@ import (
 	"fmt"
 	"myreel/pkg/constants"
 	"myreel/pkg/errno"
-	"myreel/pkg/logger"
 	"myreel/pkg/util"
-	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	glogger "gorm.io/gorm/logger"
+	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 )
 
@@ -28,15 +26,16 @@ func InitMySQL() (db *gorm.DB, err error) {
 			NamingStrategy: schema.NamingStrategy{
 				SingularTable: true, // 使用单数表名
 			},
-			Logger: glogger.New(
-				logger.GetMysqlLogger(),
-				glogger.Config{
-					SlowThreshold:             time.Second,  // 超过一秒的查询被认为是慢查询
-					LogLevel:                  glogger.Warn, // 日志等级
-					IgnoreRecordNotFoundError: true,         // 当未找到(RecordNotFoundError)时候不记录
-					ParameterizedQueries:      true,         // 在 SQL 中不包含参数
-					Colorful:                  false,        // 禁用颜色渲染
-				}),
+			// Logger: glogger.New(
+			// 	logger.GetMysqlLogger(),
+			// 	glogger.Config{
+			// 		SlowThreshold:             time.Second,  // 超过一秒的查询被认为是慢查询
+			// 		LogLevel:                  glogger.Warn, // 日志等级
+			// 		IgnoreRecordNotFoundError: true,         // 当未找到(RecordNotFoundError)时候不记录
+			// 		ParameterizedQueries:      true,         // 在 SQL 中不包含参数
+			// 		Colorful:                  false,        // 禁用颜色渲染
+			// 	}),
+			Logger: logger.Default.LogMode(logger.Info),
 		})
 	if err != nil {
 		return nil, errno.NewErrNo(errno.InternalDatabaseErrorCode, fmt.Sprintf("dal.InitMySQL mysql connect error: %v", err))
