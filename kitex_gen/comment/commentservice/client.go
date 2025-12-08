@@ -14,6 +14,7 @@ type Client interface {
 	CommentPublish(ctx context.Context, Req *comment.CommentPublishRequest, callOptions ...callopt.Option) (r *comment.CommentPublishResponse, err error)
 	CommentList(ctx context.Context, Req *comment.CommentListRequest, callOptions ...callopt.Option) (r *comment.CommentListResponse, err error)
 	Delete(ctx context.Context, Req *comment.DeleteRequest, callOptions ...callopt.Option) (r *comment.DeleteResponse, err error)
+	CommentLikeAction(ctx context.Context, Req *comment.CommentLikeActionRequest, callOptions ...callopt.Option) (r *comment.CommentLikeActionResonse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -58,4 +59,9 @@ func (p *kCommentServiceClient) CommentList(ctx context.Context, Req *comment.Co
 func (p *kCommentServiceClient) Delete(ctx context.Context, Req *comment.DeleteRequest, callOptions ...callopt.Option) (r *comment.DeleteResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.Delete(ctx, Req)
+}
+
+func (p *kCommentServiceClient) CommentLikeAction(ctx context.Context, Req *comment.CommentLikeActionRequest, callOptions ...callopt.Option) (r *comment.CommentLikeActionResonse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CommentLikeAction(ctx, Req)
 }

@@ -188,3 +188,23 @@ func (db *commentDB) GetCommentById(ctx context.Context, id int64) (*model.Comme
 		UpdatedAt:  c.UpdatedAt.Unix(),
 	}, nil
 }
+
+func (db *commentDB) AddLikeCount(ctx context.Context, id int64) error {
+	if err := db.client.WithContext(ctx).
+		Model(&Comment{}).
+		Where("id = ?", id).
+		Update("like_count", gorm.Expr("like_count + ?", 1)).Error; err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to add comment's like count: %v", err)
+	}
+	return nil
+}
+
+func (db *commentDB) SubtractLikeCount(ctx context.Context, id int64) error {
+	if err := db.client.WithContext(ctx).
+		Model(&Comment{}).
+		Where("id = ?", id).
+		Update("like_count", gorm.Expr("like_count - ?", 1)).Error; err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to subtract comment's like count: %v", err)
+	}
+	return nil
+}

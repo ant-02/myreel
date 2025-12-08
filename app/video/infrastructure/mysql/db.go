@@ -30,7 +30,7 @@ func (db *videoDB) GetVideosByLatestTime(ctx context.Context, latestTime time.Ti
 	var videos []*Video
 
 	err := db.client.WithContext(ctx).
-		Where("created_at > ?").
+		Where("created_at > ?", latestTime).
 		Find(&videos).Error
 	if err != nil {
 		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get videos by latest time: %v", err)
@@ -176,12 +176,24 @@ func (db *videoDB) GetVideosByKeywords(ctx context.Context, keywords string, fro
 }
 
 func (db *videoDB) GetVideoById(ctx context.Context, id int64) (*model.Video, error) {
-	var video model.Video
+	var video Video
 	if err := db.client.WithContext(ctx).
 		First(&video, id).Error; err != nil {
 		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video by id: %v", err)
 	}
-	return &video, nil
+	return &model.Video{
+		Id:           video.Id,
+		Uid:          video.Uid,
+		Title:        video.Title,
+		Description:  video.Description,
+		VideoUrl:     video.VideoUrl,
+		CoverUrl:     video.CoverUrl,
+		VisitCount:   video.VisitCount,
+		LikeCount:    video.LikeCount,
+		CommentCount: video.CommentCount,
+		CreatedAt:    video.CreatedAt.Unix(),
+		UpdatedAt:    video.UpdatedAt.Unix(),
+	}, nil
 }
 
 func (db *videoDB) AddLikeCount(ctx context.Context, id int64) error {

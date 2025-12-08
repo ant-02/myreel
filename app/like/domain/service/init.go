@@ -17,6 +17,8 @@ type likeService struct {
 type LikeService interface {
 	GenerateLikeId() (int64, error)
 	CreateLike(ctx context.Context, l *model.Like) error
+	VideoUserLikeAction(ctx context.Context, videoId, uid, actionType int64) error
+	CommentUserLikeAction(ctx context.Context, commentId, uid, actionType int64) error
 }
 
 func NewLikeService(db repository.LikeDB, sf *util.Snowflake, cache repository.LikeCache, lRpc repository.RpcPort) LikeService {

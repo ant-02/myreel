@@ -102,7 +102,7 @@ func (s *VideoServiceImpl) PublishList(ctx context.Context, req *video.PublishLi
 func (s *VideoServiceImpl) Popular(ctx context.Context, req *video.PopularRequest) (resp *video.PopularResponse, err error) {
 	resp = new(video.PopularResponse)
 
-	videos, pagination, err := s.useCase.GetVideosGroupByVisitCount(ctx, req.Cursor, req.Limit)
+	videos, pagination, err := s.useCase.GetPopularVideos(ctx, req.Cursor, req.Limit)
 	if err != nil {
 		resp.Base = base.BuildBaseResp(err)
 		return

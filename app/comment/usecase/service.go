@@ -50,3 +50,11 @@ func (uc *useCase) DeleteComment(ctx context.Context, videoId, commentId, uid in
 		return uc.svc.DeleteCommentById(ctx, commentId, uid)
 	}
 }
+
+func (uc *useCase) CommentLikeAction(ctx context.Context, id, actionType int64) error {
+	if actionType == 0 {
+		return uc.svc.SubtractLikeCount(ctx, id)
+	} else {
+		return uc.svc.AddChildCount(ctx, id)
+	}
+}

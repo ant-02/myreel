@@ -75,8 +75,19 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+
 	data, err := rpc.GetUserByIdRPC(ctx, &user.GetUserInfoRequest{
-		UserId: req.UserId,
+		UserId: uid,
 	})
 	if err != nil {
 		pack.RespError(c, err)

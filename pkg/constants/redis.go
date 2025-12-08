@@ -34,7 +34,7 @@ const (
 const (
 	RedisUserLoginKey = "user:login:"
 	RedisUserBanedKey = "user:ban:"
-	RedisUserLikeKey  = "user:liked"
+	RedisUserLikeKey  = "user:liked:"
 
 	RedisVideoPopularKey = "video:pop"
 	RedisVideoKey        = "video:"

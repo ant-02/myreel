@@ -97,9 +97,23 @@ func (cs *commentService) DeleteCommentsByVideoId(ctx context.Context, videoId, 
 	if err := cs.vRpc.CheckVideoUser(ctx, videoId, uid); err != nil {
 		return errno.NewErrNo(errno.InternalServiceErrorCode, "can not verify video's user").WithError(err)
 	}
-	
+
 	if err := cs.db.DeleteCommentsByVideoId(ctx, videoId); err != nil {
 		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to delete comments by video id").WithError(err)
+	}
+	return nil
+}
+
+func (cs *commentService) AddLikeCount(ctx context.Context, id int64) error {
+	if err := cs.db.AddLikeCount(ctx, id); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add comment's like count").WithError(err)
+	}
+	return nil
+}
+
+func (cs *commentService) SubtractLikeCount(ctx context.Context, id int64) error {
+	if err := cs.db.SubtractLikeCount(ctx, id); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to subtract comment's like count").WithError(err)
 	}
 	return nil
 }

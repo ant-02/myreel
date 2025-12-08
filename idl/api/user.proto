@@ -41,9 +41,7 @@ message RegisterRequest {
 
 message RegisterResponse {}
 
-message GetUserInfoRequest {
-    int64 userId = 1[(api.query)="userId"];
-}
+message GetUserInfoRequest {}
 
 message GetUserInfoResponse {
     User user = 1;

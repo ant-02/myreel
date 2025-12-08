@@ -68,8 +68,12 @@ func (vs *videoCache) CleanPopularVideos(ctx context.Context, key string, limit 
 	return nil
 }
 
-func (vs *videoCache) AddVideoWithTLL(ctx context.Context, key string, val interface{}, ttl time.Duration) error {
-	err := vs.client.HSet(ctx, key, val).Err()
+func (vs *videoCache) AddVideoWithTLL(ctx context.Context, key string, video *model.Video, ttl time.Duration) error {
+	val, err := pack.VideoToMap(video)
+	if err != nil {
+		return err
+	}
+	err = vs.client.HSet(ctx, key, val).Err()
 	if err != nil {
 		return errno.Errorf(errno.InternalRedisErrorCode, "redis: failed to add video: %v", err)
 	}

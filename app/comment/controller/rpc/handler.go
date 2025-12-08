@@ -59,3 +59,10 @@ func (s *CommentServiceImpl) Delete(ctx context.Context, req *comment.DeleteRequ
 	resp.Base = base.BuildSuccessResp()
 	return
 }
+
+// CommentLikeAction implements the CommentServiceImpl interface.
+func (s *CommentServiceImpl) CommentLikeAction(ctx context.Context, req *comment.CommentLikeActionRequest) (resp *comment.CommentLikeActionResonse, err error) {
+	// TODO: Your code here...
+	return
+}
+

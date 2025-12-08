@@ -14,7 +14,7 @@ type LikeDB interface {
 }
 
 type LikeCache interface {
-	IsExist(ctx context.Context, key string, val interface{}) (bool, error)
+	IsExist(ctx context.Context, key string, val string) (bool, error)
 	RemVideoLikeFromUser(ctx context.Context, key string, member interface{}) error
 	AddVideoLikeToUser(ctx context.Context, key string, score float64, member interface{}) error
 	GetVideoIdFromUserLike(ctx context.Context, key string, cursor, limit int64) ([]int64, error)
@@ -23,5 +23,6 @@ type LikeCache interface {
 
 type RpcPort interface {
 	VideoLikeAction(ctx context.Context, videoId, actionType int64) error
+	CommentLikeAction(ctx context.Context, commentId, actionType int64) error
 	GetVideosByIds(ctx context.Context, ids []int64) ([]*model.Video, error)
 }

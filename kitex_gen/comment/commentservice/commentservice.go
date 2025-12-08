@@ -36,6 +36,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"CommentLikeAction": kitex.NewMethodInfo(
+		commentLikeActionHandler,
+		newCommentLikeActionArgs,
+		newCommentLikeActionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -435,6 +442,117 @@ func (p *DeleteResult) GetResult() interface{} {
 	return p.Success
 }
 
+func commentLikeActionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(comment.CommentLikeActionRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(comment.CommentService).CommentLikeAction(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CommentLikeActionArgs:
+		success, err := handler.(comment.CommentService).CommentLikeAction(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CommentLikeActionResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newCommentLikeActionArgs() interface{} {
+	return &CommentLikeActionArgs{}
+}
+
+func newCommentLikeActionResult() interface{} {
+	return &CommentLikeActionResult{}
+}
+
+type CommentLikeActionArgs struct {
+	Req *comment.CommentLikeActionRequest
+}
+
+func (p *CommentLikeActionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CommentLikeActionArgs) Unmarshal(in []byte) error {
+	msg := new(comment.CommentLikeActionRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CommentLikeActionArgs_Req_DEFAULT *comment.CommentLikeActionRequest
+
+func (p *CommentLikeActionArgs) GetReq() *comment.CommentLikeActionRequest {
+	if !p.IsSetReq() {
+		return CommentLikeActionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CommentLikeActionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CommentLikeActionArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CommentLikeActionResult struct {
+	Success *comment.CommentLikeActionResonse
+}
+
+var CommentLikeActionResult_Success_DEFAULT *comment.CommentLikeActionResonse
+
+func (p *CommentLikeActionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CommentLikeActionResult) Unmarshal(in []byte) error {
+	msg := new(comment.CommentLikeActionResonse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CommentLikeActionResult) GetSuccess() *comment.CommentLikeActionResonse {
+	if !p.IsSetSuccess() {
+		return CommentLikeActionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CommentLikeActionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*comment.CommentLikeActionResonse)
+}
+
+func (p *CommentLikeActionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CommentLikeActionResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -470,6 +588,16 @@ func (p *kClient) Delete(ctx context.Context, Req *comment.DeleteRequest) (r *co
 	_args.Req = Req
 	var _result DeleteResult
 	if err = p.c.Call(ctx, "Delete", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CommentLikeAction(ctx context.Context, Req *comment.CommentLikeActionRequest) (r *comment.CommentLikeActionResonse, err error) {
+	var _args CommentLikeActionArgs
+	_args.Req = Req
+	var _result CommentLikeActionResult
+	if err = p.c.Call(ctx, "CommentLikeAction", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

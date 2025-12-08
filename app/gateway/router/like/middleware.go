@@ -31,3 +31,13 @@ func _likelistMw() []app.HandlerFunc {
 		mv.Auth(),
 	}
 }
+
+func _apiMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _v1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

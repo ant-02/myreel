@@ -4,18 +4,22 @@ import (
 	"context"
 	"myreel/app/like/domain/model"
 	"myreel/app/like/domain/repository"
+	"myreel/kitex_gen/comment"
+	"myreel/kitex_gen/comment/commentservice"
 	"myreel/kitex_gen/video"
 	"myreel/kitex_gen/video/videoservice"
 	"myreel/pkg/errno"
 )
 
 type likeRpcImpl struct {
-	video videoservice.Client
+	video   videoservice.Client
+	comment commentservice.Client
 }
 
-func NewLikeRpcImpl(v videoservice.Client) repository.RpcPort {
+func NewLikeRpcImpl(v videoservice.Client, c commentservice.Client) repository.RpcPort {
 	return &likeRpcImpl{
-		video: v,
+		video:   v,
+		comment: c,
 	}
 }
 
@@ -30,6 +34,22 @@ func (rpc *likeRpcImpl) VideoLikeAction(ctx context.Context, videoId, actionType
 
 	if resp.Base.Code != errno.SuccessCode {
 		return errno.NewErrNo(errno.InternalRPCErrorCode, "rpc: ffailed to action video likes")
+	}
+
+	return nil
+}
+
+func (rpc *likeRpcImpl) CommentLikeAction(ctx context.Context, commentId, actionType int64) error {
+	resp, err := rpc.comment.CommentLikeAction(ctx, &comment.CommentLikeActionRequest{
+		Id:         commentId,
+		ActionType: actionType,
+	})
+	if err != nil {
+		return errno.Errorf(errno.InternalRPCErrorCode, "rpc: failed to action comment likes: %v", err)
+	}
+
+	if resp.Base.Code != errno.SuccessCode {
+		return errno.NewErrNo(errno.InternalRPCErrorCode, "rpc: ffailed to action comment likes")
 	}
 
 	return nil

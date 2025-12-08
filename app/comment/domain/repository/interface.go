@@ -15,6 +15,8 @@ type CommentDB interface {
 	DeleteCommentById(ctx context.Context, id int64) error
 	DeleteCommentsByVideoId(ctx context.Context, videoId int64) error
 	GetCommentById(ctx context.Context, id int64) (*model.Comment, error)
+	AddLikeCount(ctx context.Context, id int64) error
+	SubtractLikeCount(ctx context.Context, id int64) error
 }
 
 type RpcPort interface {

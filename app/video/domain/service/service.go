@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"math"
@@ -92,7 +91,7 @@ func (vs *videoService) GetVideosByIds(ctx context.Context, ids []int64) ([]*mod
 	l := len(ids)
 	videos := make([]*model.Video, l)
 	for i, id := range ids {
-		key := fmt.Sprintf("%s/%d", constants.RedisVideoKey, id)
+		key := fmt.Sprintf("%s%d", constants.RedisVideoKey, id)
 		if exist := vs.cache.IsExist(ctx, key); exist {
 			video, err := vs.cache.GetVideo(ctx, key)
 			if err != nil {
@@ -104,11 +103,7 @@ func (vs *videoService) GetVideosByIds(ctx context.Context, ids []int64) ([]*mod
 			if err != nil {
 				return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get video").WithError(err)
 			}
-			vj, err := json.Marshal(video)
-			if err != nil {
-				return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to marshal video").WithError(err)
-			}
-			err = vs.cache.AddVideoWithTLL(ctx, key, vj, constants.RedisVideoExpireTime)
+			err = vs.cache.AddVideoWithTLL(ctx, key, video, constants.RedisVideoExpireTime)
 			if err != nil {
 				return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add video to redis").WithError(err)
 			}
@@ -211,6 +206,7 @@ func (vs *videoService) IncrVideoLike(ctx context.Context, videoId int64) error 
 		if err != nil {
 			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add video like to redis").WithError(err)
 		}
+
 		err = vs.cache.AddVideoWithTLL(ctx, fmt.Sprintf("%s%d", constants.RedisVideoKey, videoId), video, constants.RedisVideoExpireTime)
 		if err != nil {
 			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add video to redis").WithError(err)

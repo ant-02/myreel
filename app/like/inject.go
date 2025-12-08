@@ -38,8 +38,12 @@ func InjectLikeHandler() like.LikeService {
 	if err != nil {
 		panic(err)
 	}
+	commentClient, err := client.InitCommentRPC()
+	if err != nil {
+		panic(err)
+	}
 
-	lRPC := likeRpcPkg.NewLikeRpcImpl(*videoClient)
+	lRPC := likeRpcPkg.NewLikeRpcImpl(*videoClient, *commentClient)
 
 	redisCache := cache.NewVideoCache(re)
 

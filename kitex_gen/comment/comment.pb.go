@@ -326,8 +326,55 @@ func (x *DeleteResponse) GetBase() *model.BaseResp {
 	return nil
 }
 
+type CommentLikeActionRequest struct {
+	Id         int64 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	ActionType int64 `protobuf:"varint,2,opt,name=actionType" json:"actionType,omitempty"`
+}
+
+func (x *CommentLikeActionRequest) Reset() { *x = CommentLikeActionRequest{} }
+
+func (x *CommentLikeActionRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *CommentLikeActionRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *CommentLikeActionRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CommentLikeActionRequest) GetActionType() int64 {
+	if x != nil {
+		return x.ActionType
+	}
+	return 0
+}
+
+type CommentLikeActionResonse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+}
+
+func (x *CommentLikeActionResonse) Reset() { *x = CommentLikeActionResonse{} }
+
+func (x *CommentLikeActionResonse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *CommentLikeActionResonse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *CommentLikeActionResonse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
 type CommentService interface {
 	CommentPublish(ctx context.Context, req *CommentPublishRequest) (res *CommentPublishResponse, err error)
 	CommentList(ctx context.Context, req *CommentListRequest) (res *CommentListResponse, err error)
 	Delete(ctx context.Context, req *DeleteRequest) (res *DeleteResponse, err error)
+	CommentLikeAction(ctx context.Context, req *CommentLikeActionRequest) (res *CommentLikeActionResonse, err error)
 }

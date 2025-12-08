@@ -37,6 +37,7 @@ func (uc *useCase) Login(ctx context.Context, username, password string) (*model
 		}
 		return nil, nil, err
 	}
+
 	if uc.svc.IsBaned(ctx, u.Id) {
 		return nil, nil, errno.UserIsBaned
 	}

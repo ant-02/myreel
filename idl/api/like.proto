@@ -16,7 +16,6 @@ message LikeActionRequest {
 message LikeActionResponse {}
 
 message LikeListRequest {
-    int64 uid = 1[(api.query)="uid"];
     int64 cursor = 2[(api.query)="cursor"];
     int64 limit = 3[(api.query)="limit"];
 }
@@ -28,9 +27,9 @@ message LikeListResponse {
 
 service LikeService {
     rpc LikeAction(LikeActionRequest) returns (LikeActionResponse) {
-        option (api.post)="/like/action";
+        option (api.post)="/api/v1/like/action";
     }
     rpc LikeList(LikeListRequest) returns (LikeListResponse) {
-        option (api.get)="/like/list";
+        option (api.get)="/api/v1/like/list";
     }
 }

@@ -62,8 +62,19 @@ message DeleteResponse {
     model.BaseResp base = 1;
 }
 
+message CommentLikeActionRequest {
+    int64 id = 1;
+    int64 actionType = 2;
+}
+
+message CommentLikeActionResonse {
+    model.BaseResp base = 1;
+}
+
+
 service CommentService {
     rpc CommentPublish(CommentPublishRequest) returns (CommentPublishResponse);
     rpc CommentList(CommentListRequest) returns(CommentListResponse);
     rpc Delete(DeleteRequest) returns (DeleteResponse);
+    rpc CommentLikeAction(CommentLikeActionRequest) returns (CommentLikeActionResonse);
 }

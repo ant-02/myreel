@@ -18,8 +18,14 @@ func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
 	{
-		_like := root.Group("/like", _likeMw()...)
-		_like.POST("/action", append(_likeactionMw(), like.LikeAction)...)
-		_like.GET("/list", append(_likelistMw(), like.LikeList)...)
+		_api := root.Group("/api", _apiMw()...)
+		{
+			_v1 := _api.Group("/v1", _v1Mw()...)
+			{
+				_like := _v1.Group("/like", _likeMw()...)
+				_like.POST("/action", append(_likeactionMw(), like.LikeAction)...)
+				_like.GET("/list", append(_likelistMw(), like.LikeList)...)
+			}
+		}
 	}
 }

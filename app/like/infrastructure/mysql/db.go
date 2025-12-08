@@ -26,31 +26,43 @@ func (db *likeDB) Magrate() error {
 }
 
 func (db *likeDB) GetVideoLike(ctx context.Context, videoId, uid int64) (*model.Like, error) {
-	var like model.Like
+	var l Like
 	err := db.client.WithContext(ctx).
 		Where("uid = ? and video_id = ?", uid, videoId).
-		First(&like).Error
+		First(&l).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errno.LikeNotFound
 		}
 		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video like: %v", err)
 	}
-	return &like, nil
+	return &model.Like{
+		Id:        l.Id,
+		Uid:       l.Uid,
+		VideoId:   l.VideoId,
+		CommentId: l.CommentId,
+		Status:    l.Status,
+	}, nil
 }
 
 func (db *likeDB) GetCommentLike(ctx context.Context, commentId, uid int64) (*model.Like, error) {
-	var like model.Like
+	var l Like
 	err := db.client.WithContext(ctx).
 		Where("uid = ? and comment_id = ?", uid, commentId).
-		First(&like).Error
+		First(&l).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errno.LikeNotFound
 		}
 		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get video like: %v", err)
 	}
-	return &like, nil
+	return &model.Like{
+		Id:        l.Id,
+		Uid:       l.Uid,
+		VideoId:   l.VideoId,
+		CommentId: l.CommentId,
+		Status:    l.Status,
+	}, nil
 }
 
 func (db *likeDB) SetLikeStatus(ctx context.Context, id int64, status int64) error {

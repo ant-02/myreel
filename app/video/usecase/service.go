@@ -43,7 +43,7 @@ func (us *useCase) GetVideosByUserId(ctx context.Context, uid, cursor, limit int
 	return us.svc.GetVideosByUserId(ctx, uid, cursor, limit)
 }
 
-func (us *useCase) GetVideosGroupByVisitCount(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
+func (us *useCase) GetPopularVideos(ctx context.Context, cursor, limit int64) ([]*model.Video, *model.Pagination, error) {
 	ids, err := us.cache.GetPopularVideos(ctx, constants.RedisVideoPopularKey, cursor, limit)
 	if err != nil {
 		return nil, nil, err
@@ -65,7 +65,7 @@ func (us *useCase) GetVideosGroupByVisitCount(ctx context.Context, cursor, limit
 	return videos, &model.Pagination{
 		NextCursor: nextCursor,
 		PrevCursor: cursor,
-		Total:      constants.RedisVideoPopCount,
+		Total:      int64(len(ids)),
 	}, nil
 }
 

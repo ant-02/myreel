@@ -25,7 +25,7 @@ type VideoCache interface {
 	GetPopularVideos(ctx context.Context, key string, cursor, limit int64) ([]int64, error)
 	CleanPopularVideos(ctx context.Context, key string, limit int64) error
 	GetVideo(ctx context.Context, key string) (*model.Video, error)
-	AddVideoWithTLL(ctx context.Context, key string, val interface{}, ttl time.Duration) error
+	AddVideoWithTLL(ctx context.Context, key string, video *model.Video, ttl time.Duration) error
 	VideoLikeDecr(ctx context.Context, key string) error
 	VideoLikeIncr(ctx context.Context, key string) error
 	AddVideoLike(ctx context.Context, key string, val interface{}, ttl time.Duration) error
