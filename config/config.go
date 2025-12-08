@@ -16,6 +16,7 @@ var (
 	Redis        *redis
 	Service      *service
 	Upyun        *upyun
+	Etcd         *etcd
 	runtimeViper = viper.New()
 )
 
@@ -50,6 +51,7 @@ func configMapping(srv string) {
 	Mysql = &c.MySQL
 	Redis = &c.Redis
 	Upyun = &c.Upyun
+	Etcd = &c.Etcd
 	Service = getService(srv)
 }
 

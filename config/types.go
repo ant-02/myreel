@@ -34,6 +34,7 @@ type config struct {
 	MySQL     mySQL
 	Redis     redis
 	Upyun     upyun
+	Etcd      etcd
 }
 
 type service struct {
@@ -50,4 +51,8 @@ type upyun struct {
 	MaxSize    int64
 	Domain     string
 	NotifyUrl  string
+}
+
+type etcd struct {
+	Addr string
 }

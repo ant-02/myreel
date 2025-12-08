@@ -11,6 +11,7 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	etcd "github.com/kitex-contrib/registry-etcd"
 )
 
 func init() {
@@ -18,6 +19,11 @@ func init() {
 }
 
 func main() {
+	r, err := etcd.NewEtcdRegistry([]string{config.Etcd.Addr})
+	if err != nil {
+		logger.Fatalf("Payment: new etcd registry failed, err: %v", err)
+	}
+
 	listenAddr, err := util.GetAvailablePort()
 	if err != nil {
 		logger.Fatalf("Like: get available port failed, err: %v", err)
@@ -34,6 +40,7 @@ func main() {
 			ServiceName: config.Service.Name,
 		}),
 		server.WithServiceAddr(addr),
+		server.WithRegistry(r),
 	)
 
 	if err = svr.Run(); err != nil {

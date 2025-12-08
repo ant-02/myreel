@@ -56,3 +56,6 @@ upyun:
   maxSize: 209715200
   domain: "http://myreel-img.test.upcdn.net"
   notifyUrl: "http://xhhx.xyz:8888"
+
+etcd:
+  addr: "http://0.0.0.0:2379"
