@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package follow;
+
+option go_package = "/api/follow";
+
+import "api.proto";
+
+message User {
+    int64 id = 1;
+    string username = 2;
+    string avatarUrl = 3;
+}
+
+message Pagination {
+    int64 nextCursor = 1;
+    int64 prevCursor = 2;
+    int64 total = 3;
+}
+
+message FollowActionRequest {
+    int64 toUserId = 1[(api.body)="toUserId"];
+    int64 actionType = 2[(api.body)="actionType"];
+}
+
+message FollowActionResponse {}
+
+message FollowingListRequest {
+    int64 userId = 1[(api.query)="userId"];
+    int64 cursor = 2[(api.query)="cursor"];
+    int64 limit = 3[(api.query)="limit"];
+}
+
+message FollowingListResponse {
+    repeated User items = 1;
+    Pagination pagination = 2;
+}
+
+message FolloweredListRequest {
+    int64 userId = 1[(api.query)="userId"];
+    int64 cursor = 2[(api.query)="cursor"];
+    int64 limit = 3[(api.query)="limit"];
+}
+
+message FolloweredListResponse {
+    repeated User items = 1;
+    Pagination pagination = 2;
+}
+
+message FriendListRequest {
+    int64 cursor = 1[(api.query)="cursor"];
+    int64 limit = 2[(api.query)="limit"];
+}
+
+message FriendListResponse {
+    repeated User items = 1;
+    Pagination pagination = 2;
+}
+
+service FollowService {
+    rpc FollowAction(FollowActionRequest) returns (FollowActionResponse) {
+        option (api.post)="/api/v1/relation/action";
+    }
+    rpc FollowingList(FollowingListRequest) returns (FollowingListResponse) {
+        option (api.get)="/api/v1/following/list";
+    }
+    rpc FolloweredList(FolloweredListRequest) returns (FolloweredListResponse) {
+        option (api.get)="/api/v1/followered/list";
+    }
+    rpc FriendList(FriendListRequest) returns (FriendListResponse) {
+        option (api.get)="/api/v1/friends/list";
+    }
+}

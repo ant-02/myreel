@@ -7,6 +7,7 @@ const (
 	VideoServiceName   = "video"
 	LikeServiceName    = "like"
 	CommentServiceName = "comment"
+	FollowServiceName  = "follow"
 )
 
 // UserService

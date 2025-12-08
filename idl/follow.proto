@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package follow;
+
+option go_package = "/follow";
+
+import "model.proto";
+
+message User {
+    int64 id = 1;
+    string username = 2;
+    string avatarUrl = 3;
+}
+
+message Pagination {
+    int64 nextCursor = 1;
+    int64 prevCursor = 2;
+    int64 total = 3;
+}
+
+message UserList {
+    repeated User items = 1;
+    Pagination pagination = 2;
+}
+
+message FollowActionRequest {
+    int64 toUserId = 1;
+    int64 actionType = 2;
+    int64 userId = 3;
+}
+
+message FollowActionResponse {
+    model.BaseResp base = 1; 
+}
+
+message FolloweringListRequest {
+    int64 userId = 1;
+    int64 cursor = 2;
+    int64 limit = 3;
+    int64 toUserId = 4;
+}
+
+message FolloweringListResponse {
+    model.BaseResp base = 1;
+    UserList data = 2;
+}
+
+message FolloweredListRequest {
+    int64 userId = 1;
+    int64 cursor = 2;
+    int64 limit = 3;
+    int64 toUserId = 4;
+}
+
+message FolloweredListResponse {
+    model.BaseResp base = 1;
+    UserList data = 2;
+}
+
+message FriendListRequest {
+    int64 limit = 1;
+    int64 toUserId = 2;
+}
+
+message FriendListResponse {
+    model.BaseResp base = 1;
+    UserList data = 2;
+}
+
+service FollowService {
+    rpc FollowAction(FollowActionRequest) returns (FollowActionResponse);
+    rpc FolloweringList(FolloweringListRequest) returns (FolloweringListResponse);
+    rpc FolloweredList(FolloweredListRequest) returns (FolloweredListResponse);
+    rpc FriendList(FriendListRequest) returns (FriendListResponse);
+}

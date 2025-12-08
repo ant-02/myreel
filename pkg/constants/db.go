@@ -21,4 +21,5 @@ const (
 	VideoTableName   = "videos"
 	LikeTableName    = "likes"
 	CommentTableName = "comments"
+	FollowTableName  = "follows"
 )
