@@ -25,19 +25,17 @@ message FollowActionRequest {
 
 message FollowActionResponse {}
 
-message FollowingListRequest {
-    int64 userId = 1[(api.query)="userId"];
+message FolloweringListRequest {
     int64 cursor = 2[(api.query)="cursor"];
     int64 limit = 3[(api.query)="limit"];
 }
 
-message FollowingListResponse {
+message FolloweringListResponse {
     repeated User items = 1;
     Pagination pagination = 2;
 }
 
 message FolloweredListRequest {
-    int64 userId = 1[(api.query)="userId"];
     int64 cursor = 2[(api.query)="cursor"];
     int64 limit = 3[(api.query)="limit"];
 }
@@ -61,7 +59,7 @@ service FollowService {
     rpc FollowAction(FollowActionRequest) returns (FollowActionResponse) {
         option (api.post)="/api/v1/relation/action";
     }
-    rpc FollowingList(FollowingListRequest) returns (FollowingListResponse) {
+    rpc FolloweringList(FolloweringListRequest) returns (FolloweringListResponse) {
         option (api.get)="/api/v1/following/list";
     }
     rpc FolloweredList(FolloweredListRequest) returns (FolloweredListResponse) {

@@ -51,22 +51,6 @@ func FollowAction(ctx context.Context, c *app.RequestContext) {
 	pack.RespSuccess(c)
 }
 
-// FollowingList .
-// @router /api/v1/following/list [GET]
-func FollowingList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.FollowingListRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(api.FollowingListResponse)
-
-	c.JSON(consts.StatusOK, resp)
-}
-
 // FolloweredList .
 // @router /api/v1/followered/list [GET]
 func FolloweredList(ctx context.Context, c *app.RequestContext) {
@@ -74,13 +58,32 @@ func FolloweredList(ctx context.Context, c *app.RequestContext) {
 	var req api.FolloweredListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(api.FolloweredListResponse)
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	data, err := rpc.GetFolloweredsByIdsRPC(ctx, &follow.FolloweredListRequest{
+		UserId: uid,
+		Cursor: req.Cursor,
+		Limit:  req.Limit,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespData(c, data)
 }
 
 // FriendList .
@@ -97,4 +100,39 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.FriendListResponse)
 
 	c.JSON(consts.StatusOK, resp)
+}
+
+// FolloweringList .
+// @router /api/v1/following/list [GET]
+func FolloweringList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.FolloweringListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
+		return
+	}
+
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+
+	data, err := rpc.GetFolloweringsByIdsRPC(ctx, &follow.FolloweringListRequest{
+		UserId: uid,
+		Cursor: req.Cursor,
+		Limit:  req.Limit,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespData(c, data)
 }

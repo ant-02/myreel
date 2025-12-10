@@ -26,8 +26,8 @@ type UserService interface {
 	GetUploadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
 	SetAvatar(ctx context.Context, uid int64, url string) error
 	GetUserIdByUsername(ctx context.Context, username string) (int64, error)
+	GetUsersByIds(ctx context.Context, ids []int64) ([]*model.UserProfile, error)
 }
-	
 
 func NewUserService(db repository.UserDB, sf *util.Snowflake, cache repository.UserCache) UserService {
 	if db == nil {

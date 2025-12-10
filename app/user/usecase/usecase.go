@@ -22,6 +22,7 @@ type UserUseCase interface {
 	GetLoadToken(ctx context.Context, suffix string, uid int64) (*upyun.UpyunToken, error)
 	SetAvatar(ctx context.Context, uid int64, url string) error
 	GetUserIdByUsername(ctx context.Context, username string) (int64, error)
+	GetUsersByIds(ctx context.Context, ids []int64) ([]*model.UserProfile, error)
 }
 
 func NewUserUseCase(db repository.UserDB, svc service.UserService, cache repository.UserCache) *useCase {

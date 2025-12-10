@@ -89,3 +89,17 @@ func (db *userDB) GetUserIdByUserName(ctx context.Context, username string) (int
 	}
 	return id, nil
 }
+
+func (db *userDB) GetUsersByIds(ctx context.Context, ids []int64) ([]*model.UserProfile, error) {
+	var users []*model.UserProfile
+	if err := db.client.WithContext(ctx).
+		Model(&User{}).
+		Select("id", "username", "avatar_url").
+		Where("id IN ?", ids).
+		Find(&users, ids).
+		Error; err != nil {
+		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get users by ids: %v", err)
+	}
+
+	return users, nil
+}

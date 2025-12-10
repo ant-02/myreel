@@ -134,3 +134,17 @@ func (s *UserHandler) GetUseridByUsername(ctx context.Context, req *user.GetUser
 	resp.UserId = uid
 	return
 }
+
+// GetUsersByIds implements the UserServiceImpl interface.
+func (s *UserHandler) GetUsersByIds(ctx context.Context, req *user.GetUsersByIdsRequest) (resp *user.GetUsersByIdsResponse, err error) {
+	resp = new(user.GetUsersByIdsResponse)
+	users, err := s.useCase.GetUsersByIds(ctx, req.Ids)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.List = build.BuildUseProfiles(users)
+	return
+}

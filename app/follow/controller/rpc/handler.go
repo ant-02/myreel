@@ -5,6 +5,8 @@ import (
 	"myreel/app/follow/usecase"
 	follow "myreel/kitex_gen/follow"
 	base "myreel/pkg/base/context"
+
+	build "myreel/app/follow/controller/rpc/pack"
 )
 
 // FollowServiceImpl implements the last service interface defined in the IDL.
@@ -31,13 +33,29 @@ func (s *FollowServiceImpl) FollowAction(ctx context.Context, req *follow.Follow
 
 // FolloweringList implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) FolloweringList(ctx context.Context, req *follow.FolloweringListRequest) (resp *follow.FolloweringListResponse, err error) {
-	// TODO: Your code here...
+	resp = new(follow.FolloweringListResponse)
+
+	users, pagination, err := s.useCase.GetUsersByFolloweringId(ctx, req.UserId, req.Cursor, req.Limit)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildUserList(build.BuildUserProfiles(users), build.BuildPagination(pagination))
 	return
 }
 
 // FolloweredList implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) FolloweredList(ctx context.Context, req *follow.FolloweredListRequest) (resp *follow.FolloweredListResponse, err error) {
-	// TODO: Your code here...
+	resp = new(follow.FolloweredListResponse)
+
+	users, pagination, err := s.useCase.GetUsersByFolloweredId(ctx, req.UserId, req.Cursor, req.Limit)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildUserList(build.BuildUserProfiles(users), build.BuildPagination(pagination))
 	return
 }
 

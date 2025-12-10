@@ -6,6 +6,7 @@ import (
 	"myreel/app/follow/domain/model"
 	"myreel/app/follow/domain/repository"
 	"myreel/pkg/errno"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -70,4 +71,54 @@ func (db *followDB) CreateFollow(ctx context.Context, f *model.Follow) error {
 		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to create follow: %v", err)
 	}
 	return nil
+}
+
+func (db *followDB) GetUserIdsByFolloweredId(ctx context.Context, userId, limit int64, cursor time.Time) ([]*model.FolloweringIdWithTime, int64, error) {
+	var fs []*model.FolloweringIdWithTime
+	var total int64
+	tx := db.client.WithContext(ctx).
+		Model(&Follow{}).
+		Where("followered_id = ? and status = 1", userId)
+
+	err := tx.Count(&total).Error
+	if err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get follow count by followered id: %v", err)
+	}
+
+	err = tx.Where("created_at < ?", cursor).
+		Limit(int(limit)).
+		Order("created_at DESC").
+		Select("followering_id", "created_at").
+		Find(&fs).
+		Error
+	if err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get follows by followered id: %v", err)
+	}
+
+	return fs, total, nil
+}
+
+func (db *followDB) GetUserIdsByFolloweringId(ctx context.Context, userId, limit int64, cursor time.Time) ([]*model.FolloweredIdWithTime, int64, error) {
+	var fs []*model.FolloweredIdWithTime
+	var total int64
+	tx := db.client.WithContext(ctx).
+		Model(&Follow{}).
+		Where("followering_id = ? and status = 1", userId)
+
+	err := tx.Count(&total).Error
+	if err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get follow count by followering id: %v", err)
+	}
+
+	err = tx.Where("created_at < ?", cursor).
+		Limit(int(limit)).
+		Order("created_at DESC").
+		Select("followered_id", "created_at").
+		Find(&fs).
+		Error
+	if err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get follows by followering id: %v", err)
+	}
+
+	return fs, total, nil
 }

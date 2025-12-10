@@ -74,3 +74,7 @@ func (uc *useCase) SetAvatar(ctx context.Context, uid int64, url string) error {
 func (uc *useCase) GetUserIdByUsername(ctx context.Context, username string) (int64, error) {
 	return uc.db.GetUserIdByUserName(ctx, username)
 }
+
+func (uc *useCase) GetUsersByIds(ctx context.Context, ids []int64) ([]*model.UserProfile, error) {
+	return uc.svc.GetUsersByIds(ctx, ids)
+}

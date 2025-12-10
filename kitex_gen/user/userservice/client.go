@@ -21,6 +21,7 @@ type Client interface {
 	Refresh(ctx context.Context, Req *user.RefreshRequest, callOptions ...callopt.Option) (r *user.RefreshResponse, err error)
 	SetUserAvatarUrl(ctx context.Context, Req *user.SetUserAvatarUrlRequest, callOptions ...callopt.Option) (r *user.SetUserAvatarUrlResponse, err error)
 	GetUseridByUsername(ctx context.Context, Req *user.GetUserIdByUsernameRequest, callOptions ...callopt.Option) (r *user.GetUserIdByUsernameResponse, err error)
+	GetUsersByIds(ctx context.Context, Req *user.GetUsersByIdsRequest, callOptions ...callopt.Option) (r *user.GetUsersByIdsResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -100,4 +101,9 @@ func (p *kUserServiceClient) SetUserAvatarUrl(ctx context.Context, Req *user.Set
 func (p *kUserServiceClient) GetUseridByUsername(ctx context.Context, Req *user.GetUserIdByUsernameRequest, callOptions ...callopt.Option) (r *user.GetUserIdByUsernameResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetUseridByUsername(ctx, Req)
+}
+
+func (p *kUserServiceClient) GetUsersByIds(ctx context.Context, Req *user.GetUsersByIdsRequest, callOptions ...callopt.Option) (r *user.GetUsersByIdsResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetUsersByIds(ctx, Req)
 }

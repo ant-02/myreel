@@ -13,3 +13,9 @@ type Token struct {
 	RefreshToken      string
 	RefreshExpireTime int64
 }
+
+type UserProfile struct {
+	Id        int64
+	Username  string
+	AvatarUrl string
+}

@@ -137,3 +137,11 @@ func (us *userService) GetUserIdByUsername(ctx context.Context, username string)
 	}
 	return id, nil
 }
+
+func (us *userService) GetUsersByIds(ctx context.Context, ids []int64) ([]*model.UserProfile, error) {
+	users, err := us.db.GetUsersByIds(ctx, ids)
+	if err != nil {
+		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "faile to get users by ids").WithError(err)
+	}
+	return users, nil
+}

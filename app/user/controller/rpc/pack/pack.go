@@ -7,6 +7,25 @@ import (
 	"myreel/pkg/upyun"
 )
 
+func BuildUseProfile(u *domainModel.UserProfile) *user.UserProfile {
+	return &user.UserProfile{
+		Id:        u.Id,
+		Username:  u.Username,
+		AvatarUrl: u.AvatarUrl,
+	}
+}
+
+func BuildUseProfiles(us []*domainModel.UserProfile) []*user.UserProfile {
+	l := len(us)
+	result := make([]*user.UserProfile, l)
+	if l > 0 {
+		for i, v := range us {
+			result[i] = BuildUseProfile(v)
+		}
+	}
+	return result
+}
+
 func BuildUser(u *domainModel.User) *user.User {
 	return &user.User{
 		Id:        u.Id,

@@ -17,6 +17,11 @@ type Follow struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
+type FolloweredIdWithTime struct {
+	FolloweredId int64
+	CreatedAt    time.Time
+}
+
 func (Follow) TableName() string {
 	return constants.FollowTableName
 }

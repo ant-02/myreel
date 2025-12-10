@@ -23,3 +23,11 @@ func (uc *useCase) FollowAction(ctx context.Context, userId, toUserId, actionTyp
 	}
 	return err
 }
+
+func (uc *useCase) GetUsersByFolloweredId(ctx context.Context, userId, cursor, limit int64) ([]*model.UserProfile, *model.Pagination, error) {
+	return uc.svc.GetUsersByFolloweredId(ctx, userId, cursor, limit)
+}
+
+func (uc *useCase) GetUsersByFolloweringId(ctx context.Context, userId, cursor, limit int64) ([]*model.UserProfile, *model.Pagination, error) {
+	return uc.svc.GetUsersByFolloweringId(ctx, userId, cursor, limit)
+}

@@ -27,7 +27,7 @@ func Register(r *server.Hertz) {
 			}
 			{
 				_following := _v1.Group("/following", _followingMw()...)
-				_following.GET("/list", append(_followinglistMw(), follow.FollowingList)...)
+				_following.GET("/list", append(_followeringlistMw(), follow.FolloweringList)...)
 			}
 			{
 				_friends := _v1.Group("/friends", _friendsMw()...)

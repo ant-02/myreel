@@ -4,6 +4,7 @@ import (
 	"myreel/app/follow/controller/rpc"
 	"myreel/app/follow/domain/service"
 	"myreel/app/follow/infrastructure/mysql"
+	followRpcPkg "myreel/app/follow/infrastructure/rpc"
 	"myreel/app/follow/usecase"
 	"myreel/config"
 	"myreel/kitex_gen/follow"
@@ -27,6 +28,13 @@ func InjectFollowHandler() follow.FollowService {
 	// 	panic(err)
 	// }
 
+	userClient, err := client.InitUserRPC()
+	if err != nil {
+		panic(err)
+	}
+
+	fRPC := followRpcPkg.NewFollowRpcImpl(*userClient)
+
 	db := mysql.NewFollowDB(gormDB)
 	if err := db.Magrate(); err != nil {
 		panic(err)
@@ -34,8 +42,8 @@ func InjectFollowHandler() follow.FollowService {
 
 	// redisCache := cache.NewVideoCache(re)
 
-	svc := service.NewFollowService(db, sf)
-	uc := usecase.NewFollowUseCase(db, svc)
+	svc := service.NewFollowService(db, sf, fRPC)
+	uc := usecase.NewFollowUseCase(db, svc, fRPC)
 
 	return rpc.NewFollowServiceImpl(uc)
 }

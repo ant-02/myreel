@@ -151,10 +151,9 @@ func (x *FollowActionResponse) GetBase() *model.BaseResp {
 }
 
 type FolloweringListRequest struct {
-	UserId   int64 `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
-	Cursor   int64 `protobuf:"varint,2,opt,name=cursor" json:"cursor,omitempty"`
-	Limit    int64 `protobuf:"varint,3,opt,name=limit" json:"limit,omitempty"`
-	ToUserId int64 `protobuf:"varint,4,opt,name=toUserId" json:"toUserId,omitempty"`
+	UserId int64 `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
+	Cursor int64 `protobuf:"varint,2,opt,name=cursor" json:"cursor,omitempty"`
+	Limit  int64 `protobuf:"varint,3,opt,name=limit" json:"limit,omitempty"`
 }
 
 func (x *FolloweringListRequest) Reset() { *x = FolloweringListRequest{} }
@@ -182,13 +181,6 @@ func (x *FolloweringListRequest) GetCursor() int64 {
 func (x *FolloweringListRequest) GetLimit() int64 {
 	if x != nil {
 		return x.Limit
-	}
-	return 0
-}
-
-func (x *FolloweringListRequest) GetToUserId() int64 {
-	if x != nil {
-		return x.ToUserId
 	}
 	return 0
 }
@@ -221,10 +213,9 @@ func (x *FolloweringListResponse) GetData() *UserList {
 }
 
 type FolloweredListRequest struct {
-	UserId   int64 `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
-	Cursor   int64 `protobuf:"varint,2,opt,name=cursor" json:"cursor,omitempty"`
-	Limit    int64 `protobuf:"varint,3,opt,name=limit" json:"limit,omitempty"`
-	ToUserId int64 `protobuf:"varint,4,opt,name=toUserId" json:"toUserId,omitempty"`
+	UserId int64 `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
+	Cursor int64 `protobuf:"varint,2,opt,name=cursor" json:"cursor,omitempty"`
+	Limit  int64 `protobuf:"varint,3,opt,name=limit" json:"limit,omitempty"`
 }
 
 func (x *FolloweredListRequest) Reset() { *x = FolloweredListRequest{} }
@@ -252,13 +243,6 @@ func (x *FolloweredListRequest) GetCursor() int64 {
 func (x *FolloweredListRequest) GetLimit() int64 {
 	if x != nil {
 		return x.Limit
-	}
-	return 0
-}
-
-func (x *FolloweredListRequest) GetToUserId() int64 {
-	if x != nil {
-		return x.ToUserId
 	}
 	return 0
 }

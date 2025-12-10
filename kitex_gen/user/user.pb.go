@@ -74,6 +74,39 @@ func (x *User) GetDeletedAt() string {
 	return ""
 }
 
+type UserProfile struct {
+	Id        int64  `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Username  string `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
+	AvatarUrl string `protobuf:"bytes,3,opt,name=avatarUrl" json:"avatarUrl,omitempty"`
+}
+
+func (x *UserProfile) Reset() { *x = UserProfile{} }
+
+func (x *UserProfile) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *UserProfile) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *UserProfile) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserProfile) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *UserProfile) GetAvatarUrl() string {
+	if x != nil {
+		return x.AvatarUrl
+	}
+	return ""
+}
+
 type LoginRequest struct {
 	Username string `protobuf:"bytes,1,opt,name=username" json:"username,omitempty"`
 	Password string `protobuf:"bytes,2,opt,name=password" json:"password,omitempty"`
@@ -621,6 +654,50 @@ func (x *GetUserIdByUsernameResponse) GetUserId() int64 {
 	return 0
 }
 
+type GetUsersByIdsRequest struct {
+	Ids []int64 `protobuf:"varint,1,rep,packed,name=ids" json:"ids,omitempty"`
+}
+
+func (x *GetUsersByIdsRequest) Reset() { *x = GetUsersByIdsRequest{} }
+
+func (x *GetUsersByIdsRequest) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *GetUsersByIdsRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GetUsersByIdsRequest) GetIds() []int64 {
+	if x != nil {
+		return x.Ids
+	}
+	return nil
+}
+
+type GetUsersByIdsResponse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+	List []*UserProfile  `protobuf:"bytes,2,rep,name=list" json:"list,omitempty"`
+}
+
+func (x *GetUsersByIdsResponse) Reset() { *x = GetUsersByIdsResponse{} }
+
+func (x *GetUsersByIdsResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *GetUsersByIdsResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GetUsersByIdsResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetUsersByIdsResponse) GetList() []*UserProfile {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
 type UserService interface {
 	Login(ctx context.Context, req *LoginRequest) (res *LoginResponse, err error)
 	Register(ctx context.Context, req *RegisterRequest) (res *RegisterResponse, err error)
@@ -632,4 +709,5 @@ type UserService interface {
 	Refresh(ctx context.Context, req *RefreshRequest) (res *RefreshResponse, err error)
 	SetUserAvatarUrl(ctx context.Context, req *SetUserAvatarUrlRequest) (res *SetUserAvatarUrlResponse, err error)
 	GetUseridByUsername(ctx context.Context, req *GetUserIdByUsernameRequest) (res *GetUserIdByUsernameResponse, err error)
+	GetUsersByIds(ctx context.Context, req *GetUsersByIdsRequest) (res *GetUsersByIdsResponse, err error)
 }

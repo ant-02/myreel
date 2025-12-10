@@ -16,6 +16,12 @@ message User {
     string deletedAt = 7;
 }
 
+message UserProfile {
+    int64 id = 1;
+    string username = 2;
+    string avatarUrl = 3;
+}
+
 message LoginRequest {
     string username = 1;
     string password = 2;
@@ -125,6 +131,15 @@ message GetUserIdByUsernameResponse {
     int64 userId = 2;
 }
 
+message GetUsersByIdsRequest {
+    repeated int64 ids = 1;
+}
+
+message GetUsersByIdsResponse {
+    model.BaseResp base = 1;
+    repeated UserProfile list = 2;
+}
+
 service UserService {
     rpc Login(LoginRequest) returns (LoginResponse);
     rpc Register(RegisterRequest) returns (RegisterResponse);
@@ -136,4 +151,5 @@ service UserService {
     rpc Refresh(RefreshRequest) returns (RefreshResponse);
     rpc SetUserAvatarUrl(SetUserAvatarUrlRequest) returns (SetUserAvatarUrlResponse);
     rpc GetUseridByUsername(GetUserIdByUsernameRequest) returns (GetUserIdByUsernameResponse);
+    rpc GetUsersByIds(GetUsersByIdsRequest) returns (GetUsersByIdsResponse);
 }

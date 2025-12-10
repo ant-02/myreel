@@ -30,17 +30,16 @@ func _followeredMw() []app.HandlerFunc {
 
 func _followeredlistMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }
 
 func _followingMw() []app.HandlerFunc {
 	// your code...
-	return nil
-}
-
-func _followinglistMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }
 
 func _friendsMw() []app.HandlerFunc {
@@ -59,6 +58,13 @@ func _relationMw() []app.HandlerFunc {
 }
 
 func _followactionMw() []app.HandlerFunc {
+	// your code...
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
+}
+
+func _followeringlistMw() []app.HandlerFunc {
 	// your code...
 	return []app.HandlerFunc{
 		mv.Auth(),
