@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"myreel/config"
 	"myreel/kitex_gen/comment/commentservice"
+	"myreel/kitex_gen/follow/followservice"
 	"myreel/kitex_gen/like/likeservice"
 	"myreel/kitex_gen/user/userservice"
 	"myreel/kitex_gen/video/videoservice"
@@ -53,3 +54,8 @@ func InitLikeRPC() (*likeservice.Client, error) {
 func InitCommentRPC() (*commentservice.Client, error) {
 	return initRPCClient(string(constants.CommentServiceName), commentservice.NewClient)
 }
+
+func InitFollowRPC() (*followservice.Client, error) {
+	return initRPCClient(string(constants.FollowServiceName), followservice.NewClient)
+}
+

@@ -3,6 +3,8 @@
 package follow
 
 import (
+	"myreel/app/gateway/mv"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -58,5 +60,7 @@ func _relationMw() []app.HandlerFunc {
 
 func _followactionMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }

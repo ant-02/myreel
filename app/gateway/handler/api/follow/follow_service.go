@@ -5,39 +5,64 @@ package follow
 import (
 	"context"
 
+	api "myreel/app/gateway/model/api/follow"
+	"myreel/app/gateway/pack"
+	"myreel/app/gateway/rpc"
+	"myreel/kitex_gen/follow"
+	"myreel/pkg/constants"
+	"myreel/pkg/errno"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	follow "myreel/app/gateway/model/api/follow"
 )
 
 // FollowAction .
 // @router /api/v1/relation/action [POST]
 func FollowAction(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req follow.FollowActionRequest
+	var req api.FollowActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(follow.FollowActionResponse)
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	err = rpc.FollowActionRPC(ctx, &follow.FollowActionRequest{
+		ToUserId:   req.ToUserId,
+		ActionType: req.ActionType,
+		UserId:     uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespSuccess(c)
 }
 
 // FollowingList .
 // @router /api/v1/following/list [GET]
 func FollowingList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req follow.FollowingListRequest
+	var req api.FollowingListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(follow.FollowingListResponse)
+	resp := new(api.FollowingListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -46,14 +71,14 @@ func FollowingList(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/followered/list [GET]
 func FolloweredList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req follow.FolloweredListRequest
+	var req api.FolloweredListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(follow.FolloweredListResponse)
+	resp := new(api.FolloweredListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }
@@ -62,14 +87,14 @@ func FolloweredList(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/friends/list [GET]
 func FriendList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req follow.FriendListRequest
+	var req api.FriendListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp := new(follow.FriendListResponse)
+	resp := new(api.FriendListResponse)
 
 	c.JSON(consts.StatusOK, resp)
 }

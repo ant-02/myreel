@@ -8,7 +8,7 @@ OUTPUT := output/bin
 LOGS := logs
 
 # Go 服务列表
-SERVICES := gateway user video like comment
+SERVICES := gateway user video like comment follow
 BINS := $(addprefix $(OUTPUT)/, $(SERVICES))
 
 # tmux 会话名
@@ -53,7 +53,7 @@ run: build
 	sleep 0.3
 
 	# 其他服务
-	for srv in user video like comment; do \
+	for srv in user video like comment follow; do \
 		echo "Starting $$srv..."; \
 		tmux new-window -t $(TMUX_SESSION) -n $$srv \
 			"$(OUTPUT)/$$srv 2>&1 | tee -a $(LOGS)/$$srv.log"; \

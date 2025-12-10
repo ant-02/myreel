@@ -8,6 +8,7 @@ var (
 	LikeNotFound    = NewErrNo(ErrRecordNotFound, "like not found")
 	CommentNotFound = NewErrNo(ErrRecordNotFound, "comment not found")
 	VideoNotFound   = NewErrNo(ErrRecordNotFound, "video not found")
+	FollowNotFound   = NewErrNo(ErrRecordNotFound, "follow not found")
 
 	ParamVerifyError  = NewErrNo(ParamVerifyErrorCode, "parameter validation failed")
 	ParamMissingError = NewErrNo(ParamMissingErrorCode, "missing parameter")

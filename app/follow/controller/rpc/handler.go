@@ -4,6 +4,7 @@ import (
 	"context"
 	"myreel/app/follow/usecase"
 	follow "myreel/kitex_gen/follow"
+	base "myreel/pkg/base/context"
 )
 
 // FollowServiceImpl implements the last service interface defined in the IDL.
@@ -17,7 +18,14 @@ func NewFollowServiceImpl(u usecase.FollowUseCase) *FollowServiceImpl {
 
 // FollowAction implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) FollowAction(ctx context.Context, req *follow.FollowActionRequest) (resp *follow.FollowActionResponse, err error) {
-	// TODO: Your code here...
+	resp = new(follow.FollowActionResponse)
+
+	err = s.useCase.FollowAction(ctx, req.UserId, req.ToUserId, req.ActionType)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+	resp.Base = base.BuildSuccessResp()
 	return
 }
 
