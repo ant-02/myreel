@@ -17,6 +17,7 @@ type FollowUseCase interface {
 	FollowAction(ctx context.Context, userId, toUserId, actionType int64) error
 	GetUsersByFolloweredId(ctx context.Context, userId, cursor, limit int64) ([]*model.UserProfile, *model.Pagination, error)
 	GetUsersByFolloweringId(ctx context.Context, userId, cursor, limit int64) ([]*model.UserProfile, *model.Pagination, error)
+	GetFriendsById(ctx context.Context, id, cursor, limit int64) ([]*model.UserProfile, *model.Pagination, error)
 }
 
 func NewFollowUseCase(db repository.FollowDB, svc service.FollowService, rpc repository.RpcPort) FollowUseCase {

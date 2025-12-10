@@ -122,3 +122,50 @@ func (db *followDB) GetUserIdsByFolloweringId(ctx context.Context, userId, limit
 
 	return fs, total, nil
 }
+
+func (db *followDB) GetFriendIdsById(ctx context.Context, id, limit int64, cursor time.Time) ([]*model.FolloweredIdWithTime, int64, error) {
+	var fs []*model.FolloweredIdWithTime
+	var total int64
+
+	tx := db.client.WithContext(ctx)
+	if err := tx.Raw(`
+		SELECT COUNT(*)
+		FROM follows f1
+		WHERE f1.followering_id = ? 
+			AND f1.status = 1
+			AND EXISTS (
+				SELECT 1
+				FROM follows f2
+				WHERE f2.followering_id = f1.followered_id
+					AND f2.status = 1
+					AND f2.followered_id = ?
+			)
+	`, id, id).
+		Scan(&total).
+		Error; err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get friends count by id: %v", err)
+	}
+
+	if err := tx.Raw(`
+		SELECT f1.followered_id, f1.created_at
+		FROM follows f1
+		WHERE f1.followering_id = ? 
+			AND	f1.created_at < ?
+			AND f1.status = 1
+			AND EXISTS (
+				SELECT 1
+				FROM follows f2
+				WHERE f2.followering_id = f1.followered_id
+					AND f2.status = 1
+					AND f2.followered_id = ?
+			)
+		ORDER BY f1.created_at DESC
+		LIMIT ?
+	`, id, cursor, id, limit).
+		Scan(&fs).
+		Error; err != nil {
+		return nil, 0, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get friends by id: %v", err)
+	}
+
+	return fs, total, nil
+}

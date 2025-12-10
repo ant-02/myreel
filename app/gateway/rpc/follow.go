@@ -94,3 +94,35 @@ func GetFolloweredsByIdsRPC(ctx context.Context, req *follow.FolloweredListReque
 		},
 	}, nil
 }
+
+func GetFriendsByIdRPC(ctx context.Context, req *follow.FriendListRequest) (*api.FriendListResponse, error) {
+	resp, err := followClient.FriendList(ctx, req)
+	if err != nil {
+		logger.Errorf("GetFriendsByIdRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	l := len(resp.Data.Items)
+	user := make([]*api.User, l)
+	if l > 0 {
+		for i, v := range resp.Data.Items {
+			user[i] = &api.User{
+				Id:        v.Id,
+				Username:  v.Username,
+				AvatarUrl: v.AvatarUrl,
+			}
+		}
+	}
+
+	return &api.FriendListResponse{
+		Items: user,
+		Pagination: &api.Pagination{
+			NextCursor: resp.Data.Pagination.NextCursor,
+			PrevCursor: resp.Data.Pagination.PrevCursor,
+			Total:      resp.Data.Pagination.Total,
+		},
+	}, nil
+}

@@ -100,3 +100,35 @@ func (fs *followService) GetUsersByFolloweringId(ctx context.Context, userId, cu
 		Total:      total,
 	}, nil
 }
+
+func (fs *followService) GetFriendsById(ctx context.Context, id, cursor, limit int64) ([]*model.UserProfile, *model.Pagination, error) {
+	t := time.Now()
+	if cursor > 0 {
+		t = time.Unix(cursor, 10)
+	}
+	fts, total, err := fs.db.GetFriendIdsById(ctx, id, limit, t)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get friends by id").WithError(err)
+	}
+
+	nextCursor := cursor
+	l := len(fts)
+	ids := make([]int64, l)
+	if l > 0 {
+		nextCursor = fts[l-1].CreatedAt.Unix()
+		for i, v := range fts {
+			ids[i] = v.FolloweredId
+		}
+	}
+
+	users, err := fs.rpc.GetUsersByIdsRPC(ctx, ids)
+	if err != nil {
+		return nil, nil, errno.Errorf(errno.InternalServiceErrorCode, "failed to get users by ids: %v", err)
+	}
+
+	return users, &model.Pagination{
+		NextCursor: nextCursor,
+		PrevCursor: cursor,
+		Total:      total,
+	}, nil
+}

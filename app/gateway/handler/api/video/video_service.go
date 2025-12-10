@@ -190,7 +190,7 @@ func GetVideoCoverUploadToken(ctx context.Context, c *app.RequestContext) {
 // @router api/v1/video/publish [POST]
 func SaveVideo(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req video.SaveVideoRequest
+	var req api.SaveVideoRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		pack.RespError(c, errno.ParamVerifyError.WithError(err))

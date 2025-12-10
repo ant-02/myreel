@@ -56,8 +56,9 @@ message FolloweredListResponse {
 }
 
 message FriendListRequest {
-    int64 limit = 1;
-    int64 toUserId = 2;
+    int64 userId = 1;
+    int64 cursor = 2;
+    int64 limit = 3;
 }
 
 message FriendListResponse {

@@ -61,6 +61,14 @@ func (s *FollowServiceImpl) FolloweredList(ctx context.Context, req *follow.Foll
 
 // FriendList implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) FriendList(ctx context.Context, req *follow.FriendListRequest) (resp *follow.FriendListResponse, err error) {
-	// TODO: Your code here...
+	resp = new(follow.FriendListResponse)
+
+	users, pagination, err := s.useCase.GetFriendsById(ctx, req.UserId, req.Cursor, req.Limit)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildUserList(build.BuildUserProfiles(users), build.BuildPagination(pagination))
 	return
 }

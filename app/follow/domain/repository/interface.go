@@ -13,6 +13,7 @@ type FollowDB interface {
 	CreateFollow(ctx context.Context, f *model.Follow) error
 	GetUserIdsByFolloweredId(ctx context.Context, userId, limit int64, cursor time.Time) ([]*model.FolloweringIdWithTime, int64, error)
 	GetUserIdsByFolloweringId(ctx context.Context, userId, limit int64, cursor time.Time) ([]*model.FolloweredIdWithTime, int64, error)
+	GetFriendIdsById(ctx context.Context, id, limit int64, cursor time.Time) ([]*model.FolloweredIdWithTime, int64, error)
 }
 
 type RpcPort interface {

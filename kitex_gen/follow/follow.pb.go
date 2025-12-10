@@ -275,8 +275,9 @@ func (x *FolloweredListResponse) GetData() *UserList {
 }
 
 type FriendListRequest struct {
-	Limit    int64 `protobuf:"varint,1,opt,name=limit" json:"limit,omitempty"`
-	ToUserId int64 `protobuf:"varint,2,opt,name=toUserId" json:"toUserId,omitempty"`
+	UserId int64 `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
+	Cursor int64 `protobuf:"varint,2,opt,name=cursor" json:"cursor,omitempty"`
+	Limit  int64 `protobuf:"varint,3,opt,name=limit" json:"limit,omitempty"`
 }
 
 func (x *FriendListRequest) Reset() { *x = FriendListRequest{} }
@@ -285,16 +286,23 @@ func (x *FriendListRequest) Marshal(in []byte) ([]byte, error) { return prutal.M
 
 func (x *FriendListRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
 
-func (x *FriendListRequest) GetLimit() int64 {
+func (x *FriendListRequest) GetUserId() int64 {
 	if x != nil {
-		return x.Limit
+		return x.UserId
 	}
 	return 0
 }
 
-func (x *FriendListRequest) GetToUserId() int64 {
+func (x *FriendListRequest) GetCursor() int64 {
 	if x != nil {
-		return x.ToUserId
+		return x.Cursor
+	}
+	return 0
+}
+
+func (x *FriendListRequest) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
 	}
 	return 0
 }

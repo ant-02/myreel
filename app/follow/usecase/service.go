@@ -31,3 +31,7 @@ func (uc *useCase) GetUsersByFolloweredId(ctx context.Context, userId, cursor, l
 func (uc *useCase) GetUsersByFolloweringId(ctx context.Context, userId, cursor, limit int64) ([]*model.UserProfile, *model.Pagination, error) {
 	return uc.svc.GetUsersByFolloweringId(ctx, userId, cursor, limit)
 }
+
+func (uc *useCase) GetFriendsById(ctx context.Context, id, cursor, limit int64) ([]*model.UserProfile, *model.Pagination, error) {
+	return uc.svc.GetFriendsById(ctx, id, cursor, limit)
+}

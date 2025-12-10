@@ -13,7 +13,6 @@ import (
 	"myreel/pkg/errno"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // FollowAction .
@@ -93,13 +92,32 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 	var req api.FriendListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
 		return
 	}
 
-	resp := new(api.FriendListResponse)
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	data, err := rpc.GetFriendsByIdRPC(ctx, &follow.FriendListRequest{
+		UserId: uid,
+		Cursor: req.Cursor,
+		Limit:  req.Limit,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespData(c, data)
 }
 
 // FolloweringList .

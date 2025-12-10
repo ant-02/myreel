@@ -55,7 +55,7 @@ func LikeAction(ctx context.Context, c *app.RequestContext) {
 // @router /like/list [GET]
 func LikeList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req like.LikeListRequest
+	var req api.LikeListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		pack.RespError(c, errno.ParamVerifyError.WithError(err))

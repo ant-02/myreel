@@ -49,7 +49,9 @@ func _friendsMw() []app.HandlerFunc {
 
 func _friendlistMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		mv.Auth(),
+	}
 }
 
 func _relationMw() []app.HandlerFunc {
