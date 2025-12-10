@@ -19,6 +19,12 @@ func (uc *useCase) LikeAction(ctx context.Context, videoId, commentId, uid, acti
 		if err == nil || !errors.Is(err, errno.LikeNotFound) {
 			return err
 		}
+
+		err = uc.lRpc.VideoLikeAction(ctx, videoId, actionType)
+		if err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to action video like").WithError(err)
+		}
+
 		var lid int64
 		lid, err = uc.svc.GenerateLikeId()
 		if err != nil {
@@ -36,6 +42,11 @@ func (uc *useCase) LikeAction(ctx context.Context, videoId, commentId, uid, acti
 		if err == nil || !errors.Is(err, errno.LikeNotFound) {
 			return err
 		}
+
+		err = uc.lRpc.CommentLikeAction(ctx, commentId, actionType)
+		if err != nil {
+			return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to action comment like").WithError(err)
+		}
 		var lid int64
 		lid, err = uc.svc.GenerateLikeId()
 		if err != nil {
@@ -43,10 +54,10 @@ func (uc *useCase) LikeAction(ctx context.Context, videoId, commentId, uid, acti
 		}
 
 		err = uc.svc.CreateLike(ctx, &model.Like{
-			Id:      lid,
-			Uid:     uid,
-			VideoId: videoId,
-			Status:  actionType,
+			Id:        lid,
+			Uid:       uid,
+			CommentId: commentId,
+			Status:    actionType,
 		})
 	}
 	return err

@@ -55,6 +55,6 @@ func (uc *useCase) CommentLikeAction(ctx context.Context, id, actionType int64) 
 	if actionType == 0 {
 		return uc.svc.SubtractLikeCount(ctx, id)
 	} else {
-		return uc.svc.AddChildCount(ctx, id)
+		return uc.svc.AddLikeCount(ctx, id)
 	}
 }
