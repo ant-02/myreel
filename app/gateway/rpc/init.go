@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"myreel/kitex_gen/chat/chatservice"
 	"myreel/kitex_gen/comment/commentservice"
 	"myreel/kitex_gen/follow/followservice"
 	"myreel/kitex_gen/like/likeservice"
@@ -14,6 +15,7 @@ var (
 	likeClient    likeservice.Client
 	commentClient commentservice.Client
 	followClient  followservice.Client
+	chatClient    chatservice.Client
 )
 
 func Init() {
@@ -22,4 +24,5 @@ func Init() {
 	InitLikeClient()
 	InitCommentClient()
 	InitFollowClient()
+	InitChatClient()
 }

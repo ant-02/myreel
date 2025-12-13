@@ -22,4 +22,5 @@ const (
 	LikeTableName    = "likes"
 	CommentTableName = "comments"
 	FollowTableName  = "follows"
+	MessageTableName = "messages"
 )

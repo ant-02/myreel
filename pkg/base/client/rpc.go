@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"myreel/config"
+	"myreel/kitex_gen/chat/chatservice"
 	"myreel/kitex_gen/comment/commentservice"
 	"myreel/kitex_gen/follow/followservice"
 	"myreel/kitex_gen/like/likeservice"
@@ -59,3 +60,6 @@ func InitFollowRPC() (*followservice.Client, error) {
 	return initRPCClient(string(constants.FollowServiceName), followservice.NewClient)
 }
 
+func InitChatRPC() (*chatservice.Client, error) {
+	return initRPCClient(string(constants.ChatServiceName), chatservice.NewClient)
+}

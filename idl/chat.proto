@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "/chat";
+import "model.proto";
+
+// 消息类型
+enum ChatType {
+  CHAT_TYPE_PRIVATE = 0;  // 私聊（proto3 要求第一个枚举值为 0）
+  CHAT_TYPE_GROUP   = 1;  // 群聊
+}
+
+// 1. 发送私聊/群聊消息
+message SendMessageRequest {
+  int64 sender_id = 1;
+  int64 target_id = 2;      // 私聊: receiver_id; 群聊: group_id
+  ChatType chat_type = 3;
+  string content = 4;
+}
+
+message SendMessageResponse {
+  model.BaseResp base = 1;
+}
+
+// 2. 获取历史记录（私聊/群聊通用）
+message GetHistoryRequest {
+  int64 user_id = 1;
+  int64 target_id = 2;      // 对方ID 或 群ID
+  ChatType chat_type = 3;
+  int64 cursor = 4;        // 分页游标（可为空）
+  int64 limit = 5;          // 默认在代码中设为 20，proto 不支持默认值（proto3）
+}
+
+message Message {
+  int64 id = 1;
+  int64 sender_id = 2;
+  string content = 3;
+  int64 created_at = 4;
+}
+
+message Pagination {
+    int64 nextCursor = 1;
+    int64 prevCursor = 2;
+    int64 total = 3;
+}
+
+message MessageList {
+  repeated Message messages = 1;
+  Pagination pagination = 2; 
+}
+
+message GetHistoryResponse {
+  model.BaseResp base = 1;
+  MessageList data = 2;
+}
+
+// 3. 获取未读消息（通常只用于私聊）
+message GetUnreadRequest {
+  int64 user_id = 1;
+  int64 peer_id = 2;        // 对方用户 ID
+}
+
+message GetUnreadResponse {
+  model.BaseResp base = 1;
+  MessageList data = 2;
+}
+
+// 服务接口
+service ChatService {
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+  rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse);
+  rpc GetUnread(GetUnreadRequest) returns (GetUnreadResponse);
+}

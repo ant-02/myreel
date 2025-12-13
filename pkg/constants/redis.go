@@ -20,9 +20,9 @@ const (
 	RedisRetryStopTime       = 100 * time.Millisecond
 	NeverExpire              = 0
 
-	RedisUserLoginExpireTime = 2 * 60 * 60 * time.Second
-
-	RedisVideoExpireTime = 10 * time.Minute
+	RedisUserLoginExpireTime   = 2 * 60 * 60 * time.Second
+	RedisVideoExpireTime       = 10 * time.Minute
+	RedisChatMessageExpireTime = 2 * time.Minute
 )
 
 // Redis Count
@@ -39,6 +39,10 @@ const (
 	RedisVideoPopularKey = "video:pop"
 	RedisVideoKey        = "video:"
 	RedisVideoLikeKey    = "video:likes:"
+
+	RedisChatHistoryKey = "chat:history:message:"
+	RedisChatUnreadKey  = "chat:unread:message:"
+	RedisChatMessage    = "chat:message:"
 )
 
 // Redis DB Name

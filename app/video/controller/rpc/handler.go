@@ -11,7 +11,7 @@ import (
 
 // VideoServiceImpl implements the last service interface defined in the IDL.
 type VideoServiceImpl struct {
-	useCase usecase.VideoUseCase
+	useCase      usecase.VideoUseCase
 }
 
 func NewVideoServiceImpl(uc usecase.VideoUseCase) *VideoServiceImpl {

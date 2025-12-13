@@ -1,9 +1,9 @@
 package main
 
 import (
-	"myreel/app/follow"
+	"myreel/app/chat"
 	"myreel/config"
-	"myreel/kitex_gen/follow/followservice"
+	"myreel/kitex_gen/chat/chatservice"
 	"myreel/pkg/constants"
 	"myreel/pkg/logger"
 	"myreel/pkg/util"
@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	config.Init(constants.FollowServiceName)
+	config.Init(constants.ChatServiceName)
 }
 
 func main() {
@@ -34,8 +34,8 @@ func main() {
 		logger.Fatalf("Video: resolve tcp addr failed, err: %v", err)
 	}
 
-	svr := followservice.NewServer(
-		follow.InjectFollowHandler(),
+	svr := chatservice.NewServer(
+		chat.InjectChatHandler(),
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
 			ServiceName: config.Service.Name,
 		}),
@@ -44,6 +44,6 @@ func main() {
 	)
 
 	if err = svr.Run(); err != nil {
-		logger.Fatalf("Follow: run server failed, err: %v", err)
+		logger.Fatalf("Chat: run server failed, err: %v", err)
 	}
 }

@@ -8,6 +8,7 @@ require (
 	github.com/cloudwego/kitex v0.15.2
 	github.com/cloudwego/prutal v0.1.3
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/hertz-contrib/websocket v0.2.0
 	github.com/kitex-contrib/registry-etcd v0.3.0
 	github.com/redis/go-redis/v9 v9.17.1
 	github.com/spf13/viper v1.21.0

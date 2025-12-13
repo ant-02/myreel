@@ -8,6 +8,7 @@ const (
 	LikeServiceName    = "like"
 	CommentServiceName = "comment"
 	FollowServiceName  = "follow"
+	ChatServiceName    = "chat"
 )
 
 // UserService
