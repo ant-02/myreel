@@ -22,6 +22,7 @@ type ChatCache interface {
 	GetMessageIds(ctx context.Context, key string, cursor, limit int64) ([]int64, error)
 	GetMessage(ctx context.Context, key string) (*model.Message, error)
 	GetMessageCount(ctx context.Context, key string) (int64, error)
+	RemUnreadMessage(ctx context.Context, key string, vals ...int64) error
 }
 
 type RpcPort interface{}

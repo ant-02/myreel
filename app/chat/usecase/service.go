@@ -31,3 +31,8 @@ func (uc *useCase) GetHistoryMessages(ctx context.Context, senderID, targetID, c
 	conversationID := uc.svc.GenerateConversationID(chatType, senderID, targetID)
 	return uc.svc.GetHistoryMessages(ctx, cursor, limit, conversationID)
 }
+
+func (uc *useCase) GetUnreadMessages(ctx context.Context, senderID, targetID int64, chatType model.ChatType) ([]*model.Message, *model.Pagination, error) {
+	conversationID := uc.svc.GenerateConversationID(chatType, senderID, targetID)
+	return uc.svc.GetUnreadMessages(ctx, conversationID)
+}

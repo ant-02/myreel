@@ -63,3 +63,37 @@ func GetHistoryMessagesRPC(ctx context.Context, req *chat.GetHistoryRequest) (*a
 		},
 	}, nil
 }
+
+func GetUnreadMessagesRPC(ctx context.Context, req *chat.GetUnreadRequest) (*api.MessageList, error) {
+	resp, err := chatClient.GetUnread(ctx, req)
+	if err != nil {
+		logger.Errorf("GetUnreadMessagesRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	l := len(resp.Data.Messages)
+	messages := make([]*api.Message, l)
+	if l > 0 {
+		for i, v := range resp.Data.Messages {
+			messages[i] = &api.Message{
+				Id:        v.Id,
+				SenderId:  v.SenderId,
+				TargetId:  v.TargetId,
+				Content:   v.Content,
+				CreatedAt: v.CreatedAt,
+			}
+		}
+	}
+
+	return &api.MessageList{
+		Messages: messages,
+		Pagination: &api.Pagination{
+			NextCursor: resp.Data.Pagination.NextCursor,
+			PrevCursor: resp.Data.Pagination.PrevCursor,
+			Total:      resp.Data.Pagination.Total,
+		},
+	}, nil
+}

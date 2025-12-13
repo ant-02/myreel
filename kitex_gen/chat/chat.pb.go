@@ -280,8 +280,9 @@ func (x *GetHistoryResponse) GetData() *MessageList {
 
 // 3. 获取未读消息（通常只用于私聊）
 type GetUnreadRequest struct {
-	UserId int64 `protobuf:"varint,1,opt,name=user_id" json:"user_id,omitempty"`
-	PeerId int64 `protobuf:"varint,2,opt,name=peer_id" json:"peer_id,omitempty"` // 对方用户 ID
+	UserId   int64    `protobuf:"varint,1,opt,name=user_id" json:"user_id,omitempty"`
+	TargetId int64    `protobuf:"varint,2,opt,name=target_id" json:"target_id,omitempty"` // 对方ID 或 群ID
+	ChatType ChatType `protobuf:"varint,3,opt,name=chat_type" json:"chat_type,omitempty"`
 }
 
 func (x *GetUnreadRequest) Reset() { *x = GetUnreadRequest{} }
@@ -297,11 +298,18 @@ func (x *GetUnreadRequest) GetUserId() int64 {
 	return 0
 }
 
-func (x *GetUnreadRequest) GetPeerId() int64 {
+func (x *GetUnreadRequest) GetTargetId() int64 {
 	if x != nil {
-		return x.PeerId
+		return x.TargetId
 	}
 	return 0
+}
+
+func (x *GetUnreadRequest) GetChatType() ChatType {
+	if x != nil {
+		return x.ChatType
+	}
+	return ChatType_CHAT_TYPE_PRIVATE
 }
 
 type GetUnreadResponse struct {

@@ -49,6 +49,15 @@ func (s *ChatServiceImpl) GetHistory(ctx context.Context, req *chat.GetHistoryRe
 
 // GetUnread implements the ChatServiceImpl interface.
 func (s *ChatServiceImpl) GetUnread(ctx context.Context, req *chat.GetUnreadRequest) (resp *chat.GetUnreadResponse, err error) {
-	// TODO: Your code here...
+	resp = new(chat.GetUnreadResponse)
+
+	messages, pagination, err := s.useCase.GetUnreadMessages(ctx, req.UserId, req.TargetId, model.ChatType(req.ChatType))
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = build.BuildMessageList(build.BuildMessages(messages), build.BuildPagination(pagination))
 	return
 }

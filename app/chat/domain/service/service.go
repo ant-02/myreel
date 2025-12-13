@@ -54,7 +54,7 @@ func (cs *chatService) CreateMessage(ctx context.Context, msg *model.Message) er
 }
 
 func (cs *chatService) GetHistoryMessages(ctx context.Context, cursor, limit int64, conversationID string) ([]*model.Message, *model.Pagination, error) {
-	hk := cs.cache.HistoryKey(conversationID)
+	hk, uk := cs.cache.HistoryKey(conversationID), cs.cache.UnreadKey(conversationID)
 	ids, err := cs.cache.GetMessageIds(ctx, hk, cursor, limit)
 	if err != nil {
 		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get message id list").WithError(err)
@@ -68,6 +68,10 @@ func (cs *chatService) GetHistoryMessages(ctx context.Context, cursor, limit int
 	msgs := make([]*model.Message, l)
 	nextCursor := cursor
 	if l > 0 {
+		err = cs.cache.RemUnreadMessage(ctx, uk, ids...)
+		if err != nil {
+			return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to remove message").WithError(err)
+		}
 		for i, v := range ids {
 			mk := cs.cache.MessageKey(v)
 			var msg *model.Message
@@ -95,6 +99,61 @@ func (cs *chatService) GetHistoryMessages(ctx context.Context, cursor, limit int
 	return msgs, &model.Pagination{
 		NextCursor: nextCursor,
 		PrevCursor: cursor,
+		Total:      total,
+	}, nil
+}
+
+func (cs *chatService) GetUnreadMessages(ctx context.Context, conversationID string) ([]*model.Message, *model.Pagination, error) {
+	uk := cs.cache.UnreadKey(conversationID)
+
+	total, err := cs.cache.GetMessageCount(ctx, uk)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get message count").WithError(err)
+	}
+	if total == 0 {
+		return nil, &model.Pagination{
+			NextCursor: 0,
+			PrevCursor: 0,
+			Total:      total,
+		}, nil
+	}
+	ids, err := cs.cache.GetMessageIds(ctx, uk, 0, total)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get message id list").WithError(err)
+	}
+
+	err = cs.cache.RemUnreadMessage(ctx, uk, ids...)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to remove message").WithError(err)
+	}
+
+	l := len(ids)
+	msgs := make([]*model.Message, l)
+	for i, v := range ids {
+		mk := cs.cache.MessageKey(v)
+		var msg *model.Message
+		var err error
+		if exist := cs.cache.IsExist(ctx, mk); exist {
+			msg, err = cs.cache.GetMessage(ctx, mk)
+			if err != nil {
+				return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get history message").WithError(err)
+			}
+		} else {
+			msg, err = cs.db.GetMessage(ctx, v)
+			if err != nil {
+				return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get history message").WithError(err)
+			}
+			err = cs.cache.AddMessageWithTTL(ctx, mk, msg, constants.RedisChatMessageExpireTime)
+			if err != nil {
+				return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add message to hash").WithError(err)
+			}
+		}
+		msgs[i] = msg
+	}
+
+	return msgs, &model.Pagination{
+		NextCursor: 0,
+		PrevCursor: 0,
 		Total:      total,
 	}, nil
 }

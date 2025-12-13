@@ -29,6 +29,10 @@ type HistoryRequest struct {
 	Limit    int64 `json:"limit"`
 }
 
+type UnreadRequest struct {
+	TargetId int64 `json:"targetId"`
+}
+
 func MarshalWSMessage(respMsg *WSMessage) ([]byte, error) {
 	resp, err := json.Marshal(respMsg)
 	if err != nil {
@@ -69,4 +73,17 @@ func ParseHistoryRequest(msg interface{}) (*HistoryRequest, error) {
 		return nil, errno.Errorf(errno.InternalServiceErrorCode, "failed to unmarshal history request: %v", err)
 	}
 	return &historyReq, nil
+}
+
+func ParseUnreadRequest(msg interface{}) (*UnreadRequest, error) {
+	dataBytes, err := json.Marshal(msg)
+	if err != nil {
+		return nil, errno.Errorf(errno.InternalServiceErrorCode, "failed to parse unread request: %v", err)
+	}
+
+	var unreadReq UnreadRequest
+	if err := json.Unmarshal(dataBytes, &unreadReq); err != nil {
+		return nil, errno.Errorf(errno.InternalServiceErrorCode, "failed to unmarshal unread request: %v", err)
+	}
+	return &unreadReq, nil
 }

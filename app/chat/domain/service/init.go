@@ -19,6 +19,7 @@ type ChatService interface {
 	GenerateMessageId() (int64, error)
 	CreateMessage(ctx context.Context, msg *model.Message) error
 	GetHistoryMessages(ctx context.Context, cursor, limit int64, conversationID string) ([]*model.Message, *model.Pagination, error)
+	GetUnreadMessages(ctx context.Context, conversationID string) ([]*model.Message, *model.Pagination, error)
 }
 
 func NewChatService(db repository.ChatDB, sf *util.Snowflake, cache repository.ChatCache, vRpc repository.RpcPort) ChatService {

@@ -101,11 +101,86 @@ func Chat(ctx context.Context, c *app.RequestContext) {
 					return
 				}
 			case pack.TypePrivateUnread:
-
+				unreadReq, err := pack.ParseUnreadRequest(msg.Data)
+				if err != nil {
+					log.Println("failed to parse unread request:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
+				messageList, err := rpc.GetUnreadMessagesRPC(ctx, &chat.GetUnreadRequest{
+					UserId:   uid,
+					TargetId: unreadReq.TargetId,
+					ChatType: chat.ChatType_CHAT_TYPE_PRIVATE,
+				})
+				if err != nil {
+					log.Println("failed to send message:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
+				message, err = pack.MarshalWSMessage(&pack.WSMessage{
+					Type: msg.Type,
+					Data: messageList,
+				})
+				if err != nil {
+					log.Println("failed to marshal ws message", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
 			case pack.TypeGroupMessage:
-
+				sendReq, err := pack.ParseSendRequest(msg.Data)
+				if err != nil {
+					log.Println("failed to parse send request:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
+				err = rpc.SendMessageRPC(ctx, &chat.SendMessageRequest{
+					SenderId: uid,
+					TargetId: sendReq.TargetId,
+					ChatType: chat.ChatType_CHAT_TYPE_GROUP,
+					Content:  sendReq.Content,
+				})
+				if err != nil {
+					log.Println("failed to send message:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
+				message, err = pack.MarshalWSMessage(&pack.WSMessage{
+					Type: msg.Type,
+					Data: "success",
+				})
+				if err != nil {
+					log.Println("failed to marshal ws message", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
 			case pack.TypeGroupHistory:
-
+				historyReq, err := pack.ParseHistoryRequest(msg.Data)
+				if err != nil {
+					log.Println("failed to parse history request:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
+				messageList, err := rpc.GetHistoryMessagesRPC(ctx, &chat.GetHistoryRequest{
+					UserId:   uid,
+					TargetId: historyReq.TargetId,
+					ChatType: chat.ChatType_CHAT_TYPE_GROUP,
+					Cursor:   historyReq.Cursor,
+					Limit:    historyReq.Limit,
+				})
+				if err != nil {
+					log.Println("failed to send message:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
+				message, err = pack.MarshalWSMessage(&pack.WSMessage{
+					Type: msg.Type,
+					Data: messageList,
+				})
+				if err != nil {
+					log.Println("failed to marshal ws message", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
 			default:
 				log.Println("type is error")
 				c.AbortWithStatus(consts.StatusBadRequest)
