@@ -21,6 +21,203 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Message struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id        int64  `protobuf:"varint,1,opt,name=id,proto3" form:"id" json:"id,omitempty" query:"id"`
+	SenderId  int64  `protobuf:"varint,2,opt,name=sender_id,json=senderId,proto3" form:"sender_id" json:"sender_id,omitempty" query:"sender_id"`
+	TargetId  int64  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" form:"target_id" json:"target_id,omitempty" query:"target_id"`
+	Content   string `protobuf:"bytes,4,opt,name=content,proto3" form:"content" json:"content,omitempty" query:"content"`
+	CreatedAt int64  `protobuf:"varint,5,opt,name=created_at,json=createdAt,proto3" form:"created_at" json:"created_at,omitempty" query:"created_at"`
+}
+
+func (x *Message) Reset() {
+	*x = Message{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Message) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Message) ProtoMessage() {}
+
+func (x *Message) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Message.ProtoReflect.Descriptor instead.
+func (*Message) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Message) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Message) GetSenderId() int64 {
+	if x != nil {
+		return x.SenderId
+	}
+	return 0
+}
+
+func (x *Message) GetTargetId() int64 {
+	if x != nil {
+		return x.TargetId
+	}
+	return 0
+}
+
+func (x *Message) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *Message) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+type Pagination struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	NextCursor int64 `protobuf:"varint,1,opt,name=nextCursor,proto3" form:"nextCursor" json:"nextCursor,omitempty" query:"nextCursor"`
+	PrevCursor int64 `protobuf:"varint,2,opt,name=prevCursor,proto3" form:"prevCursor" json:"prevCursor,omitempty" query:"prevCursor"`
+	Total      int64 `protobuf:"varint,3,opt,name=total,proto3" form:"total" json:"total,omitempty" query:"total"`
+}
+
+func (x *Pagination) Reset() {
+	*x = Pagination{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Pagination) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Pagination) ProtoMessage() {}
+
+func (x *Pagination) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Pagination.ProtoReflect.Descriptor instead.
+func (*Pagination) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Pagination) GetNextCursor() int64 {
+	if x != nil {
+		return x.NextCursor
+	}
+	return 0
+}
+
+func (x *Pagination) GetPrevCursor() int64 {
+	if x != nil {
+		return x.PrevCursor
+	}
+	return 0
+}
+
+func (x *Pagination) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type MessageList struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Messages   []*Message  `protobuf:"bytes,1,rep,name=messages,proto3" form:"messages" json:"messages,omitempty" query:"messages"`
+	Pagination *Pagination `protobuf:"bytes,2,opt,name=pagination,proto3" form:"pagination" json:"pagination,omitempty" query:"pagination"`
+}
+
+func (x *MessageList) Reset() {
+	*x = MessageList{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *MessageList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MessageList) ProtoMessage() {}
+
+func (x *MessageList) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MessageList.ProtoReflect.Descriptor instead.
+func (*MessageList) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *MessageList) GetMessages() []*Message {
+	if x != nil {
+		return x.Messages
+	}
+	return nil
+}
+
+func (x *MessageList) GetPagination() *Pagination {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
 type ChatRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -30,7 +227,7 @@ type ChatRequest struct {
 func (x *ChatRequest) Reset() {
 	*x = ChatRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chat_proto_msgTypes[0]
+		mi := &file_chat_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -43,7 +240,7 @@ func (x *ChatRequest) String() string {
 func (*ChatRequest) ProtoMessage() {}
 
 func (x *ChatRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_chat_proto_msgTypes[0]
+	mi := &file_chat_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +253,7 @@ func (x *ChatRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatRequest.ProtoReflect.Descriptor instead.
 func (*ChatRequest) Descriptor() ([]byte, []int) {
-	return file_chat_proto_rawDescGZIP(), []int{0}
+	return file_chat_proto_rawDescGZIP(), []int{3}
 }
 
 type ChatResponse struct {
@@ -68,7 +265,7 @@ type ChatResponse struct {
 func (x *ChatResponse) Reset() {
 	*x = ChatResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_chat_proto_msgTypes[1]
+		mi := &file_chat_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -81,7 +278,7 @@ func (x *ChatResponse) String() string {
 func (*ChatResponse) ProtoMessage() {}
 
 func (x *ChatResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_chat_proto_msgTypes[1]
+	mi := &file_chat_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -94,24 +291,46 @@ func (x *ChatResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatResponse.ProtoReflect.Descriptor instead.
 func (*ChatResponse) Descriptor() ([]byte, []int) {
-	return file_chat_proto_rawDescGZIP(), []int{1}
+	return file_chat_proto_rawDescGZIP(), []int{4}
 }
 
 var File_chat_proto protoreflect.FileDescriptor
 
 var file_chat_proto_rawDesc = []byte{
 	0x0a, 0x0a, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x04, 0x63, 0x68,
-	0x61, 0x74, 0x1a, 0x09, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x0d, 0x0a,
-	0x0b, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x0e, 0x0a, 0x0c,
-	0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0x4e, 0x0a, 0x0b,
-	0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3f, 0x0a, 0x04, 0x43,
-	0x68, 0x61, 0x74, 0x12, 0x11, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x68,
-	0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x10, 0xca, 0xc1, 0x18, 0x0c,
-	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x2f, 0x63, 0x68, 0x61, 0x74, 0x42, 0x23, 0x5a, 0x21,
-	0x6d, 0x79, 0x72, 0x65, 0x65, 0x6c, 0x2f, 0x61, 0x70, 0x70, 0x2f, 0x67, 0x61, 0x74, 0x65, 0x77,
-	0x61, 0x79, 0x2f, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61,
-	0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x74, 0x1a, 0x09, 0x61, 0x70, 0x69, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x8c, 0x01,
+	0x0a, 0x07, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x73, 0x65, 0x6e,
+	0x64, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x73, 0x65,
+	0x6e, 0x64, 0x65, 0x72, 0x49, 0x64, 0x12, 0x1b, 0x0a, 0x09, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74,
+	0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x74, 0x61, 0x72, 0x67, 0x65,
+	0x74, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x04,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x1d, 0x0a,
+	0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x03, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x22, 0x62, 0x0a, 0x0a,
+	0x50, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1e, 0x0a, 0x0a, 0x6e, 0x65,
+	0x78, 0x74, 0x43, 0x75, 0x72, 0x73, 0x6f, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0a,
+	0x6e, 0x65, 0x78, 0x74, 0x43, 0x75, 0x72, 0x73, 0x6f, 0x72, 0x12, 0x1e, 0x0a, 0x0a, 0x70, 0x72,
+	0x65, 0x76, 0x43, 0x75, 0x72, 0x73, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0a,
+	0x70, 0x72, 0x65, 0x76, 0x43, 0x75, 0x72, 0x73, 0x6f, 0x72, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f,
+	0x74, 0x61, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c,
+	0x22, 0x6a, 0x0a, 0x0b, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x12,
+	0x29, 0x0a, 0x08, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x52, 0x08, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x73, 0x12, 0x30, 0x0a, 0x0a, 0x70, 0x61,
+	0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10,
+	0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x50, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x0d, 0x0a, 0x0b,
+	0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x0e, 0x0a, 0x0c, 0x43,
+	0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0x4e, 0x0a, 0x0b, 0x43,
+	0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3f, 0x0a, 0x04, 0x43, 0x68,
+	0x61, 0x74, 0x12, 0x11, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x68, 0x61,
+	0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x10, 0xca, 0xc1, 0x18, 0x0c, 0x2f,
+	0x61, 0x70, 0x69, 0x2f, 0x76, 0x31, 0x2f, 0x63, 0x68, 0x61, 0x74, 0x42, 0x23, 0x5a, 0x21, 0x6d,
+	0x79, 0x72, 0x65, 0x65, 0x6c, 0x2f, 0x61, 0x70, 0x70, 0x2f, 0x67, 0x61, 0x74, 0x65, 0x77, 0x61,
+	0x79, 0x2f, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x63, 0x68, 0x61, 0x74,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -126,19 +345,24 @@ func file_chat_proto_rawDescGZIP() []byte {
 	return file_chat_proto_rawDescData
 }
 
-var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_chat_proto_goTypes = []interface{}{
-	(*ChatRequest)(nil),  // 0: chat.ChatRequest
-	(*ChatResponse)(nil), // 1: chat.ChatResponse
+	(*Message)(nil),      // 0: chat.Message
+	(*Pagination)(nil),   // 1: chat.Pagination
+	(*MessageList)(nil),  // 2: chat.MessageList
+	(*ChatRequest)(nil),  // 3: chat.ChatRequest
+	(*ChatResponse)(nil), // 4: chat.ChatResponse
 }
 var file_chat_proto_depIdxs = []int32{
-	0, // 0: chat.ChatService.Chat:input_type -> chat.ChatRequest
-	1, // 1: chat.ChatService.Chat:output_type -> chat.ChatResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: chat.MessageList.messages:type_name -> chat.Message
+	1, // 1: chat.MessageList.pagination:type_name -> chat.Pagination
+	3, // 2: chat.ChatService.Chat:input_type -> chat.ChatRequest
+	4, // 3: chat.ChatService.Chat:output_type -> chat.ChatResponse
+	3, // [3:4] is the sub-list for method output_type
+	2, // [2:3] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_chat_proto_init() }
@@ -148,7 +372,7 @@ func file_chat_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_chat_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ChatRequest); i {
+			switch v := v.(*Message); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -160,6 +384,42 @@ func file_chat_proto_init() {
 			}
 		}
 		file_chat_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Pagination); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chat_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MessageList); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chat_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChatRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chat_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ChatResponse); i {
 			case 0:
 				return &v.state
@@ -178,7 +438,7 @@ func file_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_chat_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

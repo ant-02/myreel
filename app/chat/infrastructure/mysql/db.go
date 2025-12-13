@@ -39,3 +39,20 @@ func (db *chatDB) CreateMessage(ctx context.Context, msg *model.Message) error {
 	}
 	return nil
 }
+
+func (db *chatDB) GetMessage(ctx context.Context, id int64) (*model.Message, error) {
+	var msg Message
+	err := db.client.WithContext(ctx).First(&msg, id).Error
+	if err != nil {
+		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get messag: %v", err)
+	}
+	return &model.Message{
+		ID:             msg.ID,
+		ConversationID: msg.ConversationID,
+		SenderID:       msg.SenderID,
+		TargetID:       msg.TargetID,
+		ChatType:       model.ChatType(msg.ChatType),
+		Content:        msg.Content,
+		CreatedAt:      msg.CreatedAt.Unix(),
+	}, nil
+}

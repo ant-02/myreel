@@ -16,6 +16,7 @@ type useCase struct {
 
 type ChatUseCase interface {
 	SendMessage(ctx context.Context, senderID, targetID int64, chatType model.ChatType, content string) error
+	GetHistoryMessages(ctx context.Context, senderID, targetID, cursor, limit int64, chatType model.ChatType) ([]*model.Message, *model.Pagination, error)
 }
 
 func NewChatUseCase(db repository.ChatDB, svc service.ChatService, cache repository.ChatCache, vRpc repository.RpcPort) ChatUseCase {

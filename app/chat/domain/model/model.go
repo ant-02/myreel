@@ -17,3 +17,9 @@ type Message struct {
 	Content        string
 	CreatedAt      int64
 }
+
+type Pagination struct {
+	NextCursor int64
+	PrevCursor int64
+	Total      int64
+}

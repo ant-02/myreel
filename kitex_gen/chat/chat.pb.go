@@ -149,8 +149,9 @@ func (x *GetHistoryRequest) GetLimit() int64 {
 type Message struct {
 	Id        int64  `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	SenderId  int64  `protobuf:"varint,2,opt,name=sender_id" json:"sender_id,omitempty"`
-	Content   string `protobuf:"bytes,3,opt,name=content" json:"content,omitempty"`
-	CreatedAt int64  `protobuf:"varint,4,opt,name=created_at" json:"created_at,omitempty"`
+	TargetId  int64  `protobuf:"varint,3,opt,name=target_id" json:"target_id,omitempty"`
+	Content   string `protobuf:"bytes,4,opt,name=content" json:"content,omitempty"`
+	CreatedAt int64  `protobuf:"varint,5,opt,name=created_at" json:"created_at,omitempty"`
 }
 
 func (x *Message) Reset() { *x = Message{} }
@@ -169,6 +170,13 @@ func (x *Message) GetId() int64 {
 func (x *Message) GetSenderId() int64 {
 	if x != nil {
 		return x.SenderId
+	}
+	return 0
+}
+
+func (x *Message) GetTargetId() int64 {
+	if x != nil {
+		return x.TargetId
 	}
 	return 0
 }

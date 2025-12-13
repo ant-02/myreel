@@ -17,7 +17,7 @@ func (cs *chatService) GenerateConversationID(chatType model.ChatType, id1, id2 
 		return "p_" + strconv.FormatInt(id1, 10) + "_" + strconv.FormatInt(id2, 10)
 	}
 	// 群聊：直接用 group_id
-	return "g_" + strconv.FormatInt(id1, 10)
+	return "g_" + strconv.FormatInt(id2, 10)
 }
 
 func (cs *chatService) GenerateMessageId() (int64, error) {
@@ -51,4 +51,50 @@ func (cs *chatService) CreateMessage(ctx context.Context, msg *model.Message) er
 		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to create message").WithError(err)
 	}
 	return nil
+}
+
+func (cs *chatService) GetHistoryMessages(ctx context.Context, cursor, limit int64, conversationID string) ([]*model.Message, *model.Pagination, error) {
+	hk := cs.cache.HistoryKey(conversationID)
+	ids, err := cs.cache.GetMessageIds(ctx, hk, cursor, limit)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get message id list").WithError(err)
+	}
+	total, err := cs.cache.GetMessageCount(ctx, hk)
+	if err != nil {
+		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get message count").WithError(err)
+	}
+
+	l := len(ids)
+	msgs := make([]*model.Message, l)
+	nextCursor := cursor
+	if l > 0 {
+		for i, v := range ids {
+			mk := cs.cache.MessageKey(v)
+			var msg *model.Message
+			var err error
+			if exist := cs.cache.IsExist(ctx, mk); exist {
+				msg, err = cs.cache.GetMessage(ctx, mk)
+				if err != nil {
+					return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get history message").WithError(err)
+				}
+			} else {
+				msg, err = cs.db.GetMessage(ctx, v)
+				if err != nil {
+					return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get history message").WithError(err)
+				}
+				err = cs.cache.AddMessageWithTTL(ctx, mk, msg, constants.RedisChatMessageExpireTime)
+				if err != nil {
+					return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to add message to hash").WithError(err)
+				}
+			}
+			msgs[i] = msg
+		}
+		nextCursor = msgs[l-1].CreatedAt
+	}
+
+	return msgs, &model.Pagination{
+		NextCursor: nextCursor,
+		PrevCursor: cursor,
+		Total:      total,
+	}, nil
 }

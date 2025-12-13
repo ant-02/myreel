@@ -42,9 +42,14 @@ func (cc *chatCache) GetMessage(ctx context.Context, key string) (*model.Message
 	if err != nil {
 		return nil, errno.Errorf(errno.InternalRedisErrorCode, "redis: failed to get message by id: %v", err)
 	}
+	
 	message, err := pack.MapToMessage(val)
 	if err != nil {
 		return nil, err
 	}
 	return message, nil
+}
+
+func (cc *chatCache) GetMessageCount(ctx context.Context, key string) (int64, error) {
+	return cc.client.ZCard(ctx, key).Result()
 }

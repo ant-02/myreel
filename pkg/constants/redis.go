@@ -22,7 +22,7 @@ const (
 
 	RedisUserLoginExpireTime   = 2 * 60 * 60 * time.Second
 	RedisVideoExpireTime       = 10 * time.Minute
-	RedisChatMessageExpireTime = 2 * time.Minute
+	RedisChatMessageExpireTime = 10 * time.Minute
 )
 
 // Redis Count

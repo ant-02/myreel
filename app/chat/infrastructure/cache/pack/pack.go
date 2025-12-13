@@ -34,28 +34,28 @@ func MapToMessage(fields map[string]string) (*model.Message, error) {
 	}
 
 	// 解析各字段
-	id, err := parseI64("id")
+	id, err := parseI64("Id")
 	if err != nil {
 		return nil, err
 	}
 
-	senderID, err := parseI64("sender_id")
+	senderID, err := parseI64("SenderID")
 	if err != nil {
 		return nil, err
 	}
 
-	targetID, err := parseI64("target_id")
+	targetID, err := parseI64("TargetID")
 	if err != nil {
 		return nil, err
 	}
 
-	chatTypeInt, err := parseI64("chat_type")
+	chatTypeInt, err := parseI64("ChatType")
 	if err != nil {
 		return nil, err
 	}
 	chatType := model.ChatType(chatTypeInt)
 
-	createdAt, err := parseI64("created_at")
+	createdAt, err := parseI64("CreatedAt")
 	if err != nil {
 		return nil, err
 	}
@@ -63,11 +63,11 @@ func MapToMessage(fields map[string]string) (*model.Message, error) {
 	// 构造 Message
 	msg := &model.Message{
 		ID:             id,
-		ConversationID: fields["conversation_id"],
+		ConversationID: fields["ConversationID"],
 		SenderID:       senderID,
 		TargetID:       targetID,
 		ChatType:       chatType,
-		Content:        fields["content"],
+		Content:        fields["Content"],
 		CreatedAt:      createdAt,
 	}
 
