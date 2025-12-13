@@ -126,3 +126,70 @@ func GetFriendsByIdRPC(ctx context.Context, req *follow.FriendListRequest) (*api
 		},
 	}, nil
 }
+
+func CreateGroupRPC(ctx context.Context, req *follow.ChatGroupRequest) error {
+	resp, err := followClient.ChatGroup(ctx, req)
+	if err != nil {
+		logger.Errorf("CreateGroupRPC: RPC called failed: %v", err.Error())
+		return errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	return nil
+}
+
+func GetGroupByCreatedRPC(ctx context.Context, req *follow.CreatedChatGroupListRequest) (*api.CreatedChatGroupListResponse, error) {
+	resp, err := followClient.CreatedChatGroupList(ctx, req)
+	if err != nil {
+		logger.Errorf("GetGroupByCreatedRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	l := len(resp.Data.Items)
+	gs := make([]*api.Group, l)
+	if l > 0 {
+		for i, v := range resp.Data.Items {
+			gs[i] = &api.Group{
+				Id:        v.Id,
+				Name:      v.Name,
+				CreatedAt: v.CreatedAt,
+			}
+		}
+	}
+
+	return &api.CreatedChatGroupListResponse{
+		Items: gs,
+	}, nil
+}
+
+func GetGroupByJoinedRPC(ctx context.Context, req *follow.JoinedChatGroupListRequest) (*api.JoinedChatGroupListResponse, error) {
+	resp, err := followClient.JoinedChatGroupList(ctx, req)
+	if err != nil {
+		logger.Errorf("GetGroupByJoinedRPC: RPC called failed: %v", err.Error())
+		return nil, errno.InternalServiceError.WithError(err)
+	}
+	if !util.IsSuccess(resp.Base) {
+		return nil, errno.InternalServiceError.WithMessage(resp.Base.Msg)
+	}
+
+	l := len(resp.Data.Items)
+	gs := make([]*api.Group, l)
+	if l > 0 {
+		for i, v := range resp.Data.Items {
+			gs[i] = &api.Group{
+				Id:        v.Id,
+				Name:      v.Name,
+				CreatedAt: v.CreatedAt,
+			}
+		}
+	}
+
+	return &api.JoinedChatGroupListResponse{
+		Items: gs,
+	}, nil
+}

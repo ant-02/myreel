@@ -22,5 +22,7 @@ const (
 	LikeTableName    = "likes"
 	CommentTableName = "comments"
 	FollowTableName  = "follows"
+	GroupTableName   = "groups"
+	GroupMemberName  = "groupMembers"
 	MessageTableName = "messages"
 )

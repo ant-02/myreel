@@ -43,6 +43,27 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"ChatGroup": kitex.NewMethodInfo(
+		chatGroupHandler,
+		newChatGroupArgs,
+		newChatGroupResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"JoinedChatGroupList": kitex.NewMethodInfo(
+		joinedChatGroupListHandler,
+		newJoinedChatGroupListArgs,
+		newJoinedChatGroupListResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
+	"CreatedChatGroupList": kitex.NewMethodInfo(
+		createdChatGroupListHandler,
+		newCreatedChatGroupListArgs,
+		newCreatedChatGroupListResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -553,6 +574,339 @@ func (p *FriendListResult) GetResult() interface{} {
 	return p.Success
 }
 
+func chatGroupHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(follow.ChatGroupRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(follow.FollowService).ChatGroup(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *ChatGroupArgs:
+		success, err := handler.(follow.FollowService).ChatGroup(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*ChatGroupResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newChatGroupArgs() interface{} {
+	return &ChatGroupArgs{}
+}
+
+func newChatGroupResult() interface{} {
+	return &ChatGroupResult{}
+}
+
+type ChatGroupArgs struct {
+	Req *follow.ChatGroupRequest
+}
+
+func (p *ChatGroupArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *ChatGroupArgs) Unmarshal(in []byte) error {
+	msg := new(follow.ChatGroupRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ChatGroupArgs_Req_DEFAULT *follow.ChatGroupRequest
+
+func (p *ChatGroupArgs) GetReq() *follow.ChatGroupRequest {
+	if !p.IsSetReq() {
+		return ChatGroupArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ChatGroupArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *ChatGroupArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type ChatGroupResult struct {
+	Success *follow.ChatGroupResponse
+}
+
+var ChatGroupResult_Success_DEFAULT *follow.ChatGroupResponse
+
+func (p *ChatGroupResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *ChatGroupResult) Unmarshal(in []byte) error {
+	msg := new(follow.ChatGroupResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ChatGroupResult) GetSuccess() *follow.ChatGroupResponse {
+	if !p.IsSetSuccess() {
+		return ChatGroupResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ChatGroupResult) SetSuccess(x interface{}) {
+	p.Success = x.(*follow.ChatGroupResponse)
+}
+
+func (p *ChatGroupResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ChatGroupResult) GetResult() interface{} {
+	return p.Success
+}
+
+func joinedChatGroupListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(follow.JoinedChatGroupListRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(follow.FollowService).JoinedChatGroupList(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *JoinedChatGroupListArgs:
+		success, err := handler.(follow.FollowService).JoinedChatGroupList(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*JoinedChatGroupListResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newJoinedChatGroupListArgs() interface{} {
+	return &JoinedChatGroupListArgs{}
+}
+
+func newJoinedChatGroupListResult() interface{} {
+	return &JoinedChatGroupListResult{}
+}
+
+type JoinedChatGroupListArgs struct {
+	Req *follow.JoinedChatGroupListRequest
+}
+
+func (p *JoinedChatGroupListArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *JoinedChatGroupListArgs) Unmarshal(in []byte) error {
+	msg := new(follow.JoinedChatGroupListRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var JoinedChatGroupListArgs_Req_DEFAULT *follow.JoinedChatGroupListRequest
+
+func (p *JoinedChatGroupListArgs) GetReq() *follow.JoinedChatGroupListRequest {
+	if !p.IsSetReq() {
+		return JoinedChatGroupListArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *JoinedChatGroupListArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *JoinedChatGroupListArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type JoinedChatGroupListResult struct {
+	Success *follow.JoinedChatGroupListResponse
+}
+
+var JoinedChatGroupListResult_Success_DEFAULT *follow.JoinedChatGroupListResponse
+
+func (p *JoinedChatGroupListResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *JoinedChatGroupListResult) Unmarshal(in []byte) error {
+	msg := new(follow.JoinedChatGroupListResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *JoinedChatGroupListResult) GetSuccess() *follow.JoinedChatGroupListResponse {
+	if !p.IsSetSuccess() {
+		return JoinedChatGroupListResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *JoinedChatGroupListResult) SetSuccess(x interface{}) {
+	p.Success = x.(*follow.JoinedChatGroupListResponse)
+}
+
+func (p *JoinedChatGroupListResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *JoinedChatGroupListResult) GetResult() interface{} {
+	return p.Success
+}
+
+func createdChatGroupListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(follow.CreatedChatGroupListRequest)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(follow.FollowService).CreatedChatGroupList(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *CreatedChatGroupListArgs:
+		success, err := handler.(follow.FollowService).CreatedChatGroupList(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*CreatedChatGroupListResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newCreatedChatGroupListArgs() interface{} {
+	return &CreatedChatGroupListArgs{}
+}
+
+func newCreatedChatGroupListResult() interface{} {
+	return &CreatedChatGroupListResult{}
+}
+
+type CreatedChatGroupListArgs struct {
+	Req *follow.CreatedChatGroupListRequest
+}
+
+func (p *CreatedChatGroupListArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *CreatedChatGroupListArgs) Unmarshal(in []byte) error {
+	msg := new(follow.CreatedChatGroupListRequest)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CreatedChatGroupListArgs_Req_DEFAULT *follow.CreatedChatGroupListRequest
+
+func (p *CreatedChatGroupListArgs) GetReq() *follow.CreatedChatGroupListRequest {
+	if !p.IsSetReq() {
+		return CreatedChatGroupListArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CreatedChatGroupListArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *CreatedChatGroupListArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type CreatedChatGroupListResult struct {
+	Success *follow.CreatedChatGroupListResponse
+}
+
+var CreatedChatGroupListResult_Success_DEFAULT *follow.CreatedChatGroupListResponse
+
+func (p *CreatedChatGroupListResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *CreatedChatGroupListResult) Unmarshal(in []byte) error {
+	msg := new(follow.CreatedChatGroupListResponse)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CreatedChatGroupListResult) GetSuccess() *follow.CreatedChatGroupListResponse {
+	if !p.IsSetSuccess() {
+		return CreatedChatGroupListResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CreatedChatGroupListResult) SetSuccess(x interface{}) {
+	p.Success = x.(*follow.CreatedChatGroupListResponse)
+}
+
+func (p *CreatedChatGroupListResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CreatedChatGroupListResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -598,6 +952,36 @@ func (p *kClient) FriendList(ctx context.Context, Req *follow.FriendListRequest)
 	_args.Req = Req
 	var _result FriendListResult
 	if err = p.c.Call(ctx, "FriendList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ChatGroup(ctx context.Context, Req *follow.ChatGroupRequest) (r *follow.ChatGroupResponse, err error) {
+	var _args ChatGroupArgs
+	_args.Req = Req
+	var _result ChatGroupResult
+	if err = p.c.Call(ctx, "ChatGroup", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) JoinedChatGroupList(ctx context.Context, Req *follow.JoinedChatGroupListRequest) (r *follow.JoinedChatGroupListResponse, err error) {
+	var _args JoinedChatGroupListArgs
+	_args.Req = Req
+	var _result JoinedChatGroupListResult
+	if err = p.c.Call(ctx, "JoinedChatGroupList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CreatedChatGroupList(ctx context.Context, Req *follow.CreatedChatGroupListRequest) (r *follow.CreatedChatGroupListResponse, err error) {
+	var _args CreatedChatGroupListArgs
+	_args.Req = Req
+	var _result CreatedChatGroupListResult
+	if err = p.c.Call(ctx, "CreatedChatGroupList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

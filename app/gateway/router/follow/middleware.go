@@ -72,3 +72,23 @@ func _followeringlistMw() []app.HandlerFunc {
 		mv.Auth(),
 	}
 }
+
+func _chatgroupMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _groupMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _createdchatgrouplistMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _joinedchatgrouplistMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

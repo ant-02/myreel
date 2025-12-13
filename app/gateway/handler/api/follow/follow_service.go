@@ -154,3 +154,104 @@ func FolloweringList(ctx context.Context, c *app.RequestContext) {
 
 	pack.RespData(c, data)
 }
+
+// ChatGroup .
+// @router /api/v1/friends/group [POST]
+func ChatGroup(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req follow.ChatGroupRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
+		return
+	}
+
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+
+	err = rpc.CreateGroupRPC(ctx, &follow.ChatGroupRequest{
+		UserId:    uid,
+		Name:      req.Name,
+		FriendIds: req.FriendIds,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespSuccess(c)
+}
+
+// JoinedChatGroupList .
+// @router /api/v1/friends/group/joined [GET]
+func JoinedChatGroupList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req follow.JoinedChatGroupListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
+		return
+	}
+
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+
+	data, err := rpc.GetGroupByJoinedRPC(ctx, &follow.JoinedChatGroupListRequest{
+		UserId: uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespData(c, data)
+}
+
+// CreatedChatGroupList .
+// @router /api/v1/friends/group/created [GET]
+func CreatedChatGroupList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req follow.CreatedChatGroupListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.RespError(c, errno.ParamVerifyError.WithError(err))
+		return
+	}
+
+	val, exist := c.Get(constants.CtxUserIdKey)
+	if !exist {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+	uid, ok := val.(int64)
+	if !ok {
+		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
+		return
+	}
+
+	data, err := rpc.GetGroupByCreatedRPC(ctx, &follow.CreatedChatGroupListRequest{
+		UserId: uid,
+	})
+	if err != nil {
+		pack.RespError(c, err)
+		return
+	}
+
+	pack.RespData(c, data)
+}

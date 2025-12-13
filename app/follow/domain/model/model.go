@@ -31,3 +31,17 @@ type Pagination struct {
 	PrevCursor int64
 	Total      int64
 }
+
+type GroupMember struct {
+	Id        int64
+	GroupId   int64
+	UserId    int64
+	CreatedAt int64
+}
+
+type Group struct {
+	Id        int64
+	Name      string
+	CreatorId int64
+	CreatedAt int64
+}

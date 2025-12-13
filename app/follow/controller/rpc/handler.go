@@ -72,3 +72,48 @@ func (s *FollowServiceImpl) FriendList(ctx context.Context, req *follow.FriendLi
 	resp.Data = build.BuildUserList(build.BuildUserProfiles(users), build.BuildPagination(pagination))
 	return
 }
+
+// ChatGroup implements the FollowServiceImpl interface.
+func (s *FollowServiceImpl) ChatGroup(ctx context.Context, req *follow.ChatGroupRequest) (resp *follow.ChatGroupResponse, err error) {
+	resp = new(follow.ChatGroupResponse)
+
+	err = s.useCase.CreateGroup(ctx, req.UserId, req.Name, req.FriendIds...)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+	resp.Base = base.BuildSuccessResp()
+	return
+}
+
+// JoinedChatGroupList implements the FollowServiceImpl interface.
+func (s *FollowServiceImpl) JoinedChatGroupList(ctx context.Context, req *follow.JoinedChatGroupListRequest) (resp *follow.JoinedChatGroupListResponse, err error) {
+	resp = new(follow.JoinedChatGroupListResponse)
+
+	groups, err := s.useCase.GetGroupByJoined(ctx, req.UserId)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = &follow.GroupList{
+		Items: build.BuildGroups(groups),
+	}
+	return
+}
+
+// CreatedChatGroupList implements the FollowServiceImpl interface.
+func (s *FollowServiceImpl) CreatedChatGroupList(ctx context.Context, req *follow.CreatedChatGroupListRequest) (resp *follow.CreatedChatGroupListResponse, err error) {
+	resp = new(follow.CreatedChatGroupListResponse)
+
+	groups, err := s.useCase.GetGroupByCreator(ctx, req.UserId)
+	if err != nil {
+		resp.Base = base.BuildBaseResp(err)
+		return
+	}
+	resp.Base = base.BuildSuccessResp()
+	resp.Data = &follow.GroupList{
+		Items: build.BuildGroups(groups),
+	}
+	return
+}

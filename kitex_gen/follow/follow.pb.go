@@ -42,6 +42,47 @@ func (x *User) GetAvatarUrl() string {
 	return ""
 }
 
+type Group struct {
+	Id        int64  `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Name      string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	CreatorId int64  `protobuf:"varint,3,opt,name=creatorId" json:"creatorId,omitempty"`
+	CreatedAt int64  `protobuf:"varint,4,opt,name=createdAt" json:"createdAt,omitempty"`
+}
+
+func (x *Group) Reset() { *x = Group{} }
+
+func (x *Group) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *Group) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *Group) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Group) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Group) GetCreatorId() int64 {
+	if x != nil {
+		return x.CreatorId
+	}
+	return 0
+}
+
+func (x *Group) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
 type Pagination struct {
 	NextCursor int64 `protobuf:"varint,1,opt,name=nextCursor" json:"nextCursor,omitempty"`
 	PrevCursor int64 `protobuf:"varint,2,opt,name=prevCursor" json:"prevCursor,omitempty"`
@@ -96,6 +137,23 @@ func (x *UserList) GetItems() []*User {
 func (x *UserList) GetPagination() *Pagination {
 	if x != nil {
 		return x.Pagination
+	}
+	return nil
+}
+
+type GroupList struct {
+	Items []*Group `protobuf:"bytes,1,rep,name=items" json:"items,omitempty"`
+}
+
+func (x *GroupList) Reset() { *x = GroupList{} }
+
+func (x *GroupList) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *GroupList) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *GroupList) GetItems() []*Group {
+	if x != nil {
+		return x.Items
 	}
 	return nil
 }
@@ -332,9 +390,154 @@ func (x *FriendListResponse) GetData() *UserList {
 	return nil
 }
 
+type ChatGroupRequest struct {
+	UserId    int64   `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
+	Name      string  `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	FriendIds []int64 `protobuf:"varint,3,rep,packed,name=friend_ids" json:"friend_ids,omitempty"`
+}
+
+func (x *ChatGroupRequest) Reset() { *x = ChatGroupRequest{} }
+
+func (x *ChatGroupRequest) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *ChatGroupRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *ChatGroupRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ChatGroupRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ChatGroupRequest) GetFriendIds() []int64 {
+	if x != nil {
+		return x.FriendIds
+	}
+	return nil
+}
+
+type ChatGroupResponse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+}
+
+func (x *ChatGroupResponse) Reset() { *x = ChatGroupResponse{} }
+
+func (x *ChatGroupResponse) Marshal(in []byte) ([]byte, error) { return prutal.MarshalAppend(in, x) }
+
+func (x *ChatGroupResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *ChatGroupResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+type JoinedChatGroupListRequest struct {
+	UserId int64 `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
+}
+
+func (x *JoinedChatGroupListRequest) Reset() { *x = JoinedChatGroupListRequest{} }
+
+func (x *JoinedChatGroupListRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *JoinedChatGroupListRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *JoinedChatGroupListRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type JoinedChatGroupListResponse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+	Data *GroupList      `protobuf:"bytes,2,opt,name=data" json:"data,omitempty"`
+}
+
+func (x *JoinedChatGroupListResponse) Reset() { *x = JoinedChatGroupListResponse{} }
+
+func (x *JoinedChatGroupListResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *JoinedChatGroupListResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *JoinedChatGroupListResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *JoinedChatGroupListResponse) GetData() *GroupList {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type CreatedChatGroupListRequest struct {
+	UserId int64 `protobuf:"varint,1,opt,name=userId" json:"userId,omitempty"`
+}
+
+func (x *CreatedChatGroupListRequest) Reset() { *x = CreatedChatGroupListRequest{} }
+
+func (x *CreatedChatGroupListRequest) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *CreatedChatGroupListRequest) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *CreatedChatGroupListRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type CreatedChatGroupListResponse struct {
+	Base *model.BaseResp `protobuf:"bytes,1,opt,name=base" json:"base,omitempty"`
+	Data *GroupList      `protobuf:"bytes,2,opt,name=data" json:"data,omitempty"`
+}
+
+func (x *CreatedChatGroupListResponse) Reset() { *x = CreatedChatGroupListResponse{} }
+
+func (x *CreatedChatGroupListResponse) Marshal(in []byte) ([]byte, error) {
+	return prutal.MarshalAppend(in, x)
+}
+
+func (x *CreatedChatGroupListResponse) Unmarshal(in []byte) error { return prutal.Unmarshal(in, x) }
+
+func (x *CreatedChatGroupListResponse) GetBase() *model.BaseResp {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *CreatedChatGroupListResponse) GetData() *GroupList {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type FollowService interface {
 	FollowAction(ctx context.Context, req *FollowActionRequest) (res *FollowActionResponse, err error)
 	FolloweringList(ctx context.Context, req *FolloweringListRequest) (res *FolloweringListResponse, err error)
 	FolloweredList(ctx context.Context, req *FolloweredListRequest) (res *FolloweredListResponse, err error)
 	FriendList(ctx context.Context, req *FriendListRequest) (res *FriendListResponse, err error)
+	ChatGroup(ctx context.Context, req *ChatGroupRequest) (res *ChatGroupResponse, err error)
+	JoinedChatGroupList(ctx context.Context, req *JoinedChatGroupListRequest) (res *JoinedChatGroupListResponse, err error)
+	CreatedChatGroupList(ctx context.Context, req *CreatedChatGroupListRequest) (res *CreatedChatGroupListResponse, err error)
 }

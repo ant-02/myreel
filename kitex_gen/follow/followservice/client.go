@@ -15,6 +15,9 @@ type Client interface {
 	FolloweringList(ctx context.Context, Req *follow.FolloweringListRequest, callOptions ...callopt.Option) (r *follow.FolloweringListResponse, err error)
 	FolloweredList(ctx context.Context, Req *follow.FolloweredListRequest, callOptions ...callopt.Option) (r *follow.FolloweredListResponse, err error)
 	FriendList(ctx context.Context, Req *follow.FriendListRequest, callOptions ...callopt.Option) (r *follow.FriendListResponse, err error)
+	ChatGroup(ctx context.Context, Req *follow.ChatGroupRequest, callOptions ...callopt.Option) (r *follow.ChatGroupResponse, err error)
+	JoinedChatGroupList(ctx context.Context, Req *follow.JoinedChatGroupListRequest, callOptions ...callopt.Option) (r *follow.JoinedChatGroupListResponse, err error)
+	CreatedChatGroupList(ctx context.Context, Req *follow.CreatedChatGroupListRequest, callOptions ...callopt.Option) (r *follow.CreatedChatGroupListResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -64,4 +67,19 @@ func (p *kFollowServiceClient) FolloweredList(ctx context.Context, Req *follow.F
 func (p *kFollowServiceClient) FriendList(ctx context.Context, Req *follow.FriendListRequest, callOptions ...callopt.Option) (r *follow.FriendListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.FriendList(ctx, Req)
+}
+
+func (p *kFollowServiceClient) ChatGroup(ctx context.Context, Req *follow.ChatGroupRequest, callOptions ...callopt.Option) (r *follow.ChatGroupResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ChatGroup(ctx, Req)
+}
+
+func (p *kFollowServiceClient) JoinedChatGroupList(ctx context.Context, Req *follow.JoinedChatGroupListRequest, callOptions ...callopt.Option) (r *follow.JoinedChatGroupListResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.JoinedChatGroupList(ctx, Req)
+}
+
+func (p *kFollowServiceClient) CreatedChatGroupList(ctx context.Context, Req *follow.CreatedChatGroupListRequest, callOptions ...callopt.Option) (r *follow.CreatedChatGroupListResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CreatedChatGroupList(ctx, Req)
 }

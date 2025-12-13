@@ -20,8 +20,8 @@ func NewFollowDB(client *gorm.DB) repository.FollowDB {
 }
 
 func (db *followDB) Magrate() error {
-	if err := db.client.AutoMigrate(&Follow{}); err != nil {
-		return errno.NewErrNo(errno.InternalDatabaseErrorCode, "mysql: failed to auto magrate follow model")
+	if err := db.client.AutoMigrate(&Follow{}, &Group{}, &GroupMember{}); err != nil {
+		return errno.NewErrNo(errno.InternalDatabaseErrorCode, "mysql: failed to auto magrate follow group groupMember model")
 	}
 	return nil
 }
@@ -168,4 +168,79 @@ func (db *followDB) GetFriendIdsById(ctx context.Context, id, limit int64, curso
 	}
 
 	return fs, total, nil
+}
+
+func (db *followDB) CreateGroup(ctx context.Context, g *model.Group) error {
+	group := &Group{
+		Id:        g.Id,
+		Name:      g.Name,
+		CreatorId: g.CreatorId,
+	}
+	if err := db.client.WithContext(ctx).Create(&group).Error; err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to create group: %v", err)
+	}
+	return nil
+}
+
+func (db *followDB) CreateGroupMember(ctx context.Context, gm *model.GroupMember) error {
+	groupMember := &GroupMember{
+		Id:      gm.Id,
+		GroupId: gm.GroupId,
+		UserId:  gm.UserId,
+	}
+	if err := db.client.WithContext(ctx).Create(&groupMember).Error; err != nil {
+		return errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to create group member: %v", err)
+	}
+	return nil
+}
+
+func (db *followDB) GetGroupIdsByJoined(ctx context.Context, userId int64) ([]int64, error) {
+	var ids []int64
+	if err := db.client.WithContext(ctx).
+		Model(&GroupMember{}).
+		Where("user_id = ? ", userId).
+		Select("group_id").
+		Find(&ids).
+		Error; err != nil {
+		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get group id list by joined: %v", err)
+	}
+	return ids, nil
+}
+
+func (db *followDB) GetGroupById(ctx context.Context, id int64) (*model.Group, error) {
+	var g Group
+	if err := db.client.WithContext(ctx).
+		First(&g, id).
+		Error; err != nil {
+		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get group by id: %v", err)
+	}
+	return &model.Group{
+		Id:        g.Id,
+		Name:      g.Name,
+		CreatorId: g.CreatorId,
+		CreatedAt: g.CreatedAt.Unix(),
+	}, nil
+}
+
+func (db *followDB) GetGroupByCreator(ctx context.Context, creatorId int64) ([]*model.Group, error) {
+	var gs []*Group
+	if err := db.client.WithContext(ctx).
+		Where("creator_id = ?", creatorId).
+		Find(&gs).
+		Error; err != nil {
+		return nil, errno.Errorf(errno.InternalDatabaseErrorCode, "mysql: failed to get group list by creator: %v", err)
+	}
+	l := len(gs)
+	result := make([]*model.Group, l)
+	if l > 0 {
+		for i, v := range gs {
+			result[i] = &model.Group{
+				Id:        v.Id,
+				Name:      v.Name,
+				CreatorId: v.CreatorId,
+				CreatedAt: v.CreatedAt.Unix(),
+			}
+		}
+	}
+	return result, nil
 }

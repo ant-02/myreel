@@ -132,3 +132,62 @@ func (fs *followService) GetFriendsById(ctx context.Context, id, cursor, limit i
 		Total:      total,
 	}, nil
 }
+
+func (fs *followService) GenerateGroupId() (int64, error) {
+	id, err := fs.sf.Generate()
+	if err != nil {
+		return 0, err
+	}
+	return id, err
+}
+
+func (fs *followService) CreateGroup(ctx context.Context, g *model.Group) error {
+	if err := fs.db.CreateGroup(ctx, g); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to create group").WithError(err)
+	}
+	return nil
+}
+
+func (fs *followService) GenerateGroupMemberId() (int64, error) {
+	id, err := fs.sf.Generate()
+	if err != nil {
+		return 0, err
+	}
+	return id, err
+}
+
+func (fs *followService) CreateGroupMember(ctx context.Context, gm *model.GroupMember) error {
+	if err := fs.db.CreateGroupMember(ctx, gm); err != nil {
+		return errno.NewErrNo(errno.InternalServiceErrorCode, "failed to create group member").WithError(err)
+	}
+	return nil
+}
+
+func (fs *followService) GetGroupByJoined(ctx context.Context, userId int64) ([]*model.Group, error) {
+	ids, err := fs.db.GetGroupIdsByJoined(ctx, userId)
+	if err != nil {
+		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get group id list by joined").WithError(err)
+	}
+
+	l := len(ids)
+	gs := make([]*model.Group, l)
+	if l > 0 {
+		for i, v := range ids {
+			g, err := fs.db.GetGroupById(ctx, v)
+			if err != nil {
+				return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get group by id").WithError(err)
+			}
+			gs[i] = g
+		}
+	}
+
+	return gs, nil
+}
+
+func (fs *followService) GetGroupByCreator(ctx context.Context, creatorId int64) ([]*model.Group, error) {
+	gs, err := fs.db.GetGroupByCreator(ctx, creatorId)
+	if err != nil {
+		return nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get group list by creator").WithError(err)
+	}
+	return gs, nil
+}

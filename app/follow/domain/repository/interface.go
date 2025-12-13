@@ -14,6 +14,11 @@ type FollowDB interface {
 	GetUserIdsByFolloweredId(ctx context.Context, userId, limit int64, cursor time.Time) ([]*model.FolloweringIdWithTime, int64, error)
 	GetUserIdsByFolloweringId(ctx context.Context, userId, limit int64, cursor time.Time) ([]*model.FolloweredIdWithTime, int64, error)
 	GetFriendIdsById(ctx context.Context, id, limit int64, cursor time.Time) ([]*model.FolloweredIdWithTime, int64, error)
+	CreateGroup(ctx context.Context, g *model.Group) error
+	CreateGroupMember(ctx context.Context, gm *model.GroupMember) error
+	GetGroupIdsByJoined(ctx context.Context, userId int64) ([]int64, error)
+	GetGroupById(ctx context.Context, id int64) (*model.Group, error)
+	GetGroupByCreator(ctx context.Context, creatorId int64) ([]*model.Group, error)
 }
 
 type RpcPort interface {

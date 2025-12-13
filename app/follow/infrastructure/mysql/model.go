@@ -17,6 +17,22 @@ type Follow struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
+type GroupMember struct {
+	Id        int64     `gorm:"type:bigint;primaryKey"`
+	GroupId   int64     `gorm:"type:bigint;not null"`
+	UserId    int64     `gorm:"type:bigint;not null"`
+	CreatedAt time.Time `gorm:"autoCreateTime"`
+}
+
+type Group struct {
+	Id        int64          `gorm:"type:bigint;primaryKey"`
+	Name      string         `gorm:"type:varchar(100);not null"`
+	CreatorId int64          `gorm:"type:bigint;not null"`
+	CreatedAt time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+}
+
 type FolloweredIdWithTime struct {
 	FolloweredId int64
 	CreatedAt    time.Time
@@ -24,4 +40,12 @@ type FolloweredIdWithTime struct {
 
 func (Follow) TableName() string {
 	return constants.FollowTableName
+}
+
+func (Group) TableName() string {
+	return constants.GroupTableName
+}
+
+func (GroupMember) TableName() string {
+	return constants.GroupMemberName
 }

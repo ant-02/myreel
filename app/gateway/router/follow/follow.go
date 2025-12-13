@@ -31,6 +31,10 @@ func Register(r *server.Hertz) {
 			}
 			{
 				_friends := _v1.Group("/friends", _friendsMw()...)
+				_friends.POST("/group", append(_chatgroupMw(), follow.ChatGroup)...)
+				_group := _friends.Group("/group", _groupMw()...)
+				_group.GET("/created", append(_createdchatgrouplistMw(), follow.CreatedChatGroupList)...)
+				_group.GET("/joined", append(_joinedchatgrouplistMw(), follow.JoinedChatGroupList)...)
 				_friends.GET("/list", append(_friendlistMw(), follow.FriendList)...)
 			}
 			{

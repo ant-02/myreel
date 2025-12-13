@@ -12,6 +12,13 @@ message User {
     string avatarUrl = 3;
 }
 
+message Group {
+    int64 id = 1;
+    string name = 2;
+    int64 creatorId = 3;
+    int64 createdAt = 4;
+}
+
 message Pagination {
     int64 nextCursor = 1;
     int64 prevCursor = 2;
@@ -55,6 +62,26 @@ message FriendListResponse {
     Pagination pagination = 2;
 }
 
+message ChatGroupRequest {
+    repeated int64 friend_ids = 1;
+    string name = 2;
+}
+
+message ChatGroupResponse {}
+
+message JoinedChatGroupListRequest {}
+
+message JoinedChatGroupListResponse {
+    repeated Group items = 1;
+}
+
+message CreatedChatGroupListRequest {}
+
+message CreatedChatGroupListResponse {
+    repeated Group items = 1;
+}
+
+
 service FollowService {
     rpc FollowAction(FollowActionRequest) returns (FollowActionResponse) {
         option (api.post)="/api/v1/relation/action";
@@ -67,5 +94,14 @@ service FollowService {
     }
     rpc FriendList(FriendListRequest) returns (FriendListResponse) {
         option (api.get)="/api/v1/friends/list";
+    }
+    rpc ChatGroup(ChatGroupRequest) returns (ChatGroupResponse) {
+        option (api.post)="/api/v1/friends/group";
+    }
+    rpc JoinedChatGroupList(JoinedChatGroupListRequest) returns (JoinedChatGroupListResponse) {
+        option (api.get)="/api/v1/friends/group/joined";
+    }
+    rpc CreatedChatGroupList(CreatedChatGroupListRequest) returns (CreatedChatGroupListResponse) {
+        option (api.get)="/api/v1/friends/group/created";
     }
 }

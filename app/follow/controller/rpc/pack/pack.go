@@ -43,3 +43,23 @@ func BuildUserList(vs []*follow.User, pagination *follow.Pagination) *follow.Use
 		Pagination: pagination,
 	}
 }
+
+func BuildGroup(g *domainModel.Group) *follow.Group {
+	return &follow.Group{
+		Id:        g.Id,
+		Name:      g.Name,
+		CreatorId: g.CreatorId,
+		CreatedAt: g.CreatedAt,
+	}
+}
+
+func BuildGroups(gs []*domainModel.Group) []*follow.Group {
+	l := len(gs)
+	result := make([]*follow.Group, l)
+	if l > 0 {
+		for i, v := range gs {
+			result[i] = BuildGroup(v)
+		}
+	}
+	return result
+}
