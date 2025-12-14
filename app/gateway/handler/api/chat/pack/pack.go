@@ -19,18 +19,18 @@ type WSMessage struct {
 }
 
 type SendRequest struct {
-	TargetId int64  `json:"targetId"`
+	TargetId string `json:"targetId"`
 	Content  string `json:"content"`
 }
 
 type HistoryRequest struct {
-	TargetId int64 `json:"targetId"`
-	Cursor   int64 `json:"cursor"`
-	Limit    int64 `json:"limit"`
+	TargetId string `json:"targetId"`
+	Cursor   int64  `json:"cursor"`
+	Limit    int64  `json:"limit"`
 }
 
 type UnreadRequest struct {
-	TargetId int64 `json:"targetId"`
+	TargetId string `json:"targetId"`
 }
 
 func MarshalWSMessage(respMsg *WSMessage) ([]byte, error) {

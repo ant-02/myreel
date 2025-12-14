@@ -63,7 +63,6 @@ func (cs *chatService) GetHistoryMessages(ctx context.Context, cursor, limit int
 	if err != nil {
 		return nil, nil, errno.NewErrNo(errno.InternalServiceErrorCode, "failed to get message count").WithError(err)
 	}
-
 	l := len(ids)
 	msgs := make([]*model.Message, l)
 	nextCursor := cursor

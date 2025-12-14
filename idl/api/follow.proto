@@ -63,8 +63,8 @@ message FriendListResponse {
 }
 
 message ChatGroupRequest {
-    repeated int64 friend_ids = 1;
-    string name = 2;
+    repeated int64 friend_ids = 1[(api.body)="friendIds"];
+    string name = 2[(api.body)="name"];
 }
 
 message ChatGroupResponse {}

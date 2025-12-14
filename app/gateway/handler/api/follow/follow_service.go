@@ -159,7 +159,7 @@ func FolloweringList(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/friends/group [POST]
 func ChatGroup(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req follow.ChatGroupRequest
+	var req api.ChatGroupRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		pack.RespError(c, errno.ParamVerifyError.WithError(err))
@@ -176,7 +176,6 @@ func ChatGroup(ctx context.Context, c *app.RequestContext) {
 		pack.RespError(c, errno.NewErrNo(errno.ParamVerifyErrorCode, "failed to parse user id"))
 		return
 	}
-
 	err = rpc.CreateGroupRPC(ctx, &follow.ChatGroupRequest{
 		UserId:    uid,
 		Name:      req.Name,
@@ -194,7 +193,7 @@ func ChatGroup(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/friends/group/joined [GET]
 func JoinedChatGroupList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req follow.JoinedChatGroupListRequest
+	var req api.JoinedChatGroupListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		pack.RespError(c, errno.ParamVerifyError.WithError(err))
@@ -227,7 +226,7 @@ func JoinedChatGroupList(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/friends/group/created [GET]
 func CreatedChatGroupList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req follow.CreatedChatGroupListRequest
+	var req api.CreatedChatGroupListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		pack.RespError(c, errno.ParamVerifyError.WithError(err))

@@ -9,6 +9,7 @@ import (
 	"myreel/app/gateway/rpc"
 	"myreel/kitex_gen/chat"
 	"myreel/pkg/constants"
+	"strconv"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -52,9 +53,15 @@ func Chat(ctx context.Context, c *app.RequestContext) {
 					c.AbortWithStatus(consts.StatusBadRequest)
 					return
 				}
+				targetId, err := strconv.ParseInt(sendReq.TargetId, 10, 64)
+				if err != nil {
+					log.Println("failed to parse target id:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
 				err = rpc.SendMessageRPC(ctx, &chat.SendMessageRequest{
 					SenderId: uid,
-					TargetId: sendReq.TargetId,
+					TargetId: targetId,
 					ChatType: chat.ChatType_CHAT_TYPE_PRIVATE,
 					Content:  sendReq.Content,
 				})
@@ -79,9 +86,15 @@ func Chat(ctx context.Context, c *app.RequestContext) {
 					c.AbortWithStatus(consts.StatusBadRequest)
 					return
 				}
+				targetId, err := strconv.ParseInt(historyReq.TargetId, 10, 64)
+				if err != nil {
+					log.Println("failed to parse target id:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
 				messageList, err := rpc.GetHistoryMessagesRPC(ctx, &chat.GetHistoryRequest{
 					UserId:   uid,
-					TargetId: historyReq.TargetId,
+					TargetId: targetId,
 					ChatType: chat.ChatType_CHAT_TYPE_PRIVATE,
 					Cursor:   historyReq.Cursor,
 					Limit:    historyReq.Limit,
@@ -107,9 +120,15 @@ func Chat(ctx context.Context, c *app.RequestContext) {
 					c.AbortWithStatus(consts.StatusBadRequest)
 					return
 				}
+				targetId, err := strconv.ParseInt(unreadReq.TargetId, 10, 64)
+				if err != nil {
+					log.Println("failed to parse target id:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
 				messageList, err := rpc.GetUnreadMessagesRPC(ctx, &chat.GetUnreadRequest{
 					UserId:   uid,
-					TargetId: unreadReq.TargetId,
+					TargetId: targetId,
 					ChatType: chat.ChatType_CHAT_TYPE_PRIVATE,
 				})
 				if err != nil {
@@ -133,9 +152,15 @@ func Chat(ctx context.Context, c *app.RequestContext) {
 					c.AbortWithStatus(consts.StatusBadRequest)
 					return
 				}
+				targetId, err := strconv.ParseInt(sendReq.TargetId, 10, 64)
+				if err != nil {
+					log.Println("failed to parse target id:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
 				err = rpc.SendMessageRPC(ctx, &chat.SendMessageRequest{
 					SenderId: uid,
-					TargetId: sendReq.TargetId,
+					TargetId: targetId,
 					ChatType: chat.ChatType_CHAT_TYPE_GROUP,
 					Content:  sendReq.Content,
 				})
@@ -160,9 +185,15 @@ func Chat(ctx context.Context, c *app.RequestContext) {
 					c.AbortWithStatus(consts.StatusBadRequest)
 					return
 				}
+				targetId, err := strconv.ParseInt(historyReq.TargetId, 10, 64)
+				if err != nil {
+					log.Println("failed to parse target id:", err)
+					c.AbortWithStatus(consts.StatusBadRequest)
+					return
+				}
 				messageList, err := rpc.GetHistoryMessagesRPC(ctx, &chat.GetHistoryRequest{
 					UserId:   uid,
-					TargetId: historyReq.TargetId,
+					TargetId: targetId,
 					ChatType: chat.ChatType_CHAT_TYPE_GROUP,
 					Cursor:   historyReq.Cursor,
 					Limit:    historyReq.Limit,

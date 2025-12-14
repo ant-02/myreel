@@ -76,7 +76,6 @@ func (s *FollowServiceImpl) FriendList(ctx context.Context, req *follow.FriendLi
 // ChatGroup implements the FollowServiceImpl interface.
 func (s *FollowServiceImpl) ChatGroup(ctx context.Context, req *follow.ChatGroupRequest) (resp *follow.ChatGroupResponse, err error) {
 	resp = new(follow.ChatGroupResponse)
-
 	err = s.useCase.CreateGroup(ctx, req.UserId, req.Name, req.FriendIds...)
 	if err != nil {
 		resp.Base = base.BuildBaseResp(err)
