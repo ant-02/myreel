@@ -1,0 +1,71 @@
+server:
+  private-key: | # PKCS#8
+    -----BEGIN PRIVATE KEY-----
+    MC4CAQAwBQYDK2VwBCIEIJi1JE7fq4xFZTXiOWvK9PDEDVIOgsF0dMF46BMgT9jY
+    -----END PRIVATE KEY-----
+  public-key: |
+    -----BEGIN PUBLIC KEY-----
+    MCowBQYDK2VwAyEAe8QtuyTwO7YgDmZegsPpPPGuMZkjg6209OoArIOVOz0=
+    -----END PUBLIC KEY-----
+  version: "1.0"
+  name: "myreel"
+  log-level: "INFO" # OPTIONS: TRACE, DEBUG, INFO(default), NOTICE, WARN, ERROR, FATAL
+  intranet-url: "" # 网关地址
+
+snowflake:
+  datacenter-id: 0
+
+mysql:
+  addr: 127.0.0.1:3306
+  database: myreel
+  username: myreel
+  password: myreel
+  charset: utf8mb4
+
+redis:
+  addr: 127.0.0.1:6379
+  password: myreel
+
+services:
+  user:
+    name: user
+    load-balance: false
+    addr:
+      - 0.0.0.0:20002
+  video:
+    name: video
+    load-balance: false
+    addr:
+      - 0.0.0.0:20003
+  like:
+    name: like
+    load-balance: false
+    addr:
+      - 0.0.0.0:20004
+  comment:
+    name: comment
+    load-balance: false
+    addr:
+      - 0.0.0.0:20005
+  follow:
+    name: follow
+    load-balance: false
+    addr:
+      - 0.0.0.0:20006
+  chat:
+    name: chat
+    load-balance: false
+    addr:
+      - 0.0.0.0:20007
+
+upyun:
+  bucket: "myreel-img"
+  operator: "zll141363"
+  password: "39c1d6a1f587e00ee4e5c2c531f64946"
+  expiration: 30
+  maxSize: 209715200
+  domain: "http://myreel-img.test.upcdn.net"
+  notifyUrl: "http://xhhx.xyz:8888"
+
+etcd:
+  addr: "http://0.0.0.0:2379"
