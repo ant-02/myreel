@@ -13,19 +13,21 @@ services:
       - myreel
 
   # MySQL 服务，提供关系型数据库，用于存储结构化数据
-  myreel-mysql:
-    container_name: myreel-mysql
-    image: mysql:9.0.1
-    env_file:
-      - "./env/mysql.env"
-    ports:
-      - "3306:3306"
-    networks:
-      - myreel
-    volumes:
-      - ./data/mysql:/var/lib/mysql
+  # myreel-mysql:
+  #   container_name: myreel-mysql
+  #   image: mysql:8.0
+  #   mem_limit: 300m
+  #   env_file:
+  #     - "./env/mysql.env"
+  #   ports:
+  #     - "3306:3306"
+  #   networks:
+  #     - myreel
+  #   volumes:
+  #     - ../config/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+  #     - ./data/mysql:/var/lib/mysql
 
-    # etcd 服务，分布式键值存储系统，用于服务发现、配置管理
+  # etcd 服务，分布式键值存储系统，用于服务发现、配置管理
   myreel-etcd:
     container_name: myreel-etcd
     image: quay.io/coreos/etcd:v3.5.5
@@ -41,9 +43,70 @@ services:
       - ./data/etcd:/etcd-data
     networks:
       - myreel
-    entrypoint: [ "sh", "-c", "chmod +x /script/etcd-monitor.sh && /script/etcd-monitor.sh & exec etcd" ]
+    entrypoint:
+      [
+        "sh",
+        "-c",
+        "chmod +x /script/etcd-monitor.sh && /script/etcd-monitor.sh & exec etcd",
+      ]
 
-  
+  elasticsearch:
+    image: elasticsearch:8.4.2
+    container_name: myreel-elasticsearch
+    env_file:
+      - ./env/es.env
+    healthcheck:
+      test: [
+          "CMD-SHELL",
+          "curl -sf http://elasticsearch:9200/_cluster/health || exit 1",
+        ] # ⼼跳检测，成功之后不再执⾏后⾯的退出
+      interval: 60s # ⼼跳检测间隔周期
+      timeout: 10s
+      retries: 3
+      start_period: 60s # ⾸次检测延迟时间
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ../config/elasticsearch/config:/usr/share/elasticsearch/config
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+      - ../config/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+    ports:
+      - "9200:9200"
+    restart: always
+    networks:
+      - myreel
+
+  kibana:
+    image: kibana:8.4.2
+    container_name: myreel-kibana
+    env_file:
+      - ./env/kibana.env
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    volumes:
+      - ../config/kibana:/usr/share/kibana/config
+      - ./data/kibana:/usr/share/kibana/data
+    networks:
+      - myreel
+    mem_limit: 350m
+
+  filebeat:
+    image: elastic/filebeat:8.4.2
+    container_name: myreel-filebeat
+    user: root
+    volumes:
+      - ../config/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml # 挂载配置文件
+      - ./data/filebeat:/usr/share/filebeat/data # 持久化注册表文件
+      - ../output/log:/usr/share/filebeat/logs # 挂载日志目录
+    depends_on:
+      - elasticsearch
+    restart: on-failure
+    networks:
+      - myreel
 
 networks:
   myreel:

@@ -1,0 +1,26 @@
+filebeat.inputs:
+  - type: filestream
+    id: "myreel"
+    enabled: true
+    paths:
+      - /usr/share/filebeat/logs/**/*.log
+
+processors:
+  - decode_json_fields:
+      fields: ["message"]
+      target: ""
+      overwrite_keys: true
+      add_error_key: true
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  indices:
+    - index: "myreel-logs-%{+yyyy.MM.dd}"
+
+setup.template:
+  name: "myreel-logs"
+  pattern: "myreel-logs-*"
+  enabled: true
+  overwrite: true
+
+setup.ilm.enabled: false

@@ -16,10 +16,10 @@ snowflake:
   datacenter-id: 0
 
 mysql:
-  addr: 127.0.0.1:3306
+  addr: rm-bp1485bywcvona6y9.mysql.rds.aliyuncs.com:3306
   database: myreel
   username: myreel
-  password: myreel
+  password: Zll9658466366@
   charset: utf8mb4
 
 redis:
