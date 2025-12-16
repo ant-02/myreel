@@ -2,17 +2,13 @@
 
 ## 技术栈
 
-｜ 组件 ｜ 技术 ｜
-
-｜ Web框架 ｜ Hertz ｜
-
-｜ RPC框架 ｜ Kitex ｜
-
-｜ 数据库 ｜ MySQL ｜
-
-｜ 缓存 ｜ Redis ｜
-
-｜ 服务注册 ｜ etcd ｜
+| 组件     | 技术  |
+| -------- | ----- |
+| WEB框架  | Hertz |
+| RPC框架  | Kitex |
+| 数据库   | MySQL |
+| 缓存     | Redis |
+| 服务注册 | etcd  |
 
 ## 项目结构
 
