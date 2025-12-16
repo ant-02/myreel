@@ -77,6 +77,9 @@ services:
     restart: always
     networks:
       - myreel
+    mem_limit: 1500m
+    memswap_limit: 1500m
+    mem_reservation: 1200m
 
   kibana:
     image: kibana:8.4.2
